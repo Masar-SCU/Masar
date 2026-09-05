@@ -1,0 +1,78 @@
+name: docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/*.md'
+      - '.github/workflows/docs.yml'
+      - '.markdownlint-cli2.jsonc'
+      - '.lycheeignore'
+      - 'scripts/**'
+  pull_request:
+    paths:
+      - '**/*.md'
+      - '.github/workflows/docs.yml'
+      - '.markdownlint-cli2.jsonc'
+      - '.lycheeignore'
+      - 'scripts/**'
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint Markdown
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: markdownlint
+        run: npx --yes markdownlint-cli2@0.14.0 "**/*.md" "#node_modules"
+
+  mermaid:
+    name: Validate Mermaid diagrams
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Parses every mermaid block. A broken diagram renders as a red error box
+      # on GitHub, which is easy to miss in review and embarrassing in a demo.
+      # Uses mermaid.parse() rather than mermaid-cli, which would need a ~150 MB
+      # headless Chrome download for the same signal.
+      - name: Parse every mermaid block
+        run: |
+          npm i --no-save mermaid@11 jsdom
+          node scripts/check-mermaid.mjs .
+
+  links:
+    name: Check links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Internal links break silently when a heading is renamed. This is the
+      # single most common defect in a large Markdown documentation set.
+      - name: Internal links and anchors
+        run: python3 scripts/check-links.py .
+
+      - name: External links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --accept 200,206,429
+            --timeout 20
+            --max-retries 2
+            --exclude-path archive
+            './**/*.md'
+          fail: true
+

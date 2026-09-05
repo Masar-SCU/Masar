@@ -1,0 +1,42 @@
+{
+  // markdownlint configuration for the Masar documentation set.
+  // Rules are relaxed only where the default fights a deliberate choice.
+  "config": {
+    "default": true,
+
+    // MD013 line-length: prose is soft-wrapped at ~100 chars, but tables and
+    // links routinely exceed any limit. Enforcing this would mangle the tables
+    // that carry most of the information in these documents.
+    "MD013": false,
+
+    // MD024 duplicate headings: "Algorithm", "Worked example", "Fallback" and
+    // "Acceptance criteria" repeat per feature by design. Only forbid duplicates
+    // that are siblings, which would produce genuinely ambiguous anchors.
+    "MD024": { "siblings_only": true },
+
+    // MD033 inline HTML: <br/> inside table cells and Mermaid labels is needed.
+    "MD033": { "allowed_elements": ["br", "sub", "sup", "kbd", "details", "summary"] },
+
+    // MD034 bare URLs: we use <angle brackets>, which this rule accepts.
+    "MD034": true,
+
+    // MD036 emphasis-as-heading: "**Owner:** name" lines are metadata, not headings.
+    "MD036": false,
+
+    // MD041 first-line-heading: every document starts with an H1. Keep enforced.
+    "MD041": true,
+
+    // MD046 code block style: fenced only, never indented.
+    "MD046": { "style": "fenced" },
+
+    // MD049/MD050 emphasis style: consistent underscore/asterisk usage.
+    "MD049": { "style": "asterisk" },
+    "MD050": { "style": "asterisk" }
+  },
+
+  "globs": ["**/*.md"],
+  "ignores": [
+    "node_modules/**",
+    ".git/**"
+  ]
+}

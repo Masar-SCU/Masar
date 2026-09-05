@@ -1,0 +1,13 @@
+# Node — only ever installed transiently for the doc verification scripts
+node_modules/
+package-lock.json
+
+# Editor and OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Local scratch
+/tmp/
+*.log

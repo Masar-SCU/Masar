@@ -1,0 +1,17 @@
+# Paths ignored by the link checker (lychee).
+
+# Placeholder URLs used in API and data-model examples.
+https://example.org/*
+https://example.com/*
+https://github.com/omar/*
+
+# Sites that block automated HEAD/GET requests from CI runners and would
+# produce false failures. Verified manually instead.
+https://www.linkedin.com/*
+https://lightcast.io/*
+https://www.coursera.org/*
+
+# Files that do not exist yet — they are created during implementation and are
+# referenced by the evaluation plan ahead of time.
+eval/*
+seed/*
