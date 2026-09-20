@@ -12,6 +12,7 @@ feature nobody can implement twice the same way.
 
 | § | Feature | Tier | Owner |
 |---|---|---|---|
+| 5.0 | [Onboarding & Plan Creation Wizard](#50-onboarding--plan-creation-wizard) | MVP | Mazen · Mohamed Y. · Ziad |
 | 5.1 | [Student Profile](#51-student-profile) | MVP | Mohamed Y. · Mazen |
 | 5.2 | [Skill Calibration Quiz](#52-skill-calibration-quiz) | MVP | Mohamed Y. · Mazen |
 | 5.3 | [Career Assessment](#53-career-assessment) | MVP | Mohamed Y. · Mazen |
@@ -30,6 +31,40 @@ feature nobody can implement twice the same way.
 | 5.16 | [Admin Content Panel](#516-admin-content-panel) | MVP | Mohamed Y. |
 
 The AI Mentor is specified in [§06](06-ai-engines.md#4-engine-c--context-aware-ai-mentor-rag).
+
+---
+
+## 5.0 Onboarding & Plan Creation Wizard
+
+**Purpose:** guide first-time students through a cohesive, friction-free journey from initial curiosity to an active, personalized roadmap.
+**Requirements:** FR-00 · **Story:** US-00 · **Owners:** Mazen · Mohamed Y. · Ziad
+
+### The 5-step sequence
+
+```mermaid
+flowchart LR
+    S1["Step 1<br/>Personality & Preferences<br/>(§5.3)"] --> S2["Step 2<br/>Coursework & Skills<br/>(§5.1, §5.11)"]
+    S2 --> S3["Step 3<br/>Targeted Calibration<br/>(§5.2)"]
+    S3 --> S4["Step 4<br/>Career Fit & Selection<br/>(§5.4)"]
+    S4 --> S5["Step 5<br/>Roadmap Creation<br/>(§5.5, §5.6)"]
+
+    classDef step fill:#E8F0FE,stroke:#1A73E8,stroke-width:2px,color:#1B1F3B
+    class S1,S2,S3,S4,S5 step
+```
+
+| Step | User Action | System Output | Duration |
+|:-:|---|---|:-:|
+| **1** | Answers 20 Likert items on interests, problem types, and work preferences | Produces normalized `interest_vector` | ~4 min |
+| **2** | Selects academic year and completed Suez Canal courses; adds claimed technical skills on the 0–5 scale | Pre-fills skills via curriculum mapping; initializes `student_skill` records | ~3 min |
+| **3** | Completes a targeted diagnostic quiz for the top 2–3 core technical claimed skills with question banks | Computes `calibrated_level` for core claims; remaining claims marked unverified | ~5 min |
+| **4** | Reviews ranked careers with match percentages and fit breakdowns; selects target career and track | Persists `target_career_id` and `target_track_id` | ~2 min |
+| **5** | Enters available study hours per week (1–60 h) | Runs gap analysis and prerequisite-ordered scheduler; returns first phase and capstone | < 2 s |
+
+### Resume and state recovery
+
+- The student's progress is saved on every answer submission (`onboarding_step` in `STUDENT_PROFILE`).
+- If a student closes the browser at Step 3, logging back in automatically resumes at Step 3 with prior answers intact.
+- Completing Step 5 sets `onboarding_completed_at` and unlocks the primary dashboard.
 
 ---
 
@@ -106,6 +141,15 @@ the project from *opinion in, opinion out* to *measured, with a stated method*.
 Quizzes are authored only for the **~30 most frequently required skills**. Writing 8 items for 160
 skills would be 1,280 questions and would consume the entire project. Skills without a quiz use
 self-reported levels, flagged as unverified.
+
+### Progressive calibration in the onboarding wizard
+
+To balance assessment validity against onboarding drop-off:
+
+1. **Targeted onboarding check:** When a student reaches Step 3 of the Onboarding Wizard, the system inspects their claimed skills against the ~30 skills with authored quizzes, selecting the **top 2–3 core skills** (e.g. SQL, Git, OOP) based on market demand and claimed proficiency.
+2. **Time-boxed micro-diagnostic:** The student takes a short 5–8 item quiz per selected core skill (total ~10–15 questions, ~5 minutes).
+3. **On-demand dashboard calibration:** Remaining claimed skills that have quizzes are flagged as *Unverified* with a prompt on the student's dashboard: *"Verify your Docker level with a 3-minute quiz"*. Students can complete these at any time to refine their gap calculations.
+4. **Uncalibrated skills:** Skills without quizzes automatically use `effective_level = self_level` with a transparent `source: "self"` badge.
 
 ### Fallback
 
