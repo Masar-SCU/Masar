@@ -212,9 +212,56 @@ These were unowned in the original plan, and they are exactly the work that gets
 
 Full task-level assignment with dates is in [§08](08-plan-and-timeline.md).
 
+## 8. The end-to-end user workflow
+
+Masar operates on a two-phase user journey that resolves the cold-start problem for undecided students while driving long-term skill acquisition:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Student
+    participant Wizard as Onboarding Wizard
+    participant Engine as Recommender & Gap Engine
+    participant Scheduler as Roadmap Scheduler
+    participant Prog as Adaptive Progress Loop
+
+    Note over Student,Wizard: Phase 1 — First-Time Onboarding & Plan Creation
+    Student->>Wizard: 1. Complete personality & work-preference assessment
+    Student->>Wizard: 2. Select completed coursework & self-rate claimed skills
+    Wizard-->>Student: Auto-propose course-derived skills + flag unverified claims
+    Student->>Wizard: 3. Take targeted calibration quizzes (top claimed core skills)
+    Wizard->>Engine: Run hybrid career recommendation
+    Engine-->>Student: 4. Reveal ranked careers with transparent fit breakdown
+    Student->>Engine: Confirm target career & track (e.g. Backend -> .NET)
+    Engine->>Scheduler: Compute gaps & schedule against weekly hours budget
+    Scheduler-->>Student: 5. Generate dated, prerequisite-ordered roadmap & capstone
+
+    Note over Student,Prog: Phase 2 — Adaptive Learning & Progress Loop
+    loop Every learning cycle
+        Student->>Prog: Complete roadmap item / submit evidence
+        Prog->>Prog: Increment skill level & update readiness score
+        Prog->>Scheduler: Recalculate gaps and unblock next phase
+        Student->>Prog: Consult AI Mentor for grounded milestone guidance
+    end
+```
+
+### 8.1 Phase 1 — Onboarding and plan creation
+
+1. **Personality & work-preference assessment:** Rather than confronting students with a blank skill list, Masar starts with a quick Likert-scale assessment probing problem-solving inclinations (analytical vs visual), work environments (team vs solo), and interests.
+2. **Skill identification & coursework pre-fill:** Students select their academic year and completed Suez Canal University courses. The curriculum mapping pre-fills foundational skills with confidence ratings, and students self-rate any additional claimed skills on the 0–5 proficiency scale.
+3. **Targeted skill calibration:** To combat self-assessment bias without inducing questionnaire fatigue, the system generates focused diagnostic quizzes (5–8 questions) for the student's top 2–3 core technical claimed skills with active question banks. Students can complete these immediately or calibrate remaining skills later from the dashboard.
+4. **Career recommendation & target selection:** The hybrid engine blends interest alignment (30%), calibrated skill fit (55%), and skill coverage (15%), displaying ranked careers with inspectable reasoning. The student confirms their chosen career and track.
+5. **Personalized roadmap generation:** The deterministic scheduler runs a topological sort over the induced prerequisite DAG, packaging gaps into weekly phases matching the student's hours-per-week budget, attaching free curated resources and a multi-skill capstone project.
+
+### 8.2 Phase 2 — Continuous growth and the adaptive loop
+
+- **Progressive verification:** Marking learning milestones or capstone deliverables complete increments the student's effective skill level.
+- **Dynamic recalculation:** Every completion instantly recalculates the career readiness score, logs a historical trend point, and recalculates subsequent unblocked dependencies.
+- **Contextual mentoring:** Students consult the AI mentor, who answers questions grounded strictly in the student's verified skills, roadmap items, and local market statistics.
+
 ---
 
-## 8. One-sentence definition
+## 9. One-sentence definition
 
 > **Masar** measures a Computer Science student's current skills, recommends technology career
 > paths that fit them, quantifies exactly which skills they lack for a chosen path, and

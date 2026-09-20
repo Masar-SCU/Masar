@@ -47,20 +47,35 @@ Diagram sources live in [`docs/diagrams/`](docs/diagrams/). Superseded documents
 
 ## The core value loop
 
+Masar guides a student through two distinct, interconnected phases:
+
 ```mermaid
-flowchart LR
-    P["Student Profile<br/>skills · courses · interests"] --> C["Career<br/>Recommendation"]
-    C --> G["Skill-Gap Analysis<br/>+ Readiness Score"]
-    G --> R["Personalized Roadmap<br/>resources + projects"]
-    R --> T["Progress<br/>Tracking"]
-    T -->|"re-score & re-plan"| P
+flowchart TD
+    subgraph ONBOARD["Phase 1 — First-Time Onboarding & Plan Creation"]
+        direction LR
+        A1["1. Personality & Work Preferences<br/><i>Likert assessment</i>"] --> A2["2. Skill Identification<br/><i>coursework + self-rating</i>"]
+        A2 --> A3["3. Targeted Skill Calibration<br/><i>focused diagnostic quizzes</i>"]
+        A3 --> A4["4. Career Fit & Target Selection<br/><i>hybrid recommendation</i>"]
+        A4 --> A5["5. Roadmap Generation<br/><i>prereq DAG + weekly budget</i>"]
+    end
+
+    subgraph LOOP["Phase 2 — Adaptive Learning Loop"]
+        direction LR
+        B1["Milestone Execution<br/><i>resources + capstone</i>"] --> B2["Skill Increment<br/><i>verified progress</i>"]
+        B2 --> B3["Readiness Re-score<br/><i>trend snapshot</i>"]
+        B3 --> B4["Adaptive Re-plan<br/><i>unblock next skills</i>"]
+        B4 --> B5["Contextual AI Mentor<br/><i>grounded coaching</i>"]
+        B5 --> B1
+    end
+
+    A5 ==> B1
 
     classDef core fill:#E8F0FE,stroke:#1A73E8,stroke-width:2px,color:#1B1F3B
-    class G,R core
+    class A4,A5,B2,B3,B4 core
 ```
 
-`Skill-Gap Analysis` and `Personalized Roadmap` are the two components the project cannot
-be demonstrated without. Everything else exists to feed them or to act on their output.
+1. **Phase 1 (Onboarding):** A student discovers their career fit without friction. They start with an intuitive interest/work-preference assessment, record their academic courses and technical skills, take focused benchmark quizzes on their core claimed skills, and receive an explainable career ranking with an ordered roadmap.
+2. **Phase 2 (Growth Loop):** As the student completes roadmap milestones, their skill levels increment, readiness scores update dynamically, subsequent dependencies are unblocked, and the AI mentor provides grounded guidance.
 
 ---
 
