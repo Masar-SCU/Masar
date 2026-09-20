@@ -31,6 +31,7 @@ erDiagram
     STUDENT_PROFILE ||--o{ STUDENT_COURSE : completed
     STUDENT_PROFILE ||--o{ STUDENT_INTEREST : selected
     STUDENT_PROFILE ||--o{ ASSESSMENT_ATTEMPT : takes
+    STUDENT_PROFILE ||--o{ QUIZ_ATTEMPT : takes
     STUDENT_PROFILE ||--o{ ROADMAP : owns
     STUDENT_PROFILE ||--o{ READINESS_SNAPSHOT : accrues
     STUDENT_PROFILE ||--o{ MENTOR_MESSAGE : exchanges
@@ -44,6 +45,7 @@ erDiagram
     SKILL ||--o{ PROJECT_SKILL : practised_in
     SKILL ||--o{ COURSE_SKILL : covered_by
     SKILL ||--o{ QUIZ_ITEM : assessed_by
+    SKILL ||--o{ QUIZ_ATTEMPT : for_skill
     SKILL ||--o{ JOB_POSTING_SKILL : demanded_in
     SKILL ||--o| SKILL_EMBEDDING : embedded_as
 
@@ -67,7 +69,10 @@ erDiagram
     COURSE ||--o{ STUDENT_COURSE : taken_by
 
     ASSESSMENT_ATTEMPT ||--o{ ASSESSMENT_ANSWER : records
-    QUIZ_ITEM ||--o{ ASSESSMENT_ANSWER : answered_in
+    ASSESSMENT_QUESTION ||--o{ ASSESSMENT_ANSWER : answers
+
+    QUIZ_ITEM ||--o{ QUIZ_ANSWER : tests
+    QUIZ_ATTEMPT ||--o{ QUIZ_ANSWER : contains
 
     JOB_POSTING ||--o{ JOB_POSTING_SKILL : mentions
     JOB_POSTING }o--o| CAREER : classified_as
@@ -257,6 +262,8 @@ USER
 STUDENT_PROFILE
   id, user_id UNIQUE, academic_year, target_career_id NULL, target_track_id NULL,
   hours_per_week, career_goal_text,
+  onboarding_step (1..5) DEFAULT 1,
+  onboarding_completed_at TIMESTAMP NULL,
   consent_advisor_visibility BOOL DEFAULT false,
   consent_research_use     BOOL DEFAULT false,
   created_at, updated_at
@@ -291,6 +298,38 @@ READINESS_SNAPSHOT
 
 `READINESS_SNAPSHOT` is append-only and never updated. It is what turns "adaptive" from a claim in
 the abstract into a visible line on a chart during the defence.
+
+### 6.1 Assessment and calibration data
+
+```text
+ASSESSMENT_QUESTION
+  id, code, category, prompt, min_label, max_label, sequence, is_active
+  -- category: 'interest' | 'work_style' | 'problem_type' | 'career_intent'
+
+ASSESSMENT_ATTEMPT
+  id, profile_id, started_at, completed_at NULL, status
+  -- status: 'in_progress' | 'completed' | 'abandoned'
+
+ASSESSMENT_ANSWER
+  id, attempt_id, question_id, score (1..5), answered_at
+  UNIQUE (attempt_id, question_id)
+
+QUIZ_ITEM
+  id, skill_id, target_level (1..5), question_text,
+  options_json, correct_option_index, explanation, is_active
+
+QUIZ_ATTEMPT
+  id, profile_id, skill_id, started_at, completed_at NULL,
+  calibrated_level (0..5) NULL, is_passed BOOL
+
+QUIZ_ANSWER
+  id, attempt_id, quiz_item_id, selected_option_index, is_correct, answered_at
+  UNIQUE (attempt_id, quiz_item_id)
+```
+
+- **Separation of concerns:** `ASSESSMENT_QUESTION` models the 20–25 Likert-scale personality, preference, and interest items feeding the career interest vector. `QUIZ_ITEM` models technical multiple-choice items tied to specific skills and target proficiency levels.
+- **Resilience:** `ASSESSMENT_ANSWER` records answers as they are selected, enabling students to pause and resume the onboarding wizard without data loss.
+- **Auditability:** `QUIZ_ATTEMPT` and `QUIZ_ANSWER` retain an objective record of test outcomes, explaining why a calibrated level was assigned.
 
 ---
 
@@ -442,6 +481,8 @@ CHECK (importance        BETWEEN 0 AND 1)
 CHECK (confidence        BETWEEN 0 AND 1)
 CHECK (hours_per_week    BETWEEN 1 AND 60)
 CHECK (score             BETWEEN 0 AND 100)
+CHECK (onboarding_step   BETWEEN 1 AND 5)
+CHECK (target_level      BETWEEN 1 AND 5)
 
 UNIQUE (profile_id, skill_id)                    -- one rating per skill per student
 UNIQUE (alias)                                   -- an alias maps to exactly one skill
@@ -486,7 +527,10 @@ Knowing the real size prevents both premature optimisation and unpleasant surpri
 | `project` | 40–60 | Curated |
 | `course` | 40–60 | One department's catalogue |
 | `course_skill` | 150–250 | The curriculum bridge |
+| `assessment_question` | 20–25 | Personality, work-style and interest items |
+| `assessment_attempt` | ≤ 1,000 | 1–2 per student |
 | `quiz_item` | 300–500 | 5–8 per calibrated skill |
+| `quiz_attempt` | ≤ 2,500 | Diagnostic calibration logs |
 | `job_posting` | 500–800 | One frozen snapshot |
 | `job_posting_skill` | 4,000–8,000 | ~10 skills per posting |
 | `student_profile` | ≤ 500 | [NFR-02](02-requirements.md#nfr-02--scale) |
