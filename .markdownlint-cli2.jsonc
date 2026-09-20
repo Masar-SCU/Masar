@@ -31,7 +31,10 @@
 
     // MD049/MD050 emphasis style: consistent underscore/asterisk usage.
     "MD049": { "style": "asterisk" },
-    "MD050": { "style": "asterisk" }
+    "MD050": { "style": "asterisk" },
+
+    // MD060 table column style: relaxed to accommodate markdown table formatting variations.
+    "MD060": false
   },
 
   "globs": ["**/*.md"],
