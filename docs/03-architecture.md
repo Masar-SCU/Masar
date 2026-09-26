@@ -229,8 +229,7 @@ sequenceDiagram
     S->>W: Complete 5-8 question quiz for primary skill
     W->>A: POST /api/quizzes/{skillId}/submit
     A->>D: evaluate calibrated level
-    A->>DB: update student_skill (effective_level)
-
+    A->>DB: update student_skill (calibrated_level; effective_level follows)
     Note over S,AI: Step 4 — Career Recommendation & Selection
     W->>A: POST /api/assessments/{id}/submit
     A->>D: MatchScorer.Score(profile, careers)
