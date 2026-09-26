@@ -91,6 +91,8 @@ used to enumerate registered emails ([NFR-06](02-requirements.md#nfr-06--authent
 | GET | `/api/profile/courses` | Completed courses |
 | PUT | `/api/profile/courses` | `[{ courseId, grade?, completedTerm? }]` |
 | POST | `/api/profile/courses/derive-skills` | Returns **proposals**, persists nothing (US-11 AC2) |
+| GET | `/api/profile/onboarding` | Onboarding progress `{ step, isCompleted, completedAt }` |
+| PUT | `/api/profile/onboarding/step` | `{ step: 1..5 }` — updates current wizard step (FR-00) |
 | PUT | `/api/profile/consent` | `{ advisorVisibility: bool, researchUse: bool }` |
 
 **There is no `/api/profile/{id}`.** Identity comes from the token, so a whole class of
@@ -148,6 +150,7 @@ Public read-only reference data. Cacheable; `Cache-Control: public, max-age=3600
 | GET | `/api/assessments/latest` | Most recent completed attempt |
 | GET | `/api/recommendations` | Ranked careers from the current profile |
 | PUT | `/api/profile/target` | `{ careerId, trackId }` — sets the target |
+| GET | `/api/quizzes/calibration-candidates` | Returns top 2–3 claimed core skills recommended for onboarding calibration |
 | GET | `/api/quizzes/{skillId}` | Calibration items for one skill |
 | POST | `/api/quizzes/{skillId}/submit` | `{ answers[] }` → calibrated level |
 

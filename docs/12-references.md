@@ -103,7 +103,7 @@ Available: <https://www.w3.org/TR/WCAG21/>
 and Proof-of-Work Applications*, 2021.
 
 **[19]** OWASP Foundation, *Application Security Verification Standard (ASVS)*.
-Available: <https://owasp.org/www-project-application-security-verification-standard/>
+Available: <https://github.com/OWASP/ASVS>
 — Reference for the authentication and authorization requirements.
 
 ---

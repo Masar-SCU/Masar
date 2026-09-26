@@ -44,6 +44,17 @@ extra sessions can target real gaps, and wants evidence the tool gives sound adv
 Format: `As a <persona>, I want <capability>, so that <outcome>.`
 A story is done only when every criterion passes. These become the E2E test names.
 
+### US-00 — First-time onboarding wizard · *P1, P2* · **M**
+
+> As a first-time student, I want a structured onboarding wizard (personality test → coursework & skills → targeted calibration → career fit & roadmap), so that I am guided step-by-step to an actionable plan without being overwhelmed.
+
+- **AC1** Upon first login, I am automatically routed to the Onboarding Wizard, with step state persisted so I can leave and resume without data loss.
+- **AC2** **Step 1 (Personality & Preferences):** I complete a 15–20 question Likert assessment evaluating my interests, problem-solving preferences, and work styles in under 5 minutes.
+- **AC3** **Step 2 (Coursework & Skills):** I select my academic year and completed department courses, which automatically propose foundational skills with clear course-provenance badges, alongside a fast search to add any additional claimed skills on the 0–5 scale.
+- **AC4** **Step 3 (Targeted Calibration):** For my top 2–3 claimed core technical skills with available quiz banks, I am offered a focused diagnostic quiz (5–8 questions each) to verify my baseline, with a clear option to calibrate remaining skills later.
+- **AC5** **Step 4 (Career Fit & Selection):** I view ranked career recommendations showing both interest fit and skill fit, explore tracks, and select my committed target career.
+- **AC6** **Step 5 (Roadmap Plan):** I enter my available weekly study hours, and the system generates my prerequisite-ordered roadmap and capstone project, seamlessly landing me on my active dashboard.
+
 ### US-01 — Build a skill profile · *P1, P2* · **M**
 
 > As a student, I want to record my skills, courses and interests, so that recommendations reflect me.
@@ -157,6 +168,7 @@ A story is done only when every criterion passes. These become the E2E test name
 | ID | Requirement | Pri | Story |
 |---|---|---|---|
 | **Accounts & profile** | | | |
+| FR-00 | Persist onboarding wizard state and progress step, enabling seamless resume and step-gated onboarding completion | M | US-00 |
 | FR-01 | Register with email + password; passwords stored using a modern KDF (see [NFR-06](#nfr-06--authentication)) | M | US-01 |
 | FR-02 | Log in / log out; sessions via short-lived access token + refresh token | M | US-01 |
 | FR-03 | Store academic year, interests, and career goal text | M | US-01 |

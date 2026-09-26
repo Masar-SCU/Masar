@@ -190,6 +190,66 @@ free-tier quota, which under a $0 budget means taking the mentor offline for eve
 
 ## 7. Key request flows
 
+### 7.0 End-to-end onboarding and plan creation flow
+
+The complete end-to-end journey for a first-time student, tying together assessment, skill capture, calibration, career recommendation, and roadmap generation:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor S as Student
+    participant W as React SPA
+    participant A as .NET API
+    participant D as Domain
+    participant DB as PostgreSQL
+    participant AI as AI Service
+
+    Note over S,AI: Step 1 — Personality & Work-Preference Assessment
+    S->>W: Start onboarding
+    W->>A: POST /api/assessments  (start attempt)
+    A->>DB: create assessment attempt
+    A-->>W: 201  questions[]
+    S->>W: Answer questions (incremental)
+    W->>A: PUT /api/assessments/{id}/answers
+    A->>DB: persist answers
+
+    Note over S,AI: Step 2 — Coursework & Skill Identification
+    S->>W: Select academic year & completed courses
+    W->>A: POST /api/profile/courses/derive-skills
+    A->>DB: query course_skill mappings
+    A-->>W: proposed skills with confidence
+    S->>W: Confirm/adjust skill levels (0-5)
+    W->>A: PUT /api/profile/skills  (claims)
+    A->>DB: upsert student_skill rows
+
+    Note over S,AI: Step 3 — Targeted Skill Calibration
+    W->>A: GET /api/quizzes/calibration-candidates
+    A->>DB: find top claimed skills with quiz coverage
+    A-->>W: candidate skills (e.g. SQL, Git)
+    S->>W: Complete 5-8 question quiz for primary skill
+    W->>A: POST /api/quizzes/{skillId}/submit
+    A->>D: evaluate calibrated level
+    A->>DB: update student_skill (calibrated_level, effective_level follows)
+    Note over S,AI: Step 4 — Career Recommendation & Selection
+    W->>A: POST /api/assessments/{id}/submit
+    A->>D: MatchScorer.Score(profile, careers)
+    A->>AI: POST /match (optional semantic re-rank)
+    AI-->>A: semantic similarity
+    A-->>W: ranked careers + fit breakdown
+    S->>W: Select target career & track (e.g. Backend / .NET)
+    W->>A: PUT /api/profile/target
+    A->>DB: update target_career_id & target_track_id
+
+    Note over S,AI: Step 5 — Personalized Roadmap Generation
+    S->>W: Specify weekly hours (e.g. 10 h/week)
+    W->>A: GET /api/roadmap
+    A->>D: GapCalculator.Analyse(...)
+    A->>D: PrerequisiteGraph.TopologicalOrder(...)
+    A->>D: RoadmapScheduler.Pack(...)
+    A->>DB: persist generated roadmap & snapshot
+    A-->>W: 200  dated roadmap + capstone project
+```
+
 ### 7.1 Career recommendation — hybrid, with a guaranteed answer
 
 This flow is the direct answer to the original spec's biggest planning flaw, which made the AI a

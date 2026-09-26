@@ -33,6 +33,7 @@ listed in both tiers. **One row per feature, here, and nowhere else.**
 | **Skill-Gap Analysis** | 🔴 Core | Osama | Profile, Career DB | **Yes** | None — pure computation |
 | **Roadmap Generation** | 🔴 Core | Osama | Gap, prereq DAG | **Yes** | None — pure computation |
 | Student Profile | 🟡 MVP | Mohamed Y. | Skill catalogue | Yes | — |
+| Onboarding Wizard | 🟡 MVP | Mazen | Assessment, Profile, Quizzes | Yes | Direct profile entry |
 | Career & Skill Database | 🟡 MVP | Mohamed Y. | Seed data | Yes | Hand-curated from O\*NET/ESCO |
 | Career Recommendation (baseline) | 🟡 MVP | Osama | Profile, Assessment | Yes | None — deterministic |
 | Career Assessment | 🟡 MVP | Mohamed Y. | — | Yes | — |
@@ -194,9 +195,10 @@ trend chart. **This is the slice that makes "adaptive" real.**
 | Ranked results with per-career reasons | Mazen |
 | Calibration quiz items for the top 15 skills | Mohamed Yasser, Ahmed Y. |
 | Quiz delivery and calibration scoring | Mohamed Yasser |
+| Onboarding Wizard UI (5-step progressive flow) | **Mazen** |
+| Progressive calibration routing (top 2–3 core skills) | Mohamed Yasser, Mazen |
 
-**Done when:** a student takes the assessment and receives an explained ranking without ever choosing
-a career manually.
+**Done when:** a new student registers, steps through the Onboarding Wizard (personality test → coursework & skills → targeted calibration → career fit → roadmap), and seamlessly lands on an active personalized plan.
 
 ### ⏸ Reduced velocity — exams · **W15–W17 · 27 Dec – 16 Jan**
 
