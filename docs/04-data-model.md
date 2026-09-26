@@ -311,7 +311,7 @@ ASSESSMENT_ATTEMPT
   -- status: 'in_progress' | 'completed' | 'abandoned'
 
 ASSESSMENT_ANSWER
-  id, attempt_id, question_id, score (1..5), answered_at
+  id, attempt_id, question_id, likert_score (1..5), answered_at
   UNIQUE (attempt_id, question_id)
 
 QUIZ_ITEM
