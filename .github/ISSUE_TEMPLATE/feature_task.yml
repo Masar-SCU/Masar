@@ -1,0 +1,73 @@
+name: Feature / Engineering Task
+description: Track a planned feature, slice task, or technical deliverable.
+title: "[S<#>] <Concise task title>"
+labels: ["type:task"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please consult [08 — Plan & Timeline](docs/08-plan-and-timeline.md) before submitting tasks.
+  - type: dropdown
+    id: slice
+    attributes:
+      label: Target Slice
+      description: Which vertical slice does this task belong to?
+      options:
+        - "Slice 0: Walking Skeleton"
+        - "Slice 1: Profile & Skill Catalogue"
+        - "Slice 2: Careers, Gap Engine & Readiness"
+        - "Slice 3: Roadmap & Resources"
+        - "Slice 4: Progress & Adaptive Loop"
+        - "Slice 5: Assessment & Recommendation"
+        - "Slice 6: AI Engines (Extraction & Embeddings)"
+        - "Slice 7: Context-Aware AI Mentor (RAG)"
+        - "Slice 8: Curriculum Mapping & Projects"
+        - "Slice 9: Advisor, Internship Readiness, What-If"
+        - "Slice 10: Hardening & Feature Freeze"
+        - "Slice 11: Final Report & Defence"
+    validations:
+      required: true
+  - type: dropdown
+    id: priority_tier
+    attributes:
+      label: Priority Tier
+      description: As defined in the Priority Matrix (docs/08-plan-and-timeline.md#2-priority-matrix--single-source-of-truth).
+      options:
+        - "🔴 Core (Gap engine, roadmap scheduler)"
+        - "🟡 MVP (Required for MVP demo)"
+        - "🔵 Should (Enhancer built post-MVP)"
+        - "⚪ Later (Out of scope / future)"
+    validations:
+      required: true
+  - type: input
+    id: references
+    attributes:
+      label: Spec Reference (FR / NFR / US / ADR)
+      description: e.g. FR-12, US-04 AC2, ADR-0001
+      placeholder: FR-12
+    validations:
+      required: true
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective & Scope
+      description: What does this task accomplish?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Exact conditions that must be demonstrated on staging.
+      value: |
+        - [ ] 
+        - [ ] 
+    validations:
+      required: true
+  - type: checkboxes
+    id: dod_acknowledgement
+    attributes:
+      label: Definition of Done Acknowledgement
+      options:
+        - label: I confirm this task will adhere to the Definition of Done (tested, reviewed, staging-deployed, docs updated).
+          required: true

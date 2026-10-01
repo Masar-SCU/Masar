@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Masar Documentation Index
+    url: https://github.com/Masar-SCU/Masar/blob/main/README.md#documentation-index
+    about: Read the project specification and architectural guides.
+  - name: Working Agreements & Timeline
+    url: https://github.com/Masar-SCU/Masar/blob/main/docs/08-plan-and-timeline.md
+    about: Review sprint schedules, slices, and the Definition of Done.

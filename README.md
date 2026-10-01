@@ -39,6 +39,7 @@ and owns exactly one concern, so two people can edit two documents without confl
 | 11 | [Glossary](docs/11-glossary.md) | Shared vocabulary — use these exact terms in code, docs and the report | All |
 | 12 | [References](docs/12-references.md) | Citable sources for the report | Ahmed Y. |
 | — | [Decision records (ADR)](docs/adr/) | Why we chose PostgreSQL, which models, where the job data comes from | Abdelrahman |
+| — | [Team Meetings](meetings/) | Meeting records, standup cadence, and sprint kickoffs | Abdelrahman |
 
 Diagram sources live in [`docs/diagrams/`](docs/diagrams/). Superseded documents live in
 [`archive/`](archive/). Verification scripts live in [`scripts/`](scripts/).
