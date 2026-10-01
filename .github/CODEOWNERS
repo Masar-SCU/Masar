@@ -1,0 +1,35 @@
+# Masar Code Owners
+# See docs/01-project-overview.md#7-team--responsibilities for ownership matrix
+
+# Global fallback
+* @amegahed12
+
+# Documentation and Specifications
+/docs/ @amegahed12
+/meetings/ @amegahed12
+README.md @amegahed12
+.markdownlint-cli2.jsonc @amegahed12
+
+# DevOps, CI/CD, Containerization
+/.github/workflows/ @mohamedsalah770 @amegahed12
+/docker/ @mohamedsalah770 @amegahed12
+docker-compose*.yml @mohamedsalah770 @amegahed12
+.env.example @mohamedsalah770 @amegahed12
+
+# Backend (.NET Web API, Domain, Application, Infrastructure)
+/src/backend/ @Eldax23 @OsamaELhendawy @amegahed12
+/src/backend/Masar.Domain/ @OsamaELhendawy @Eldax23
+/src/backend/Masar.Application/ @Eldax23 @OsamaELhendawy
+/src/backend/Masar.Infrastructure/ @Eldax23 @OsamaELhendawy
+/src/backend/Masar.Api/ @Eldax23 @amegahed12
+
+# Frontend (React 19 + TypeScript + Vite)
+/src/frontend/ @ziad-Ahmed401 @Mazen-Oraby @YUSUFU0
+/src/frontend/src/components/ui/ @YUSUFU0 @ziad-Ahmed401
+/src/frontend/src/features/gap/ @ziad-Ahmed401 @OsamaELhendawy
+/src/frontend/src/features/roadmap/ @ziad-Ahmed401 @OsamaELhendawy
+/src/frontend/src/features/profile/ @Mazen-Oraby @Eldax23
+/src/frontend/src/features/mentor/ @ziad-Ahmed401 @AhmedYoussef935
+
+# AI Service (Python FastAPI, SentenceTransformers, RAG)
+/src/ai/ @AhmedYoussef935 @ziad-Ahmed401 @amegahed12

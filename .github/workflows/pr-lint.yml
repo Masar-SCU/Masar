@@ -1,0 +1,54 @@
+name: pr-lint
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  pull-requests: read
+  contents: read
+
+jobs:
+  validate:
+    name: Validate PR conventions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR Title (Conventional Commits)
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          echo "Checking PR title: '$PR_TITLE'"
+          # Regex for Conventional Commits (e.g., feat(api): add auth endpoints or docs: update readme)
+          REGEX="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-zA-Z0-9_\-\./]+\))?:\s.+$"
+          if [[ ! "$PR_TITLE" =~ $REGEX ]]; then
+            echo "::error::PR title must follow Conventional Commits format, e.g.:"
+            echo "  feat(gap): implement severity classification (FR-12)"
+            echo "  fix(auth): handle expired refresh token (NFR-06)"
+            echo "  docs(plan): update sprint 1 kickoff notes"
+            exit 1
+          fi
+
+      - name: Validate Branch Name
+        env:
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          echo "Checking branch name: '$HEAD_BRANCH'"
+          # Working agreement branch naming: feat/*, fix/*, docs/*, chore/*, refactor/*, test/*
+          REGEX="^(feat|fix|docs|chore|refactor|test)\/[a-zA-Z0-9._-]+$"
+          if [[ ! "$HEAD_BRANCH" =~ $REGEX ]]; then
+            echo "::error::Branch name '$HEAD_BRANCH' does not follow working agreement convention."
+            echo "Branch must start with feat/, fix/, docs/, chore/, refactor/, or test/."
+            echo "Example: feat/s0-docker-compose or fix/gap-rounding"
+            exit 1
+          fi
+
+      - name: Check PR Size
+        env:
+          ADDITIONS: ${{ github.event.pull_request.additions }}
+          DELETIONS: ${{ github.event.pull_request.deletions }}
+        run: |
+          TOTAL_CHANGES=$(( ADDITIONS + DELETIONS ))
+          echo "Total lines changed: $TOTAL_CHANGES ($ADDITIONS added, $DELETIONS deleted)"
+          if [ "$TOTAL_CHANGES" -gt 400 ]; then
+            echo "::warning::PR changes ($TOTAL_CHANGES lines) exceed the recommended ~400 line target. Consider decomposing into smaller vertical slices."
+          fi
