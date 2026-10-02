@@ -11,8 +11,8 @@
 | Frontend | **React 19 + TypeScript + Vite** | Team's existing skill; TypeScript makes the [API contract](07-api-contract.md) enforceable at compile time | Ziad, Mazen |
 | UI | **Tailwind CSS + Radix UI primitives** | Radix provides accessible components out of the box, which is how [NFR-05](02-requirements.md#nfr-05--accessibility) becomes achievable rather than aspirational | Yousef K. |
 | Charts | **Recharts** | Needed for the readiness trend and the cohort heatmap | Mazen |
-| Backend | **ASP.NET Core 8 Web API (C#)** | Team's existing skill; LTS release | Mohamed Y., Osama |
-| ORM | **EF Core 8 + Npgsql** | Migrations, plus `Pgvector.EntityFrameworkCore` for vector columns | Mohamed Y. |
+| Backend | **ASP.NET Core 10 Web API (C#)** | Team's existing skill; active LTS release | Mohamed Y., Osama |
+| ORM | **EF Core 10 + Npgsql** | Migrations, plus `Pgvector.EntityFrameworkCore` for vector columns | Mohamed Y. |
 | Database | **PostgreSQL 16 + pgvector** | One store for both relational and vector data — see [ADR-0001](adr/0001-database-and-vector-store.md) | Mohamed Y. |
 | AI service | **Python 3.12 + FastAPI** | The NLP/embedding ecosystem is Python in practice | Ahmed Y. |
 | Embeddings | **sentence-transformers `all-MiniLM-L6-v2`** — 384 dimensions, ~23 M parameters, Apache-2.0, CPU-only | Small enough for a free CPU tier, and the licence permits this use | Ahmed Y. |
