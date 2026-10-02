@@ -1,3 +1,4 @@
+using System.Text.Json;
 using FluentValidation;
 using MediatR;
 using Masar.Application.Common.Exceptions;
@@ -43,7 +44,10 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         if (failures.Count > 0)
         {
             var details = failures
-                .Select(f => new ErrorDetail(f.PropertyName, f.ErrorMessage))
+                .Select(f => new ErrorDetail(
+                    JsonNamingPolicy.CamelCase.ConvertName(f.PropertyName),
+                    f.ErrorMessage
+                ))
                 .ToList();
 
             throw new ValidationException(details);

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Masar.Api.Middleware;
 using Masar.Application;
 using Masar.Application.Common.Exceptions; // for ErrorDetail
@@ -30,7 +31,10 @@ builder
             var details = context
                 .ModelState.Where(kvp => kvp.Value?.Errors.Count > 0)
                 .SelectMany(kvp =>
-                    kvp.Value!.Errors.Select(e => new ErrorDetail(kvp.Key, e.ErrorMessage))
+                    kvp.Value!.Errors.Select(e => new ErrorDetail(
+                        JsonNamingPolicy.CamelCase.ConvertName(kvp.Key),
+                        e.ErrorMessage
+                    ))
                 )
                 .ToList();
 
