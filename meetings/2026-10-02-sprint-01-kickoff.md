@@ -10,16 +10,16 @@
 
 ## 1. Attendees & Workstream Roles
 
-| Member | GitHub Handle | Primary Role | Sprint 1 Focus |
-|---|---|---|---|
-| **Abdelrahman Megahed** | `@amegahed12` | Team Lead · Full-Stack | Repo governance, API contract freeze, integration |
-| **Mohamed Salah** | `@mohamedsalah770` | DevOps | Docker compose, CI workflows, staging deploy |
-| **Mohamed Yasser** | `@Eldax23` | .NET Backend | .NET solution scaffold, auth & JWT subsystem |
-| **Osama Mohammed** | `@OsamaELhendawy` | .NET Backend | Review backend architecture, prepare Slice 1/2 algorithms |
-| **Ziad Ahmed** | `@ziad-Ahmed401` | Frontend · AI Integration | React 19 + Vite setup, routing shell, API client |
-| **Mazen Oraby** | `@Mazen-Oraby` | Frontend | React dashboard shell, layout components, state store |
-| **Ahmed Yousef** | `@AhmedYoussef935` | AI / ML | FastAPI service scaffold, `/health` & `/ready`, model loading |
-| **Yousef Khaled** | `@YUSUFU0` | UI/UX | Design system tokens, color palette, Radix UI components |
+| Member                  | GitHub Handle      | Primary Role              | Sprint 1 Focus                                                |
+| -------------------------| --------------------| ---------------------------| ---------------------------------------------------------------|
+| **Abdelrahman Megahed** | `@amegahed12`      | Team Lead · Full-Stack    | Repo governance, API contract freeze, integration             |
+| **Mohamed Salah**       | `@mohamedsalah770` | DevOps                    | Docker compose, CI workflows, staging deploy                  |
+| **Mohamed Yasser**      | `@Eldax23`         | .NET Backend              | .NET solution scaffold, auth & JWT subsystem                  |
+| **Osama Mohammed**      | `@OsamaELhendawy`  | .NET Backend              | Review backend architecture, prepare Slice 1/2 algorithms     |
+| **Ziad Ahmed**          | `@ziad-Ahmed401`   | Frontend · AI Integration | React 19 + Vite setup, routing shell, API client              |
+| **Mazen Oraby**         | `@Mazen-Oraby`     | Frontend                  | React dashboard shell, layout components, state store         |
+| **Ahmed Yousef**        | `@AhmedYoussef935` | AI / ML                   | FastAPI service scaffold, `/health` & `/ready`, model loading |
+| **Yousef Khaled**       | `@YUSUFU0`         | UI/UX                     | Design system tokens, color palette, Radix UI components      |
 
 ---
 
