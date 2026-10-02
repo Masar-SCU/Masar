@@ -37,6 +37,13 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception ex)
         {
+            if (context.Response.HasStarted)
+            {
+                _logger.LogError(ex,
+                    "Exception occurred after the response had already started streaming — " +
+                    "the error envelope could not be written to the client.");
+                throw;
+            }
             await HandleAsync(context, ex);
         }
     }
