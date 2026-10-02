@@ -119,5 +119,5 @@ Open items before implementation starts, all tracked in
 
 ---
 
-*Masar — Graduation Project, Department of Computer Science, Faculty of Computers & Informatics,
-Suez Canal University. Supervised by Dr. Hend Shabaan.*
+_Masar — Graduation Project, Department of Computer Science, Faculty of Computers & Informatics,
+Suez Canal University. Supervised by Dr. Hend Shabaan._
