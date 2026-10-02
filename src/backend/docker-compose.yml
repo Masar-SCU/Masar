@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: masar-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: masar
+      POSTGRES_USER: masar_dev
+      POSTGRES_PASSWORD: masar_dev_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - masar_pg_data:/var/lib/postgresql/data
+
+volumes:
+  masar_pg_data:
