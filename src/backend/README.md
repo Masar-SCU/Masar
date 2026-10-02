@@ -51,5 +51,5 @@ the clean-architecture skeleton and the Postgres/EF Core wiring; nothing is buil
 | New entity / business rule | `Masar.Domain/Entities/` |
 | New table / EF mapping | `Masar.Infrastructure/Persistence/Configurations/` + a migration |
 | New endpoint | `Masar.Api/Controllers/` — thin: parse request → send command → map result |
-| New use case | `Masar.Application/<Feature>/Commands|Queries/` — command/query + validator + handler |
+| New use case | `Masar.Application/Feature/Commands\|Queries/` — command/query + validator + handler |
 | New external dependency (email, JWT, etc.) | Define the interface in `Masar.Application/Common/Interfaces/`, implement it in `Masar.Infrastructure`, register it in `Masar.Infrastructure/DependencyInjection.cs` |
