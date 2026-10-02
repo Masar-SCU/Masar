@@ -1,7 +1,7 @@
 # Sprint 01 Kickoff & Slice 0 Alignment Meeting
 
-- **Date:** Saturday, 3 October 2026
-- **Time:** 19:00 CLT (50 minutes)
+- **Date:** Saturday, 2 October 2026
+- **Time:** 7:00 PM
 - **Location:** Google Meet / Discord Voice
 - **Facilitator:** Abdelrahman Megahed (@amegahed12)
 - **Goal:** Align all 8 team members on repository governance, architecture boundaries, and launch **Sprint 1 (Slice 0: Walking Skeleton)** to establish a fully working end-to-end multi-service pipeline by the end of the sprint.
