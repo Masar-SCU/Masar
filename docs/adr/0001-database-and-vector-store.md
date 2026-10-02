@@ -55,7 +55,7 @@ becomes the plan if a chosen free host turns out not to permit `CREATE EXTENSION
 
 **PostgreSQL 16 with the pgvector extension, as the single data store.**
 
-- EF Core 8 + Npgsql for relational access.
+- EF Core 10 + Npgsql for relational access.
 - `Pgvector.EntityFrameworkCore` for the vector column type.
 - HNSW indexes with `vector_cosine_ops` on `skill_embedding` and `career_embedding`.
 - Local development uses the `pgvector/pgvector:pg16` image so vector behaviour matches production exactly.

@@ -33,7 +33,7 @@ Before joining the meeting, please ensure:
   - Docker Desktop / Docker Engine & Docker Compose v2.
   - Git (configured with your name & email).
   - Your runtime SDK:
-    - **Backend:** .NET 8 SDK.
+    - **Backend:** .NET 10 SDK (LTS).
     - **Frontend:** Node.js 20+ & npm.
     - **AI Service:** Python 3.12 & Poetry/venv.
 - [ ] **Task Assigned:** Review your assigned issue in GitHub Milestones → [Slice 0: Walking Skeleton](https://github.com/Masar-SCU/Masar/milestones).
@@ -70,7 +70,7 @@ gantt
 ### Part 2: Architecture & Inviolable Rules (00:10 – 00:25)
 
 1. **The Three-Service Language Boundary:**
-   - **.NET 8 Web API:** Owns all state, database connections, and business logic.
+   - **.NET 10 Web API:** Owns all state, database connections, and business logic.
    - **Python FastAPI:** Stateless compute only (embeddings & skill extraction). Never touches the DB.
    - **React 19 SPA:** Presentation only. Never talks directly to the AI service.
 2. **Domain Layer Purity:**
