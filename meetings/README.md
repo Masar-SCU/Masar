@@ -10,13 +10,13 @@ This directory contains records of all official team syncs, sprint kickoffs, sli
 
 Per [08 — Plan & Timeline](../docs/08-plan-and-timeline.md#8-working-agreements):
 
-| Cadence | Event | Purpose | Duration | Attendees |
-|---|---|---|:-:|---|
-| **Twice weekly** (Sun & Wed) | **Async Written Standup** | Post in team channel: **Done / Next / Blocked**. | — | All 8 members |
-| **Weekly** (Saturday) | **Team Sync & Demo** | Walk through completed PRs on staging; plan upcoming week. | 45 min | All 8 members |
-| **End of Slice** (Every 2–3 wks) | **Slice Review** | Demonstrate the slice's "Done when" statement live. | 30 min | All 8 members |
-| **Fortnightly** | **Supervisor Update** | Report progress, showcase staging demo, consult on blockers. | 30 min | Abdelrahman + Lead reps with Dr. Hend |
-| **Monthly** | **Risk Register Review** | Audit top risks in [10 — Risks & Assumptions](../docs/10-risks-and-assumptions.md). | 20 min | All 8 members |
+| Cadence                          | Event                     | Purpose                                                                             | Duration | Attendees         |
+| ----------------------------------| ---------------------------| -------------------------------------------------------------------------------------| :--------:| -------------------|
+| **Twice weekly** (Sun & Wed)     | **Async Written Standup** | Post in team channel: **Done / Next / Blocked**.                                    | —        | All 8 members     |
+| **Weekly** (Saturday)            | **Team Sync & Demo**      | Walk through completed PRs on staging; plan upcoming week.                          | 45 min   | All 8 members     |
+| **End of Slice** (Every 2–3 wks) | **Slice Review**          | Demonstrate the slice's "Done when" statement live.                                 | 30 min   | All 8 members     |
+| **Fortnightly**                  | **Supervisor Update**     | Report progress, showcase staging demo, consult on blockers.                        | Depends  | Team + Supervisor |
+| **Monthly**                      | **Risk Register Review**  | Audit top risks in [10 — Risks & Assumptions](../docs/10-risks-and-assumptions.md). | 20 min   | All 8 members     |
 
 ---
 
@@ -42,9 +42,9 @@ Post this format directly to the team communication channel on **Sunday morning*
 
 ## 4. Meetings Archive
 
-| Date | Title | Focus / Deliverable | Notes Link |
-|---|---|---|---|
-| **2026-10-03** | **Sprint 01 Kickoff & Slice 0 Alignment** | Architecture walkthrough, DoD lock-in, toolchain setup & issue distribution | [2026-10-03-sprint-01-kickoff.md](2026-10-03-sprint-01-kickoff.md) |
+| Date           | Title                                     | Focus / Deliverable                                                         | Notes Link                                                         |
+| ----------------| -------------------------------------------| -----------------------------------------------------------------------------| --------------------------------------------------------------------|
+| **2026-10-02** | **Sprint 01 Kickoff & Slice 0 Alignment** | Architecture walkthrough, DoD lock-in, toolchain setup & issue distribution | [2026-10-02-sprint-01-kickoff.md](2026-10-02-sprint-01-kickoff.md) |
 
 ---
 
