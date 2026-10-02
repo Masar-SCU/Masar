@@ -12,11 +12,12 @@ public static class DependencyInjection
         IConfiguration configuration
     )
     {
-        var connectionString =
-            configuration.GetConnectionString("MasarDb")
-            ?? throw new InvalidOperationException(
-                "Connection string 'MasarDb' is not configured."
-            );
+        var connectionString = configuration.GetConnectionString("MasarDb");
+
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            throw new InvalidOperationException("Connection string 'MasarDb' is not configured.");
+        }
 
         services.AddDbContext<MasarDbContext>(options => options.UseNpgsql(connectionString));
 
