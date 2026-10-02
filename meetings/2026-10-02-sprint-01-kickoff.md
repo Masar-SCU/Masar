@@ -19,7 +19,7 @@
 | **Ziad Ahmed**          | `@ziad-Ahmed401`   | Frontend · AI Integration | React 19 + Vite setup, routing shell, API client              |
 | **Mazen Oraby**         | `@Mazen-Oraby`     | Frontend                  | React dashboard shell, layout components, state store         |
 | **Ahmed Yousef**        | `@AhmedYoussef935` | AI / ML                   | FastAPI service scaffold, `/health` & `/ready`, model loading |
-| **Yousef Khaled**       | `@YUSUFU0`         | UI/UX                     | Design system tokens, color palette, Radix UI components      |
+| **Yousef Khaled**       | `@YUSUFU0`         | UI/UX                     | Figma tokens, color palette, WCAG AA contrast (no code)        |
 
 ---
 
@@ -98,7 +98,7 @@ Review all open issues in Milestone 1:
 | [#8](https://github.com/Masar-SCU/Masar/issues/8) | Auth Subsystem (JWT, Refresh, Roles) | `@Eldax23` | Register/login endpoints + auth guards |
 | [#9](https://github.com/Masar-SCU/Masar/issues/9) | React 19 + TypeScript + Vite Scaffold | `@ziad-Ahmed401` | Shell layout, routing, JWT interceptor |
 | [#10](https://github.com/Masar-SCU/Masar/issues/10) | FastAPI AI Service Scaffold | `@AhmedYoussef935` | `/health`, `/ready`, model boot caching |
-| [#11](https://github.com/Masar-SCU/Masar/issues/11) | Design System Tokens & Radix Components | `@YUSUFU0` | WCAG AA color tokens, typography, buttons |
+| [#11](https://github.com/Masar-SCU/Masar/issues/11) | Design System Tokens & Radix Components | `@YUSUFU0` (Design) + `@Mazen-Oraby` (Code) | Figma design spec by Yousef; Tailwind/React code by Mazen |
 | [#12](https://github.com/Masar-SCU/Masar/issues/12) | Freeze API Contract (v1) | `@amegahed12` | DTO signoff + TypeScript type generation |
 | [#13](https://github.com/Masar-SCU/Masar/issues/13) | Staging Deployment Setup | `@mohamedsalah770` | Continuous deployment from `main` to staging |
 
