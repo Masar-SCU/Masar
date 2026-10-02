@@ -1,3 +1,10 @@
 # Masar Frontend
 
-This is the frontend application for the Masar project, built with React 19, Vite, TypeScript, and Tailwind CSS.
+The frontend application for **Masar**, a career guidance platform designed to help Computer Science students explore technology career paths, identify skill gaps, and build personalized learning roadmaps.
+
+Built with:
+
+* **React 19**
+* **TypeScript**
+* **Vite**
+* **Tailwind CSS**
