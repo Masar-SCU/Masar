@@ -56,7 +56,7 @@ export const AppLayout: React.FC = () => {
 
         {/* Logo */}
         <div className="p-6 border-b border-slate-100 flex items-center gap-3">
-          <div className="w-8 h-8 shrink-0 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-lg">
+          <div className="w-8 h-8 shrink-0 rounded-lg bg-brand-600 text-white flex items-center justify-center font-bold text-lg">
             M
           </div>
 
@@ -92,7 +92,7 @@ export const AppLayout: React.FC = () => {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-blue-50 text-blue-700'
+                      ? 'bg-brand-50 text-brand-700'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                   }`
                 }
@@ -146,7 +146,7 @@ export const AppLayout: React.FC = () => {
               Omar Tarek
             </span>
 
-            <div className="w-8 h-8 shrink-0 rounded-full bg-blue-100 text-blue-700 font-semibold flex items-center justify-center text-xs">
+            <div className="w-8 h-8 shrink-0 rounded-full bg-brand-100 text-brand-700 font-semibold flex items-center justify-center text-xs">
               OT
             </div>
           </div>

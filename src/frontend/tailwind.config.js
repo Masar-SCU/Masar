@@ -8,17 +8,16 @@ export default {
     extend: {
       colors: {
         brand: {
-          50: '#e8f0fe',
-          500: '#1a73e8', // Masar Primary Blue
-          600: '#1557b0',
-          700: '#174ea6',
+          50: '#E6F7F5',  // Light tint
+          600: '#0F766E', // Primary Teal (Main Brand Color)
+          700: '#115E59',
         },
         severity: {
-          critical: '#d93025',
-          moderate: '#f2994a',
-          minor: '#f9ab00',
-          met: '#1e8e3e',
-          strength: '#9333ea',
+         critical: '#B91C1C', 
+          moderate: '#C2410C',
+          minor: '#A16207',
+          met: '#15803D',
+          strength: '#9333ea', 
         }
       }
     },

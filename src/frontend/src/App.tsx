@@ -19,13 +19,13 @@ function LoginPage() {
         <form className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">University Email</label>
-            <input type="email" placeholder="student@suez.edu.eg" className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+            <input type="email" placeholder="student@suez.edu.eg" className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-500 outline-none" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
-            <input type="password" placeholder="••••••••" className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+            <input type="password" placeholder="••••••••" className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-500 outline-none" />
           </div>
-          <button type="button" className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700">
+          <button type="button" className="w-full bg-brand-600 text-white py-2 rounded-lg font-medium hover:bg-brand-700">
             Sign In
           </button>
         </form>
