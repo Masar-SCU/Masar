@@ -1,4 +1,5 @@
 using System.Reflection;
+using Masar.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Masar.Infrastructure.Persistence;
@@ -7,6 +8,9 @@ public class MasarDbContext : DbContext
 {
     public MasarDbContext(DbContextOptions<MasarDbContext> options)
         : base(options) { }
+
+    public DbSet<User> Users => Set<User>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
