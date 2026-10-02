@@ -1,4 +1,8 @@
+using Masar.Application.Common.Interfaces;
+using Masar.Infrastructure.Email;
 using Masar.Infrastructure.Persistence;
+using Masar.Infrastructure.Persistence.Repositories;
+using Masar.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +24,13 @@ public static class DependencyInjection
         }
 
         services.AddDbContext<MasarDbContext>(options => options.UseNpgsql(connectionString));
+
+        services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
+
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddSingleton<IPasswordHasher, PasswordHasher>();
+        services.AddSingleton<ITokenService, TokenService>();
+        services.AddScoped<IEmailSender, ConsoleEmailSender>();
 
         return services;
     }
