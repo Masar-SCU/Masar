@@ -23,9 +23,12 @@ docker-compose*.yml @mohamedsalah770 @amegahed12
 /src/backend/Masar.Infrastructure/ @Eldax23 @OsamaELhendawy
 /src/backend/Masar.Api/ @Eldax23 @amegahed12
 
+# Design (Figma Tokens, UI Guidelines, Wireframes)
+/design/ @YUSUFU0
+
 # Frontend (React 19 + TypeScript + Vite)
-/src/frontend/ @ziad-Ahmed401 @Mazen-Oraby @YUSUFU0
-/src/frontend/src/components/ui/ @YUSUFU0 @ziad-Ahmed401
+/src/frontend/ @ziad-Ahmed401 @Mazen-Oraby
+/src/frontend/src/components/ui/ @Mazen-Oraby @ziad-Ahmed401
 /src/frontend/src/features/gap/ @ziad-Ahmed401 @OsamaELhendawy
 /src/frontend/src/features/roadmap/ @ziad-Ahmed401 @OsamaELhendawy
 /src/frontend/src/features/profile/ @Mazen-Oraby @Eldax23
