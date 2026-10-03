@@ -13,7 +13,7 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
-    public void TrackNewRefereshToken(RefreshToken token) => _context.RefreshTokens.Add(token);
+    public void TrackNewRefreshToken(RefreshToken token) => _context.RefreshTokens.Add(token);
 
     public Task<User?> GetByIdAsync(Guid id, CancellationToken ct = default) =>
         _context.Users.Include(u => u.RefreshTokens).FirstOrDefaultAsync(u => u.Id == id, ct);

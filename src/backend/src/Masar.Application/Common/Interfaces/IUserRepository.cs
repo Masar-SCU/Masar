@@ -13,7 +13,7 @@ public interface IUserRepository
 
     Task AddAsync(User user, CancellationToken ct = default);
 
-    void TrackNewRefereshToken(RefreshToken token);
+    void TrackNewRefreshToken(RefreshToken token);
 
     /// <summary>Commits pending changes. Called once per use case, at the end of the handler.</summary>
     Task SaveChangesAsync(CancellationToken ct = default);

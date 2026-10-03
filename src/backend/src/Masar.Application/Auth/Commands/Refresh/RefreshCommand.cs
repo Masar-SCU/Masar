@@ -56,7 +56,7 @@ public class RefreshCommandHandler : IRequestHandler<RefreshCommand, RefreshResp
         // one is issued. The old token can never be exchanged again.
         presentedToken.Revoke(newHash);
         var refreshToken = user.IssueRefreshToken(newHash, _tokenService.RefreshTokenLifetime);
-        _users.TrackNewRefereshToken(refreshToken);
+        _users.TrackNewRefreshToken(refreshToken);
         await _users.SaveChangesAsync(ct);
 
         var accessToken = _tokenService.GenerateAccessToken(user);

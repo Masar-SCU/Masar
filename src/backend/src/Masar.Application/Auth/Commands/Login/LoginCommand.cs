@@ -68,7 +68,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponse>
             _tokenService.RefreshTokenLifetime
         );
 
-        _users.TrackNewRefereshToken(refreshToken);
+        _users.TrackNewRefreshToken(refreshToken);
         await _users.SaveChangesAsync(ct);
 
         return new LoginResponse(
