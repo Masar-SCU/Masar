@@ -8,12 +8,14 @@ export default {
     extend: {
       colors: {
         brand: {
-          50: '#E6F7F5',  // Light tint
-          600: '#0F766E', // Primary Teal (Main Brand Color)
+          50: '#E6F7F5',   // Light tint
+          100: '#CCFBF1',  // Subtle tint (avatars, badges)
+          500: '#14B8A6',  // Medium teal (focus rings)
+          600: '#0F766E',  // Primary Teal (Main Brand Color)
           700: '#115E59',
         },
         severity: {
-         critical: '#B91C1C', 
+          critical: '#B91C1C', 
           moderate: '#C2410C',
           minor: '#A16207',
           met: '#15803D',
