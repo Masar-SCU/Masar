@@ -49,6 +49,11 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponse>
             throw new UnauthenticatedException();
         }
 
+        if (user.IsDeletionScheduled)
+        {
+            throw new UnauthenticatedException();
+        }
+
         var accessToken = _tokenService.GenerateAccessToken(user);
         var rawRefreshToken = _tokenService.GenerateRefreshTokenValue();
         var refreshTokenHash = _tokenService.HashRefreshToken(rawRefreshToken);

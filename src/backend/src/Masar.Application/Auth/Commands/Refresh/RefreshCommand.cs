@@ -43,6 +43,11 @@ public class RefreshCommandHandler : IRequestHandler<RefreshCommand, RefreshResp
             throw new UnauthenticatedException("Refresh token is invalid or expired.");
         }
 
+        if (user.IsDeletionScheduled)
+        {
+            throw new UnauthenticatedException("Refresh token is invalid or expired.");
+        }
+
         var newRawToken = _tokenService.GenerateRefreshTokenValue();
         var newHash = _tokenService.HashRefreshToken(newRawToken);
 
