@@ -49,6 +49,11 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponse>
             throw new UnauthenticatedException();
         }
 
+        if (!user.EmailConfirmed)
+        {
+            throw new UnauthenticatedException("Please verify your email before logging in.");
+        }
+
         if (user.IsDeletionScheduled)
         {
             throw new UnauthenticatedException();
