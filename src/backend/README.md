@@ -51,10 +51,11 @@ dotnet run --project src/Masar.Api
 
 Swagger opens at `/swagger`. Try the flow in order:
 
-1. `POST /api/auth/register` — the verification link is logged to the console (`ConsoleEmailSender`
-   stands in for real email until Infrastructure gets an SMTP implementation). The token itself is
-   never logged (NFR-08) — read it straight from the database if you need it for local testing:
-   `SELECT email_verification_token FROM users WHERE email = '...';`
+1. `POST /api/auth/register` — the verification link, including the token, is logged to the
+   console by `ConsoleEmailSender` for local testing convenience. **This is a temporary
+   dev-only shortcut and violates NFR-08's "never log tokens" rule** — it needs to be removed
+   before this stands in for a real email provider. Look for a line like:
+   `[DEV EMAIL] Verification link for you@example.com: /verify-email?token=...`
 2. `POST /api/auth/verify-email` with that token.
 3. `POST /api/auth/login` — returns `accessToken` (900s TTL) and `refreshToken`.
 4. `POST /api/auth/refresh` — rotates the refresh token; the old one stops working immediately.
