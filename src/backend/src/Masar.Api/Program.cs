@@ -96,6 +96,13 @@ var jwtSettings =
     builder.Configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()
     ?? throw new InvalidOperationException("Jwt configuration section is missing.");
 
+if (string.IsNullOrWhiteSpace(jwtSettings.Secret))
+{
+    throw new InvalidOperationException(
+        "Jwt:Secret is not configured. Set it via " +
+        "'dotnet user-secrets set \"Jwt:Secret\" \"<a long random string>\"' " +
+        "from src/Masar.Api.");
+}
 builder
     .Services.AddAuthentication(options =>
     {
