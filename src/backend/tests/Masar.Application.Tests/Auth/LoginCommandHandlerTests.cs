@@ -24,6 +24,7 @@ public class LoginCommandHandlerTests
     public async Task Handle_WithValidCredentials_IssuesTokensAndPersistsRefreshToken()
     {
         var user = User.Register("student@example.com", "stored-hash", "verify-token");
+        user.ConfirmEmail("verify-token"); // login now requires a confirmed email
 
         _users.GetByEmailAsync("student@example.com", Arg.Any<CancellationToken>())
             .Returns(user);
@@ -41,6 +42,23 @@ public class LoginCommandHandlerTests
         result.ExpiresIn.Should().Be(900);
         user.RefreshTokens.Should().ContainSingle(t => t.TokenHash == "hashed-refresh-token");
         await _users.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WithUnconfirmedEmail_ThrowsUnauthenticated()
+    {
+        var user = User.Register("student@example.com", "stored-hash", "verify-token");
+        // deliberately not confirmed
+
+        _users.GetByEmailAsync("student@example.com", Arg.Any<CancellationToken>())
+            .Returns(user);
+        _hasher.Verify("correct-password", "stored-hash").Returns(true);
+
+        var act = () => _handler.Handle(
+            new LoginCommand("student@example.com", "correct-password"), CancellationToken.None);
+
+        var ex = await act.Should().ThrowAsync<UnauthenticatedException>();
+        ex.Which.Message.Should().Be("Please verify your email before logging in.");
     }
 
     [Fact]
