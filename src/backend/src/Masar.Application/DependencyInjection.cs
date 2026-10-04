@@ -12,9 +12,6 @@ public static class DependencyInjection
     {
         var assembly = Assembly.GetExecutingAssembly();
 
-        // NOTE: MediatR 12.x requires a commercial license above certain
-        // org/usage thresholds. Confirm the free-tier terms apply to this
-        // project before shipping — see MediatR's licensing page.
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
         services.AddValidatorsFromAssembly(assembly);
 
