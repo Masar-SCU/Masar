@@ -84,7 +84,7 @@ A story is done only when every criterion passes. These become the E2E test name
 - **AC2** Each result shows **why** it matched: the specific skills and interests that contributed.
 - **AC3** I can open any career to see its required skills with importance weights.
 - **AC4** I can pick any career as my target, including one that was not ranked first.
-- **AC5** Recommendations are still produced when the AI service is unavailable (baseline algorithm), and the UI indicates the degraded mode.
+- **AC5** The ASP.NET backend requests recommendations from the internal FastAPI recommendation service; the frontend never calls the AI service directly. If primary model inference fails while FastAPI remains available, the documented deterministic fallback may be used and the result is marked as degraded.
 
 ### US-04 — See my gap · *P1, P2* · **M**
 
@@ -179,7 +179,7 @@ A story is done only when every criterion passes. These become the E2E test name
 | **Assessment & calibration** | | | |
 | FR-08 | Deliver an interest + preference questionnaire | M | US-03 |
 | FR-09 | Deliver per-skill calibration quizzes and store calibrated levels | M | US-02 |
-| FR-10 | Rank all careers with a 0–100 match score and per-career reasons | M | US-03 |
+| FR-10 | Rank all careers using the AI recommendation service with a 0–100 model-driven match score and per-career reasons, subject to mandatory constraints | M | US-03 |
 | FR-11 | Let the student set, and later change, a target career | M | US-03 |
 | **Gap & roadmap** | | | |
 | FR-12 | Compute per-skill gap, weighted priority and severity class | M | US-04 |
@@ -227,7 +227,7 @@ several (security, privacy) cannot be retrofitted late without rework.
 | Any page interactive | ≤ 3 s on a 3G-class connection |
 | Gap analysis for one student | ≤ 2 s |
 | Roadmap generation | ≤ 3 s |
-| Career recommendation (with embeddings) | ≤ 4 s |
+| Career recommendation (model-first) | ≤ 4 s |
 | Career recommendation (baseline only) | ≤ 500 ms |
 | AI mentor first token | ≤ 5 s |
 
@@ -242,7 +242,7 @@ faculty cohort. Do not build for a million users; do not write code that breaks 
 
 ### NFR-03 — Availability
 
-Best-effort. Free hosting tiers sleep when idle ([ADR-0005](adr/0005-zero-budget-hosting.md)),
+Best-effort. Free hosting tiers sleep when idle (ADR-0005),
 so the first request after an idle period may take up to 60 s. Therefore:
 
 - A visible loading state, never a blank screen or a raw timeout error.
@@ -296,7 +296,7 @@ Student skill data is sensitive: it is a record of what a person *cannot* do.
 - **Minimisation.** Collect nothing that no feature consumes. No national ID, no address, no phone number.
 - **Consent.** Separate, revocable opt-in for (a) advisor visibility of the individual profile and (b) inclusion of the student's data in the evaluation study.
 - **Deletion.** A student can delete their account; personal rows are hard-deleted within 30 days. Only irreversibly anonymised aggregates may remain.
-- **Third-party AI.** The mentor prompt carries **only** skill names, levels, and the target career. Never name, email, student ID, or free text the student wrote about themselves. See [§06](06-ai-engines.md#44-privacy-in-the-mentor-prompt).
+- **Third-party AI.** The mentor prompt carries only explicitly allow-listed, relevant computed student-context fields required for grounded responses (for example target career, readiness, gaps, strengths, roadmap context, rationale, and recent completions). It never carries the student’s name, email, student ID, university identity unless explicitly required by the project, or uncontrolled/free-form personal profile text. The `Sanitised Context DTO` is the enforcement boundary. See [§06](06-ai-engines.md#44-privacy-in-the-mentor-prompt).
 - **Transport.** HTTPS everywhere, HSTS enabled.
 - **At rest.** No plaintext credentials, tokens, or secrets in the database or the repository.
 - **Logs.** Never log tokens, passwords, or full prompt contents. Personal identifiers in logs are truncated.
@@ -367,7 +367,7 @@ Each of these, if false, changes the plan. Tracked in [§10](10-risks-and-assump
 |---|---|---|
 | A1 | The department's course list is obtainable in a usable form | Curriculum mapping degrades to a small hand-entered subset |
 | A2 | A free LLM tier remains available at sufficient quota | Mentor falls back to templated explanations |
-| A3 | ≥ 500 job postings can be collected for the 6 careers under acceptable terms | Importance weights come from O\*NET/ESCO alone; regional weighting is dropped |
+| A3 | ≥ 500 job postings can be collected for the 6 careers under acceptable terms | Importance weights fall back to O\*NET/ESCO alone and regional weighting is dropped only for that insufficient-corpus fallback; it is reported as future work |
 | A4 | ≥ 15 students are available for the evaluation study | The study becomes qualitative, with the sample-size limitation stated |
 | A5 | All 8 members have ~10 productive hours/week outside exam periods | Should-have features are cut in priority order |
 | A6 | Free hosting tiers remain sufficient | The demo runs from a local machine in demo mode |
@@ -378,7 +378,7 @@ Each of these, if false, changes the plan. Tracked in [§10](10-risks-and-assump
 
 | # | Constraint | Consequence |
 |---|---|---|
-| C1 | **$0 budget, everything included** | No paid APIs, hosting, or data. Drives [ADR-0002](adr/0002-llm-provider.md) and [ADR-0005](adr/0005-zero-budget-hosting.md) |
+| C1 | **$0 budget, everything included** | No paid APIs, hosting, or data. Drives ADR-0002 and ADR-0005 |
 | C2 | Fixed final review, **20 May 2027** | Feature freeze 4 weeks earlier; scope is the only flexible variable |
 | C3 | Team skill mix is fixed (.NET, React, Python) | No stack changes mid-project |
 | C4 | Exam periods reduce capacity | Modelled as low-velocity weeks in [§08](08-plan-and-timeline.md) |
