@@ -1,4 +1,5 @@
 # ADR-0006 — Model-Based Recommendation with Deterministic Foundations
+
 **Status:** Accepted · **Date:** 2026-10-06 · **Deciders:** All
 
 ---
@@ -6,6 +7,7 @@
 ## Context
 
 The original documents contradicted each other on the role of AI:
+
 - `masar_full_specification.md`: "AI is the **core intelligence engine** powering Masar."
 - `masar_project_document.tex`: "The **AI is an enabling component**, not the product itself."
 
