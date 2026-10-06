@@ -13,13 +13,13 @@
 | Charts | **Recharts** | Needed for the readiness trend and the cohort heatmap | Mazen |
 | Backend | **ASP.NET Core 10 Web API (C#)** | Team's existing skill; active LTS release | Mohamed Y., Osama |
 | ORM | **EF Core 10 + Npgsql** | Migrations, plus `Pgvector.EntityFrameworkCore` for vector columns | Mohamed Y. |
-| Database | **PostgreSQL 16 + pgvector** | One store for both relational and vector data — see [ADR-0001](adr/0001-database-and-vector-store.md) | Mohamed Y. |
+| Database | **PostgreSQL 16 + pgvector** | One store for both relational and vector data — see ADR-0001 | Mohamed Y. |
 | AI service | **Python 3.12 + FastAPI** | The NLP/embedding ecosystem is Python in practice | Ahmed Y. |
 | Embeddings | **sentence-transformers `all-MiniLM-L6-v2`** — 384 dimensions, ~23 M parameters, Apache-2.0, CPU-only | Small enough for a free CPU tier, and the licence permits this use | Ahmed Y. |
-| LLM | **Free-tier hosted API**, provider-abstracted — see [ADR-0002](adr/0002-llm-provider.md) | $0 budget; the abstraction lets the provider be swapped without touching features | Ziad, Ahmed Y. |
+| LLM | **Free-tier hosted API**, provider-abstracted — see ADR-0002 | $0 budget; the abstraction lets the provider be swapped without touching features | **Ahmed Y.** |
 | Containers | **Docker + docker compose** | One-command local setup ([NFR-14](02-requirements.md#nfr-14--portability)) | Mohamed Salah |
 | CI/CD | **GitHub Actions** | Free for public repositories | Mohamed Salah |
-| Hosting | Free tiers — see [ADR-0005](adr/0005-zero-budget-hosting.md) | $0 budget | Mohamed Salah |
+| Hosting | Free tiers — see ADR-0005 | $0 budget | Mohamed Salah |
 
 > **Rule:** no dependency is added without a named reason and a pinned version. `latest` is banned
 > in Dockerfiles, and lockfiles are committed.
@@ -35,12 +35,14 @@ directly on the critical path of the component two other people depend on.
 
 The split is therefore drawn on a **language boundary, not a scalability boundary**:
 
-- **.NET owns all state and all decisions.** It is the only service that talks to the database.
-- **Python owns stateless computation.** Give it text, get vectors or extracted skills back. It stores nothing.
+- **.NET owns all application state and public API responsibilities.** It is the only service that talks to the database and is responsible for loading persisted career/skill data, including precomputed embeddings, before calling the AI service.
+- **FastAPI owns stateless AI and career-recommendation computation.** Recommendation work includes profile embedding, candidate retrieval over supplied candidate data/vectors, reranking, mandatory constraints, and the final ranking. **The AI Mentor intelligence also lives here, including construction/validation of the Sanitised Context DTO, RAG/prompt construction, LLM provider abstraction, output validation, and AI fallback logic.** It stores nothing and does not access the database directly.
 - **React owns presentation only.** No business rules in the client.
 
-This keeps the Python service deletable. If the free CPU tier proves too slow, embeddings can be
-precomputed offline and the service reduced to a batch script without changing any .NET code.
+This keeps the Python service focused. Career and skill embeddings are generated at seed time and persisted by the
+.NET/data layer in PostgreSQL. For recommendation requests, .NET loads the required candidate data and stored career
+embeddings, then sends them to FastAPI. FastAPI performs per-request profile embedding, candidate retrieval,
+reranking, mandatory constraints, and final recommendation without accessing PostgreSQL directly.
 
 ---
 
@@ -54,7 +56,7 @@ flowchart TB
 
     subgraph MASAR["Masar"]
         WEB["React SPA<br/>browser"]
-        API["ASP.NET Core API<br/>state · decisions · auth"]
+        API["ASP.NET Core API<br/>state · public API · auth"]
         AISVC["Python AI Service<br/>stateless compute"]
         DB[("PostgreSQL 16<br/>+ pgvector")]
     end
@@ -110,23 +112,35 @@ flowchart TB
         D2["ReadinessCalculator"]:::core
         D3["RoadmapScheduler"]:::core
         D4["PrerequisiteGraph"]:::core
-        D5["MatchScorer (baseline)"]:::core
-        D6["ScoringConfig"]
     end
 
     subgraph INF["Infrastructure — I/O adapters"]
         direction LR
         I1["EF Core / Npgsql"]
-        I2["AiServiceClient"]
-        I3["VectorRepository"]
+        I2["AiRecommendationClient"]
+    end
+
+    subgraph AI["FastAPI — recommendation and AI computation"]
+        direction LR
+        AI1["Embedder"]
+        AI2["Candidate Retrieval<br/>supplied career vectors"]
+        AI3["Reranker"]
+        AI4["Mandatory Constraints"]
+        AI5["Final Recommendation"]
+        AI1 --> AI2 --> AI3 --> AI4 --> AI5
     end
 
     API --> APP
     APP --> DOM
     APP --> INF
+    I2 --> AI1
 
     classDef core fill:#E8F0FE,stroke:#1A73E8,stroke-width:2px
 ```
+
+For recommendation requests, `AiRecommendationClient` sends the profile plus candidate career data and
+precomputed career embeddings that `.NET` loaded from PostgreSQL. The vector payload is an input to FastAPI
+candidate retrieval; FastAPI never queries PostgreSQL.
 
 **The highlighted `Domain` classes are the project's intellectual core.** They are pure functions
 over plain objects: no `DbContext`, no `HttpClient`, no `DateTime.Now` (time is injected). That is
@@ -143,13 +157,13 @@ the design has drifted.
 
 ```mermaid
 flowchart LR
-    IN["POST /extract-skills<br/>POST /embed<br/>POST /match<br/>POST /mentor"]
+    IN["POST /extract-skills<br/>POST /embed<br/>POST /recommend<br/>POST /mentor"]
 
     subgraph P["Pipelines"]
         E1["Skill Extractor<br/>normalise → candidate phrases →<br/>taxonomy match → confidence"]
         E2["Embedder<br/>MiniLM-L6-v2 · 384-dim"]
-        E3["Semantic Matcher<br/>cosine re-rank"]
-        E4["Mentor RAG<br/>context builder → prompt →<br/>LLM → output validator"]
+        E3["Recommendation Pipeline<br/>profile embedding → retrieval over<br/>supplied career vectors → reranker → constraints"]
+        E4["Mentor RAG<br/>Sanitised Context DTO → prompt →<br/>LLM → output validator"]
     end
 
     IN --> E1
@@ -179,7 +193,7 @@ free-tier quota, which under a $0 budget means taking the mentor offline for eve
 | Network | AI service bound to the internal network only, with no public route. In `docker compose` its port is not published; on the hosting provider it is a private service. |
 | Shared secret | Every request from .NET carries `X-Masar-Service-Key`. The AI service rejects any request without an exact match, using a constant-time comparison, and returns `401` with no detail. |
 | Secret storage | Environment variable, injected by the platform's secret store. Never committed, and rotated if it is ever printed in a log. |
-| Timeouts | .NET client: 20 s timeout, 2 retries with backoff, then the fallback path ([NFR-09](02-requirements.md#nfr-09--abuse-and-cost-control)). |
+| Timeouts | .NET client: 20 s timeout, 2 retries with backoff; if the primary model inference still fails while FastAPI is available, FastAPI returns the documented deterministic fallback ([NFR-09](02-requirements.md#nfr-09--abuse-and-cost-control)). |
 | Logging | Request ID propagated as `X-Correlation-Id` so one student action can be traced across all three services. |
 
 > If the chosen host cannot provide private networking on its free tier, the shared secret becomes
@@ -232,10 +246,12 @@ sequenceDiagram
     A->>DB: update student_skill (calibrated_level, effective_level follows)
     Note over S,AI: Step 4 — Career Recommendation & Selection
     W->>A: POST /api/assessments/{id}/submit
-    A->>D: MatchScorer.Score(profile, careers)
-    A->>AI: POST /match (optional semantic re-rank)
-    AI-->>A: semantic similarity
-    A-->>W: ranked careers + fit breakdown
+    A->>DB: load profile + skills + career data + stored career embeddings
+    A->>AI: POST /recommend (profile + candidate data + precomputed career vectors)
+    AI->>AI: Embed profile → retrieve over supplied career vectors → rerank
+    AI->>AI: Apply mandatory constraints → final ranking
+    AI-->>A: final ranked careers + recommendation metadata
+    A-->>W: ranked careers + fit explanations
     S->>W: Select target career & track (e.g. Backend / .NET)
     W->>A: PUT /api/profile/target
     A->>DB: update target_career_id & target_track_id
@@ -250,10 +266,11 @@ sequenceDiagram
     A-->>W: 200  dated roadmap + capstone project
 ```
 
-### 7.1 Career recommendation — hybrid, with a guaranteed answer
+### 7.1 Career recommendation — model-first, with a FastAPI fallback
 
-This flow is the direct answer to the original spec's biggest planning flaw, which made the AI a
-hard dependency of an MVP-core feature.
+Career prediction and recommendation are computed inside the internal FastAPI service. The .NET
+backend remains responsible for loading the required data, calling the service, and returning the
+public API response. FastAPI does not access PostgreSQL directly.
 
 ```mermaid
 sequenceDiagram
@@ -261,32 +278,33 @@ sequenceDiagram
     actor S as Student
     participant W as React SPA
     participant A as .NET API
-    participant D as Domain
     participant DB as PostgreSQL
-    participant AI as AI Service
+    participant AI as FastAPI Recommendation Service
 
     S->>W: submit assessment
     W->>A: POST /api/assessments/{id}/submit
-    A->>DB: load profile + skills + all careers
-    A->>D: MatchScorer.Score(profile, careers)
-    D-->>A: deterministic ranking (always succeeds)
+    A->>DB: load profile + skills + career data + stored career embeddings
+    A->>AI: POST /recommend (profile + candidate data + precomputed career vectors)
 
-    A->>AI: POST /match  (skill & interest text, career text)
-    alt AI responds within 20 s
-        AI-->>A: semantic similarity per career
-        A->>D: blend  final = 0.7·baseline + 0.3·semantic
-        D-->>A: re-ranked list
-        A-->>W: 200  ranking + reasons + mode "hybrid"
-    else timeout, error, or rate limit
-        A-->>W: 200  baseline ranking + mode "baseline"
-        Note over W: UI shows "computed without semantic matching"
-    end
+    AI->>AI: Embed profile
+    AI->>AI: Candidate retrieval over supplied career vectors
+    AI->>AI: Reranker produces primary ranking
+    AI->>AI: Apply mandatory constraints
+    AI->>AI: Build final recommendation
+    AI-->>A: final ranked careers + score/reasons + mode
+
+    A-->>W: 200 ranked careers + reasons
     W-->>S: ranked careers with explanations
+
+    alt primary model inference fails
+        AI->>AI: Run documented deterministic baseline fallback
+        AI-->>A: fallback ranking + mode "fallback"
+        A-->>W: 200 fallback ranking
+    end
 ```
 
-**The student always gets a ranked list.** The AI improves the ranking; it cannot prevent it.
-The blend weights live in `ScoringConfig` and are justified empirically in
-[§09 RQ1](09-evaluation.md#rq1--does-semantic-matching-beat-keyword-matching).
+The model is the primary prediction mechanism. The deterministic baseline is retained for evaluation
+and as the documented FastAPI fallback; it is not the production primary predictor.
 
 ### 7.2 Gap analysis and roadmap — fully deterministic
 
@@ -337,8 +355,8 @@ sequenceDiagram
     W->>A: POST /api/mentor/messages
     A->>A: rate-limit check (10/hour/user)
     A->>DB: load gap, roadmap, target career
-    A->>A: build context — skills, levels, career only<br/>strip name, email, student ID, free text
-    A->>AI: POST /mentor  { question, sanitisedContext }
+    A->>AI: POST /mentor  { question, context }
+    AI->>AI: construct + validate Sanitised Context DTO — allow-list skills, levels, career, computed data; reject identifiers/free text
     AI->>AI: wrap untrusted text in delimiters
     AI->>L: system prompt + context + question
     L-->>AI: answer
@@ -348,7 +366,7 @@ sequenceDiagram
     A-->>W: 200  answer + citations
 ```
 
-The sanitisation step at (5) is a requirement, not an optimisation:
+The sanitisation and allow-list validation step inside FastAPI is a requirement, not an optimisation:
 [NFR-08](02-requirements.md#nfr-08--privacy-and-data-protection) forbids sending student
 identifiers to a third party.
 
@@ -449,7 +467,7 @@ Named so nobody "helpfully" adds them at week 20.
 | GraphQL | REST plus a typed client is enough | OpenAPI-generated TypeScript client |
 | WebSockets / live updates | No collaborative or real-time feature | Request/response |
 | Event sourcing / CQRS | Would add weeks of ceremony for no gain | Straight CRUD plus pure domain calculators |
-| Separate vector database | pgvector covers the scale — [ADR-0001](adr/0001-database-and-vector-store.md) | pgvector in the same Postgres instance |
+| Separate vector database | pgvector covers the scale — ADR-0001 | pgvector in the same Postgres instance |
 
 ---
 
