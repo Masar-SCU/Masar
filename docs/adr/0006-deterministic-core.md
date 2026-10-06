@@ -1,117 +1,143 @@
-# ADR-0006 — Deterministic core, AI as enhancement
-
-**Status:** Accepted · **Date:** 2026-09-20 · **Deciders:** All
+# ADR-0006 — Model-Based Recommendation with Deterministic Foundations
+**Status:** Accepted · **Date:** 2026-10-06 · **Deciders:** All
 
 ---
 
 ## Context
 
 The original documents contradicted each other on the role of AI:
-
 - `masar_full_specification.md`: "AI is the **core intelligence engine** powering Masar."
 - `masar_project_document.tex`: "The **AI is an enabling component**, not the product itself."
 
-And within the same specification, §10.5 and §10.6 walked the stronger claim back: "the underlying
-skill ordering should remain controlled by the system's prerequisite graph", and "maintain a curated
-database of resources rather than asking an LLM to generate URLs."
+The earlier decision therefore made deterministic code responsible for every decision that had to be
+correct, ordered, or explainable, including career matching. That was useful for reliability, but it
+made the career recommendation contribution a deterministic baseline with AI only as an enhancement.
 
-The practical consequence was worse than the inconsistency. The priority matrix marked **Semantic
-Career Matching** and **Job-Skill NLP Extraction** as 🔴 MVP-Core — "the product is NOT demonstrable
-without these" — which meant the entire demo depended on the two least predictable components, both
-owned by one person, both requiring data that did not yet exist.
+The current architecture separates these concerns more precisely. Career prediction and ranking are
+now model-first, while deterministic logic remains responsible for decisions that must obey explicit
+hard rules or preserve guaranteed correctness, such as mandatory recommendation constraints, gap
+classification, readiness calculation, and prerequisite-aware roadmap ordering.
+
+The deterministic recommendation baseline is retained as an evaluation benchmark and as a documented
+fallback. It is not the normal production predictor.
 
 ## Decision
 
-> **AI provides intelligence for interpretation and matching. Deterministic code owns every decision
-> that must be correct, ordered, or explainable.**
+> **AI provides the primary intelligence for career prediction and ranking. Deterministic logic enforces
+> mandatory recommendation constraints and provides a documented fallback; deterministic foundation logic
+> continues to own gap analysis, readiness, and prerequisite-aware roadmap ordering.**
 
 ### Ownership by concern
 
-| Concern | Owner | Why |
+| **Concern** | **Owner** | **Why** |
 |---|---|---|
-| Skill extraction from free text | **AI** | Unstructured input; no rule set generalises |
-| Career matching | **Deterministic baseline + AI re-rank** | Baseline guarantees an answer; AI improves ranking |
+| Skill extraction from free text | **AI / semantic pipeline** | Unstructured input; no compact rule set generalises well |
+| Career matching | **Model-first AI recommendation service** | Career prediction is the primary AI contribution and is evaluated against the deterministic baseline |
+| Mandatory career constraints | **Deterministic inside FastAPI** | Hard requirements must not be violated by the model |
+| Deterministic recommendation baseline | **Deterministic inside FastAPI** | Reproducible benchmark and documented fallback |
 | Gap classification | **Deterministic** | Must be reproducible and explainable to a student |
-| Roadmap ordering | **Deterministic** | An LLM cannot be trusted to respect prerequisites |
+| Roadmap ordering | **Deterministic** | Prerequisites require guaranteed ordering |
 | Readiness scoring | **Deterministic** | It is a stated formula; there is nothing to infer |
-| Resource selection | **Curated database** | An LLM will confidently produce dead URLs |
-| Gap rationale text | **Templates over stored data** | Must always render, cost nothing, and never hallucinate |
-| Conversational mentoring | **AI** | Natural language over data already computed |
+| Resource selection | **Curated database** | Resources must be valid and controlled |
+| Gap rationale text | **Templates over stored data** | Must always render without hallucinated facts |
+| Conversational mentoring | **AI, owned by Ahmed Yousef** | Natural language over data already computed; AI-side mentor logic stays inside FastAPI while UI/.NET request integration remain outside it |
 
-### Tier consequences
+### Recommendation pipeline
 
-| Feature | Was | Now | Reason |
-|---|---|---|---|
-| Semantic Career Matching | 🔴 Core | 🟡 MVP (enhancer) | Baseline produces a ranking without it |
-| Job-Skill NLP Extraction | 🔴 Core | 🟡 MVP (offline) | Runs at seed time; taxonomy weights are the fallback |
-| AI Mentor | 🟡 MVP | 🔵 Should | Valuable, but never blocks a core flow |
-| Skill-Gap Analysis | 🔴 Core | 🔴 Core | Unchanged — and now genuinely dependency-free |
-| Roadmap Generation | 🔴 Core | 🔴 Core | Unchanged — and now genuinely dependency-free |
+The complete career recommendation computation runs inside FastAPI:
 
-**The two 🔴 Core features make zero AI calls.** That is the substance of this decision.
+```text
+Student profile + candidate careers
+        ↓
+     Embedder
+        ↓
+Candidate Retrieval
+        ↓
+     Reranker
+        ↓
+Mandatory Constraints
+        ↓
+Final Recommendation
+```
+
+The .NET backend owns application state, public APIs, and database access. It loads the persisted career
+embeddings and supplies the required candidate data/vectors to FastAPI. It does not calculate the career
+recommendation score and does not perform candidate retrieval or reranking. FastAPI performs those operations
+without direct PostgreSQL access.
+
+### Evaluation and fallback
+
+The deterministic recommendation baseline remains implemented inside FastAPI for two purposes:
+
+1. **Evaluation:** RQ1 compares the model-first pipeline against the deterministic baseline.
+2. **Fallback:** if primary model inference cannot complete, FastAPI can return a recommendation in
+   `mode: "fallback"`.
+
+The fallback is therefore part of the reliability design, not the normal ranking path.
 
 ## Rationale
 
-**Reliability.** The demo on 20 May 2027 cannot fail because a free-tier quota reset, a model was
-deprecated, or a network path was slow. Two features carry the project's value, and neither touches the
-network beyond the database.
+**Model contribution.** Career prediction is the project's AI contribution and should be evaluated as
+such rather than hidden behind a fixed weighted hybrid formula.
 
-**Explainability.** A committee will ask "why did it recommend that?". A deterministic formula has an
-answer that can be shown on screen ([§05 5.15](../05-features-mvp.md#515-explainability-panel)). An
-LLM's ordering decision does not.
+**Reliability.** Mandatory constraints, gap analysis, readiness, and prerequisite ordering remain
+deterministic. A model cannot silently override a hard requirement or produce an invalid roadmap order.
 
-**Correctness.** Prerequisite ordering has a right answer. A topological sort produces it every time;
-a language model produces it usually. "Usually" is not acceptable for the feature the project is named
-after.
+**Explainability.** The system can distinguish between model-driven career ranking and deterministic
+rules. This makes it possible to explain which part of the result came from the model and which part
+was enforced by a rule.
 
-**Testability.** Pure functions over plain objects reach the 80 % coverage target in
-[NFR-12](../02-requirements.md#nfr-12--testability) without mocking an external service. Property-based
-tests can assert monotonicity and prerequisite correctness — impossible against a model.
+**Testability.** The deterministic foundations remain directly unit-testable. The model-first recommendation
+pipeline is evaluated with ranking metrics against a reproducible baseline rather than being assumed to
+be correct.
 
-**Honest claims.** Saying "AI-powered career guidance" when the core is arithmetic invites one follow-up
-question that forces an embarrassing retreat. Saying "deterministic gap analysis with AI-assisted
-matching and explanation" is accurate, more specific, and cannot be undermined.
+**Graceful degradation.** If the model service is unavailable, FastAPI can use the deterministic
+recommendation baseline. The rest of the deterministic foundations continues to work independently.
 
-**It does not reduce the AI contribution.** Three engines still exist, and each is now *measured*
-([§09](../09-evaluation.md)) rather than asserted. A measured improvement from semantic re-ranking is a
-stronger contribution than an unmeasured claim that the system "uses AI".
+**Honest claims.** The project can accurately describe career recommendation as model-first while
+still stating that gap analysis and roadmap ordering are deterministic and that the baseline is retained
+for evaluation/fallback.
 
 ## Consequences
 
-**Positive**
+### Positive
 
-- No MVP-core feature can fail because of AI.
-- Every AI component has a documented fallback ([§06 7](../06-ai-engines.md#7-fallbacks-and-graceful-degradation)).
-- Core features are fast (no network hop), reproducible, and unit-testable.
-- The AI contribution becomes an empirical claim rather than a marketing one.
-- The project's exposure to free-tier quotas is confined to one should-have feature.
+- Career recommendation has a clear model-first AI contribution.
+- Mandatory recommendation constraints remain deterministic and enforceable.
+- Gap analysis, readiness, and roadmap ordering remain reproducible and explainable.
+- The deterministic recommendation baseline remains available for RQ1 and service degradation.
+- All career-prediction computation stays inside FastAPI rather than being split between FastAPI and .NET.
 
-**Negative**
+### Negative
 
-- Fallback paths are extra code. Roughly 200 lines total, and they are the code that makes the demo safe.
-- "Deterministic gap analysis" sounds less impressive in a title than "AI-powered". Accuracy is worth more than the adjective.
+- The project must maintain both the model-first recommendation pipeline and the deterministic baseline.
+- Model quality must be evaluated empirically; the system cannot rely on a fixed formula as its primary
+  predictor.
+- FastAPI carries additional responsibility for embedding, candidate retrieval, reranking, constraints,
+  and fallback execution.
 
-**Neutral**
+### Neutral
 
-- Both a baseline and a hybrid path must be maintained. This is also what makes
-  [RQ1](../09-evaluation.md#rq1--does-semantic-matching-beat-keyword-matching) answerable at all, so it
-  is a cost that buys a result.
+- The deterministic foundations are not removed. They remain the authority for gap analysis, readiness, and
+  prerequisite-aware roadmap generation.
+- The deterministic recommendation baseline remains part of the implementation and evaluation, but it
+  is no longer the production ranking mechanism.
 
 ## Language rules that follow
 
-| Do not say | Say |
+| **Do not say** | **Say** |
 |---|---|
-| "AI-powered career guidance system" | "Career guidance with AI-assisted matching and mentoring" |
-| "Machine learning determines your gaps" | "Weighted scoring determines your gaps" |
-| "AI generates your roadmap" | "A prerequisite-aware scheduler generates your roadmap" |
-| "AI recommends resources" | "Curated resources are matched to your roadmap" |
-
-See [§11](../11-glossary.md#terms-deliberately-avoided).
+| "Deterministic code ranks careers in production" | "The model-first recommendation service ranks careers in production" |
+| "AI generates the student's roadmap" | "A prerequisite-aware deterministic scheduler generates the roadmap" |
+| "AI determines the student's gaps" | "Deterministic gap analysis determines the student's gaps" |
+| "The .NET backend calculates the recommendation score" | "FastAPI performs the career recommendation computation" |
+| "The baseline is the normal predictor" | "The baseline is retained for evaluation and fallback" |
 
 ## Verification
 
-- [ ] **W6** — gap analysis and readiness demonstrably work with the AI service stopped
-- [ ] **W10** — roadmap generation demonstrably works with the AI service stopped
-- [ ] **W21** — an integration test asserts that stopping the AI service degrades rather than breaks the system
-- [ ] **W23** — every fallback path has a test
-- [ ] **W31** — the report uses the agreed language throughout
+- **W6** — gap analysis and readiness demonstrably work with the AI service stopped
+- **W10** — roadmap generation demonstrably works with the AI service stopped
+- **W21** — an integration test asserts that stopping the AI service degrades recommendation rather than
+  breaking the system
+- **W23** — the model-first recommendation pipeline and deterministic fallback are evaluated separately
+- **W31** — the report uses the agreed model-first/deterministic-foundations language throughout
