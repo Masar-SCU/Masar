@@ -99,7 +99,7 @@ Rules:
 - Stored as `smallint`, constrained `0..5`. Never a float, never a percentage.
 - The definition text is displayed **next to the input**, not in a help modal. A rating scale nobody reads produces noise.
 - Career requirements use the same scale, so `gap = required − current` is meaningful.
-- Percentages appear **only** in the readiness score and career match score, where they are computed values with a stated formula — never as user input.
+- Percentages appear **only** in computed readiness/recommendation outputs — never as user input. The readiness score follows its defined deterministic logic; the primary career recommendation score is produced by the selected model, while the deterministic recommendation baseline/fallback has its own documented formula where applicable.
 
 ---
 
@@ -166,9 +166,10 @@ SKILL_EMBEDDING
 ```
 
 - 384 dimensions, matching `all-MiniLM-L6-v2` ([§03](03-architecture.md#1-technology-stack)).
-- Generated **at seed time** and stored. Never computed per request ([NFR-01](02-requirements.md#nfr-01--performance)).
+- Generated **at seed time** by the AI/ML pipeline and persisted through the .NET data layer. Never computed per request ([NFR-01](02-requirements.md#nfr-01--performance)).
+- PostgreSQL/pgvector persistence remains a database-layer responsibility; the FastAPI service does not access the database directly.
 - `model_name` and `model_version` are stored so a model change is detectable. Comparing vectors produced by two different models yields confidently wrong similarity scores with no error message.
-- Index: `USING hnsw (embedding vector_cosine_ops)`.
+- Database-side index: `USING hnsw (embedding vector_cosine_ops)`. This indexes persisted vectors in PostgreSQL; it does not imply FastAPI database access. Production recommendation retrieval uses the precomputed career vectors supplied by `.NET`.
 
 ---
 
@@ -248,7 +249,8 @@ CAREER_EMBEDDING
 
 `source_text` is the exact string that was embedded (career summary plus weighted skill names).
 Storing it means a similarity result can always be explained after the fact, which is otherwise
-impossible to reconstruct.
+impossible to reconstruct. The AI/ML pipeline owns embedding generation; the .NET/data layer owns persistence
+of the resulting vector in PostgreSQL/pgvector.
 
 ---
 
@@ -459,7 +461,7 @@ JOB_POSTING_SKILL
 |---|---|---|---|
 | **O\*NET Database** (U.S. DoL / ETA) | Occupation→skill and Technology Skills mappings, as taxonomy seed | **CC BY 4.0** | Attribution in the app footer and in the report |
 | **ESCO** (European Commission) | Occupation and skill/competence concepts, multilingual labels, alias seed | Free download in CSV/RDF/JSON-LD; reuse under the Commission's terms | Attribution, with the ESCO version recorded |
-| **Job postings** | A frozen snapshot for frequency weighting | Per-source terms — see [ADR-0003](adr/0003-job-data-sourcing.md) | Store raw text only where terms allow; otherwise store extracted skills plus a link |
+| **Job postings** | A frozen snapshot for frequency weighting | Per-source terms — see ADR-0003 | Store raw text only where terms allow; otherwise store extracted skills plus a link |
 | **Curated resources** | Titles and URLs only | Not applicable — links only | No content copied |
 | **Department course catalogue** | Codes, titles, descriptions | Institutional, used with the supervisor's approval | Acknowledged in the report |
 | **`all-MiniLM-L6-v2`** | Sentence embeddings | **Apache-2.0** | Attribution; permits research and commercial use |
@@ -537,7 +539,7 @@ Knowing the real size prevents both premature optimisation and unpleasant surpri
 | `student_skill` | ≤ 15,000 | ~30 per student |
 
 Total well under 100 MB — comfortably inside every free Postgres tier, including the 1 GB caps
-noted in [ADR-0005](adr/0005-zero-budget-hosting.md).
+noted in ADR-0005.
 
 ---
 
