@@ -158,13 +158,13 @@ Public read-only reference data. Cacheable; `Cache-Control: public, max-age=3600
 
 ```json
 {
-  "mode": "hybrid",
+  "mode": "model-first",
   "recommendations": [
     {
       "careerId": 2,
       "name": "Frontend / Full-Stack",
       "matchScore": 69,
-      "breakdown": { "skillFit": 0.58, "interestFit": 0.81, "coverage": 0.72, "semantic": 0.74 },
+      "breakdown": { "constraintStatus": "passed" },
       "reasons": [
         { "type": "skill",    "detail": "HTML/CSS at level 3 matches a high-importance requirement" },
         { "type": "interest", "detail": "Your visual and analytical interests align with this path" }
@@ -175,7 +175,7 @@ Public read-only reference data. Cacheable; `Cache-Control: public, max-age=3600
 }
 ```
 
-`mode` is `"hybrid"` or `"baseline"`, so the client can honestly display degraded state
+`mode` is `"model-first"` or `"fallback"`, so the client can honestly display degraded state
 ([§05 5.4](05-features-mvp.md#54-career-recommendation)).
 
 ---
@@ -334,6 +334,12 @@ applied inside the query, not in the client.
 
 ## 10. Internal AI service endpoints
 
+The recommendation endpoint performs the complete career-prediction pipeline inside FastAPI: profile embedding,
+candidate retrieval over the supplied candidate data/precomputed career vectors, reranking, mandatory constraints,
+and final recommendation. Intermediate representations are internal to FastAPI unless explicitly exposed by the
+contract. FastAPI does not access PostgreSQL directly; `.NET` loads persisted career embeddings and passes the
+required vectors as part of the existing `careers` request data.
+
 Not publicly routable. Requires `X-Masar-Service-Key`
 ([§03 6](03-architecture.md#6-service-to-service-authentication)).
 
@@ -341,14 +347,19 @@ Not publicly routable. Requires `X-Masar-Service-Key`
 |---|---|---|---|
 | POST | `/extract-skills` | `{ text, sections? }` | `{ skills: [{ slug, confidence, layer, matchedAlias }] }` |
 | POST | `/embed` | `{ texts: string[] }` | `{ vectors: number[][], model, version }` |
-| POST | `/match` | `{ profileText, careerIds[] }` | `{ similarities: [{ careerId, score }] }` |
+| POST | `/recommend` | `{ profile, careers, constraints? }` | `{ recommendations: [{ careerId, score, reasons }], mode, model }` |
 | POST | `/mentor` | `{ question, context }` | `{ answer, citations[], model, tokensUsed }` |
 | GET | `/health` | — | `{ status: "ok" }` |
 | GET | `/ready` | — | `{ status: "ready" \| "loading", model, version }` |
 
-The `context` object on `/mentor` is the sanitised allow-listed DTO from
-[§06 4.4](06-ai-engines.md#44-privacy-in-the-mentor-prompt). The AI service never receives a user ID
-and has no way to load additional data, so it cannot widen its own context even if instructed to.
+For `/recommend`, the existing `careers` request data includes the candidate information required by the pipeline
+and the precomputed career embeddings loaded by `.NET` from PostgreSQL. FastAPI uses those vectors for candidate
+retrieval and does not perform database access itself.
+
+The `context` object on `/mentor` contains only the fields permitted by the allow-list defined in
+[§06 4.4](06-ai-engines.md#44-privacy-in-the-mentor-prompt). FastAPI validates the payload against its typed
+Sanitised Context DTO before prompt construction. The AI service never receives a user ID and has no way to load
+additional data, so it cannot widen its own context even if instructed to.
 
 ---
 
