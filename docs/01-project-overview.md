@@ -46,7 +46,7 @@ no feature is not an objective — it is a wish. This traceability is what makes
 | # | Objective | Delivered by | Verified by |
 |---|---|---|---|
 | **O1** | Assess technical skills, interests and preferences | [Student Profile](05-features-mvp.md#51-student-profile), [Calibration Quiz](05-features-mvp.md#52-skill-calibration-quiz) | FR-01…FR-06 |
-| **O2** | Recommend suitable career paths | [Career Recommendation](05-features-mvp.md#54-career-recommendation) | FR-10, [RQ1](09-evaluation.md#rq1--does-semantic-matching-beat-keyword-matching) |
+| **O2** | Recommend suitable career paths | [Career Recommendation](05-features-mvp.md#54-career-recommendation) | FR-10, [RQ1](09-evaluation.md#rq1--does-the-model-first-recommendation-pipeline-outperform-the-deterministic-baseline) |
 | **O3** | Analyse job requirements to identify demanded skills | [Job-Skill Extraction](06-ai-engines.md#2-engine-a--job-skill-extraction), [Curriculum Mapping](05-features-mvp.md#511-university-curriculum-mapping) | [RQ2](09-evaluation.md#rq2--how-accurate-is-skill-extraction) |
 | **O4** | Identify gaps against a target career | [Skill-Gap Analysis](05-features-mvp.md#55-skill-gap-analysis--core) | FR-12…FR-15 |
 | **O5** | Generate learning paths and project recommendations | [Roadmap](05-features-mvp.md#56-personalized-roadmap--core), [Projects](05-features-mvp.md#58-project-recommendations) | FR-16…FR-22 |
@@ -72,13 +72,13 @@ scope until nothing is finished.
 - **Computer Science students** at Suez Canal University as the primary audience
 - **English** UI, with Arabic-ready infrastructure ([NFR-13](02-requirements.md#nfr-13--internationalisation-readiness))
 - A **web application** — responsive, usable on a phone browser
-- A **frozen, documented snapshot** of job-posting data, not live scraping ([ADR-0003](adr/0003-job-data-sourcing.md))
+- A **frozen, documented snapshot** of job-posting data, not live scraping (ADR-0003)
 
 ### Explicitly out of scope
 
 | Not doing | Why |
 |---|---|
-| Live job scraping at scale | Legal grey area, unstable, and would sit on the critical path. [ADR-0003](adr/0003-job-data-sourcing.md) |
+| Live job scraping at scale | Legal grey area, unstable, and would sit on the critical path. ADR-0003 |
 | Real job matching / applications | Requires employer relationships we do not have |
 | Non-technology careers | The skill taxonomy would not transfer |
 | Native mobile apps | A responsive web app covers the need at a fraction of the cost |
@@ -95,9 +95,10 @@ Masar connects three things that are normally disconnected: **what a student can
 
 Four contributions are genuinely defensible in a thesis:
 
-1. **A hybrid career-matching method** — a deterministic weighted-overlap baseline combined
-   with an embedding-based semantic re-ranker, where the contribution of the semantic layer
-   is *measured* rather than assumed ([RQ1](09-evaluation.md#rq1--does-semantic-matching-beat-keyword-matching)).
+1. **A model-first career recommendation method** — an AI recommendation pipeline in which
+   embeddings, candidate retrieval and a reranker provide the primary career ranking signal,
+   followed by deterministic mandatory constraints. The existing deterministic baseline is
+   retained for evaluation and as a documented fallback ([RQ1](09-evaluation.md#rq1--does-the-model-first-recommendation-pipeline-outperform-the-deterministic-baseline)).
 2. **Curriculum-to-skill mapping.** Mapping an actual department's course catalogue onto a
    market skill taxonomy, so a transcript becomes a starting skill profile. We are not aware
    of a commercial product that does this, and it directly addresses P3.
@@ -113,13 +114,15 @@ Four contributions are genuinely defensible in a thesis:
 The original specification contradicted itself, calling AI both "the core intelligence engine"
 and "an enabling component, not the product itself." The resolved position:
 
-> **AI provides the intelligence for interpretation and matching. Deterministic logic owns
-> every decision that must be correct, ordered, or explainable.**
+> **AI provides the primary intelligence for career prediction and semantic matching.
+> Deterministic logic enforces mandatory recommendation constraints and preserves correctness
+> where a model cannot be allowed to violate a hard requirement.**
 
 | Concern | Owned by | Rationale |
 |---|---|---|
 | Skill extraction from free text | **AI** (NLP) | Unstructured input; no rule set generalises |
-| Career matching / re-ranking | **AI + deterministic baseline** | AI improves recall; the baseline guarantees an answer |
+| Career prediction / ranking | **AI recommendation model** | The model is the primary ranking signal |
+| Mandatory career constraints | **Deterministic logic inside the AI service** | Hard constraints must never be violated |
 | Gap classification | **Deterministic** | Must be reproducible and explainable to the student |
 | Roadmap ordering | **Deterministic** (topological sort) | An LLM cannot be trusted to respect prerequisites |
 | Resource selection | **Curated database** | An LLM will confidently generate dead URLs |
@@ -160,8 +163,8 @@ components are how graduation projects die when one person hits an exam week.
 | **Abdelrahman Megahed** | Team Lead · Full-Stack | Architecture, [API contract](07-api-contract.md), integration, releases, project tracking | Floating capacity |
 | **Mohamed Yasser** | .NET Backend | Data model, EF Core layer, Profile + Assessment + Career services | Osama |
 | **Osama Mohammed** | .NET Backend | **Gap engine**, **roadmap scheduler**, progress service | Mohamed Y. |
-| **Ahmed Yousef** | AI / ML | Skill extraction, embeddings, [evaluation](09-evaluation.md) | Ziad |
-| **Ziad Ahmed** | Frontend · AI integration | AI Mentor integration, gap + roadmap UI, AI service client | Ahmed Y., Mazen |
+| **Ahmed Yousef** | AI / ML | Skill extraction, embeddings, FastAPI recommendation service, recommendation baseline/fallback, **AI Mentor backend intelligence, LLM integration/provider abstraction, prompt security and output validation**, [evaluation](09-evaluation.md) | Ziad |
+| **Ziad Ahmed** | Frontend · Integration | Mentor UI, gap + roadmap UI, explainability UI, **AI service client integration support** | Ahmed Y., Mazen |
 | **Mazen Oraby** | Frontend | Profile, assessment, dashboard, resource and project views | Ziad |
 | **Yousef Khaled** | UI/UX | Design system, wireframes, prototypes, **usability testing**, accessibility | Mazen |
 | **Mohamed Salah** | DevOps | CI/CD, containers, staging + production deploys, seed-data pipeline, backups | Abdelrahman |
@@ -178,13 +181,13 @@ flowchart TB
     end
 
     subgraph FE["Frontend · React"]
-        FE1["Ziad Ahmed<br/>gap · roadmap · mentor"]
+        FE1["Ziad Ahmed<br/>gap · roadmap · mentor UI"]
         FE2["Mazen Oraby<br/>profile · dashboard"]
         FE3["Yousef Khaled<br/>design system · UX testing"]
     end
 
     subgraph AI["AI Service · Python"]
-        AI1["Ahmed Yousef<br/>extraction · embeddings · evaluation"]
+        AI1["Ahmed Yousef<br/>extraction · embeddings · recommendation · AI Mentor"]
     end
 
     subgraph OPS["Platform"]
@@ -230,7 +233,7 @@ sequenceDiagram
     Student->>Wizard: 2. Select completed coursework & self-rate claimed skills
     Wizard-->>Student: Auto-propose course-derived skills + flag unverified claims
     Student->>Wizard: 3. Take targeted calibration quizzes (top claimed core skills)
-    Wizard->>Engine: Run hybrid career recommendation
+    Wizard->>Engine: Run model-first career recommendation
     Engine-->>Student: 4. Reveal ranked careers with transparent fit breakdown
     Student->>Engine: Confirm target career & track (e.g. Backend -> .NET)
     Engine->>Scheduler: Compute gaps & schedule against weekly hours budget
@@ -250,7 +253,7 @@ sequenceDiagram
 1. **Personality & work-preference assessment:** Rather than confronting students with a blank skill list, Masar starts with a quick Likert-scale assessment probing problem-solving inclinations (analytical vs visual), work environments (team vs solo), and interests.
 2. **Skill identification & coursework pre-fill:** Students select their academic year and completed Suez Canal University courses. The curriculum mapping pre-fills foundational skills with confidence ratings, and students self-rate any additional claimed skills on the 0–5 proficiency scale.
 3. **Targeted skill calibration:** To combat self-assessment bias without inducing questionnaire fatigue, the system generates focused diagnostic quizzes (5–8 questions) for the student's top 2–3 core technical claimed skills with active question banks. Students can complete these immediately or calibrate remaining skills later from the dashboard.
-4. **Career recommendation & target selection:** The hybrid engine blends interest alignment (30%), calibrated skill fit (55%), and skill coverage (15%), displaying ranked careers with inspectable reasoning. The student confirms their chosen career and track.
+4. **Career recommendation & target selection:** The model-first recommendation service ranks careers using the AI recommendation pipeline and applies mandatory constraints before returning the final ranking with inspectable reasoning. The student confirms their chosen career and track.
 5. **Personalized roadmap generation:** The deterministic scheduler runs a topological sort over the induced prerequisite DAG, packaging gaps into weekly phases matching the student's hours-per-week budget, attaching free curated resources and a multi-skill capstone project.
 
 ### 8.2 Phase 2 — Continuous growth and the adaptive loop
