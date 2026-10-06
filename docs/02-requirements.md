@@ -1,6 +1,6 @@
 # 02 — Requirements
 
-**Document owners: ** Abdelrahman Megahed, Yousef Khaled · **Status:** Baseline
+**Document owners:** Abdelrahman Megahed, Yousef Khaled · **Status:** Baseline
 
 Every requirement has a stable ID. Cite these IDs in commit messages, test names, and the
 report. `FR` = functional, `NFR` = non-functional. Priorities: **M** = MVP-critical,
