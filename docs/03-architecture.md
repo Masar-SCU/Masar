@@ -356,11 +356,11 @@ sequenceDiagram
     A->>A: rate-limit check (10/hour/user)
     A->>DB: load gap, roadmap, target career
     A->>AI: POST /mentor  { question, context }
-    AI->>AI: construct + validate Sanitised Context DTO — allow-list skills, levels, career, computed data; reject identifiers/free text
+    AI->>AI: construct and validate Sanitised Context DTO - allow-list skills, levels, career, computed data, reject identifiers and free text
     AI->>AI: wrap untrusted text in delimiters
     AI->>L: system prompt + context + question
     L-->>AI: answer
-    AI->>AI: validate — length, no leaked instructions, plain text
+    AI->>AI: validate - length, no leaked instructions, plain text
     AI-->>A: answer + cited context keys
     A->>DB: persist turn (question, answer, cited keys)
     A-->>W: 200  answer + citations
