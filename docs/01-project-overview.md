@@ -46,7 +46,7 @@ no feature is not an objective — it is a wish. This traceability is what makes
 | # | Objective | Delivered by | Verified by |
 |---|---|---|---|
 | **O1** | Assess technical skills, interests and preferences | [Student Profile](05-features-mvp.md#51-student-profile), [Calibration Quiz](05-features-mvp.md#52-skill-calibration-quiz) | FR-01…FR-06 |
-| **O2** | Recommend suitable career paths | [Career Recommendation](05-features-mvp.md#54-career-recommendation) | FR-10, [RQ1](09-evaluation.md#rq1--does-the-model-first-recommendation-pipeline-outperform-the-deterministic-baseline) |
+| **O2** | Recommend suitable career paths | [Career Recommendation](05-features-mvp.md#54-career-recommendation) | FR-10, [RQ1](09-evaluation.md#rq1-does-the-model-first-recommendation-pipeline-outperform-the-deterministic-baseline) |
 | **O3** | Analyse job requirements to identify demanded skills | [Job-Skill Extraction](06-ai-engines.md#2-engine-a--job-skill-extraction), [Curriculum Mapping](05-features-mvp.md#511-university-curriculum-mapping) | [RQ2](09-evaluation.md#rq2--how-accurate-is-skill-extraction) |
 | **O4** | Identify gaps against a target career | [Skill-Gap Analysis](05-features-mvp.md#55-skill-gap-analysis--core) | FR-12…FR-15 |
 | **O5** | Generate learning paths and project recommendations | [Roadmap](05-features-mvp.md#56-personalized-roadmap--core), [Projects](05-features-mvp.md#58-project-recommendations) | FR-16…FR-22 |
@@ -98,7 +98,7 @@ Four contributions are genuinely defensible in a thesis:
 1. **A model-first career recommendation method** — an AI recommendation pipeline in which
    embeddings, candidate retrieval and a reranker provide the primary career ranking signal,
    followed by deterministic mandatory constraints. The existing deterministic baseline is
-   retained for evaluation and as a documented fallback ([RQ1](09-evaluation.md#rq1--does-the-model-first-recommendation-pipeline-outperform-the-deterministic-baseline)).
+   retained for evaluation and as a documented fallback ([RQ1](09-evaluation.md#rq1-does-the-model-first-recommendation-pipeline-outperform-the-deterministic-baseline)).
 2. **Curriculum-to-skill mapping.** Mapping an actual department's course catalogue onto a
    market skill taxonomy, so a transcript becomes a starting skill profile. We are not aware
    of a commercial product that does this, and it directly addresses P3.

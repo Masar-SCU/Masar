@@ -35,7 +35,8 @@ listed in both tiers. **One row per feature, here, and nowhere else.**
 | Student Profile | 🟡 MVP | Mohamed Y. | Skill catalogue | Yes | — |
 | Onboarding Wizard | 🟡 MVP | Mazen | Assessment, Profile, Quizzes | Yes | Direct profile entry |
 | Career & Skill Database | 🟡 MVP | Mohamed Y. | Seed data | Yes | Hand-curated from O\*NET/ESCO |
-| Career Recommendation (baseline) | 🟡 MVP | Osama | Profile, Assessment | Yes | None — deterministic |
+| Career Recommendation (AI model) | 🟡 MVP | Ahmed Y. | Profile, Assessment, FastAPI Recommendation Service | Yes | FastAPI deterministic fallback |
+| Deterministic Recommendation Baseline | 🟡 MVP *(evaluation/fallback)* | **Ahmed Y.** | RQ1 comparison | No | FastAPI deterministic fallback |
 | Career Assessment | 🟡 MVP | Mohamed Y. | — | Yes | — |
 | Calibration Quiz | 🟡 MVP | Mohamed Y. | Quiz items | No | Self-report only, flagged |
 | Career Readiness Score | 🟡 MVP | Osama | Gap | **Yes** | None |
@@ -45,8 +46,7 @@ listed in both tiers. **One row per feature, here, and nowhere else.**
 | Admin Content Panel | 🟡 MVP | Mohamed Y. | — | No | Direct SQL (slow, error-prone) |
 | Demo Mode | 🟡 MVP | Mohamed Salah | Fixtures | **Yes** | — |
 | Job-Skill Extraction | 🟡 MVP *(offline)* | Ahmed Y. | Job corpus | No | Alias dictionary + taxonomy weights |
-| Semantic Re-rank | 🟡 MVP *(enhancer)* | Ahmed Y. | Embeddings | No | Baseline ranking only |
-| AI Mentor | 🔵 Should | Ziad + Ahmed Y. | Gap, roadmap, LLM | No | Templated explanations |
+| AI Mentor | 🔵 Should | **Ahmed Y. (AI) · Ziad (UI/integration)** | Gap, roadmap, LLM | No | Templated explanations |
 | Curriculum Mapping | 🔵 Should | Mohamed Y. | Course catalogue | No | Reduced course subset |
 | Internship Readiness | 🔵 Should | Mohamed Y. | Gap | No | — |
 | Advisor Dashboard | 🔵 Should | Osama | Gap, consent | No | — |
@@ -70,9 +70,9 @@ listed in both tiers. **One row per feature, here, and nowhere else.**
 | 🔵 **Should** | Materially better product. Built after the MVP is stable and deployed. |
 | ⚪ **Later** | Out of scope. Listed so nobody proposes them as if they were new ideas in March. |
 
-> **Two features are 🔴, not four.** The original marked Semantic Matching and NLP Extraction as
-> MVP-Core, which made the demo depend on the two least predictable components. Both are now
-> enhancers with named fallbacks, and neither is on the demo path.
+> **Two features are 🔴, not four.** The project keeps the core gap/roadmap features unchanged.
+> Career recommendation is an MVP feature whose primary computation now runs in FastAPI, with a
+> documented deterministic fallback inside the same service.
 
 ---
 
@@ -145,7 +145,7 @@ Six weeks in. What is shown:
 2. They select a target career.
 3. **The gap analysis appears with severity, priority and per-skill rationale.**
 4. **A readiness score of 65 % is shown, with the arithmetic behind it.**
-5. The architecture and the reasoning behind the deterministic core.
+5. The architecture and the reasoning behind the deterministic foundations.
 
 What is honestly reported as not yet built: roadmap, resources, projects, progress, AI mentor.
 
@@ -189,8 +189,8 @@ trend chart. **This is the slice that makes "adaptive" real.**
 | Task | Owner |
 |---|---|
 | Assessment questionnaire, 22 items | Mohamed Yasser |
-| `MatchScorer` baseline in Domain, with unit tests | Osama |
-| Recommendation endpoint with score breakdown | Osama |
+| Deterministic recommendation baseline implementation, with unit tests | **Ahmed Yousef** |
+| Recommendation endpoint integration and response mapping | **Ahmed Yousef · Mohamed Yasser** |
 | Assessment UI with incremental save | Mazen |
 | Ranked results with per-career reasons | Mazen |
 | Calibration quiz items for the top 15 skills | Mohamed Yasser, Ahmed Y. |
@@ -210,7 +210,7 @@ Assume roughly 40 % capacity. Deliberately scheduled for low-coupling work that 
 | Expand resources 150 → 300 | Mazen, Yousef K. |
 | Seed 50 projects | Mohamed Yasser |
 | Collect and freeze the job corpus, 500+ postings | **Ahmed Yousef** |
-| Manually label 100 postings for evaluation | Ahmed Yousef, Ziad |
+| Manually label 100 postings for evaluation | **Ahmed Yousef** (with Ziad support) |
 | Usability test round 1, 5 students | **Yousef Khaled** |
 | Report: introduction, related work, methodology draft | Abdelrahman |
 
@@ -224,24 +224,26 @@ Assume roughly 40 % capacity. Deliberately scheduled for low-coupling work that 
 | Extraction pipeline, layers 1–4 | **Ahmed Yousef** |
 | Extraction evaluation against the labelled set ([RQ2](09-evaluation.md#rq2--how-accurate-is-skill-extraction)) | Ahmed Yousef |
 | Compute importance weights from the corpus | Ahmed Yousef |
-| Embedding service, seed-time generation, pgvector storage | Ahmed Yousef |
-| Semantic re-rank + [RQ1](09-evaluation.md#rq1--does-semantic-matching-beat-keyword-matching) measurement | Ahmed Yousef |
-| AI service client with timeout, retry, fallback | Ziad |
+| Embedding service and seed-time embedding generation | Ahmed Yousef |
+| Persist generated career/skill embeddings in PostgreSQL/pgvector through the .NET data layer | Mohamed Yasser |
+| Model-first recommendation pipeline + [RQ1](09-evaluation.md#rq1-does-the-model-first-recommendation-pipeline-outperform-the-deterministic-baseline) measurement | Ahmed Yousef |
+| AI service client with timeout, retry, and degraded-mode handling | **Ahmed Yousef** (AI behavior) · Ziad (integration) |
 | Degraded-mode UI indicator | Ziad |
 | AI service deployed as a private service | Mohamed Salah |
 
-**Done when:** importance weights come from real postings, the hybrid ranking is measured against the
-baseline, and killing the AI service degrades the system gracefully instead of breaking it.
+**Done when:** importance weights come from real postings, the model-first ranking is measured against the
+deterministic baseline, mandatory constraints are enforced inside FastAPI, and the documented FastAPI
+fallback is available when primary model inference fails.
 
 ### Slice 7 — AI mentor · **W22–W23 · 14–27 Feb**
 
 | Task | Owner |
 |---|---|
-| Sanitised context DTO with a field allow-list | **Ziad** |
-| RAG prompt construction + injection hardening | Ahmed Yousef |
-| LLM provider abstraction ([ADR-0002](adr/0002-llm-provider.md)) | Ziad |
-| Output validation | Ahmed Yousef |
-| Templated fallback for all intents | Ziad |
+| Sanitised Context DTO construction/validation with a field allow-list in FastAPI | **Ahmed Yousef** |
+| RAG prompt construction + injection hardening | **Ahmed Yousef** |
+| LLM provider abstraction (ADR-0002) | **Ahmed Yousef** |
+| Output validation | **Ahmed Yousef** |
+| Templated fallback for all intents | **Ahmed Yousef** |
 | Rate limiting and the quota counter | Mohamed Yasser |
 | Mentor chat UI with citations | Ziad |
 | Mentor grounding evaluation ([RQ4](09-evaluation.md#rq4--is-the-mentor-grounded)) | Ahmed Yousef |
@@ -408,8 +410,8 @@ by someone who did not build it.
 | **Gap engine & scheduler** | **Osama** | Osama | Mohamed Y., Abdelrahman |
 | Seed data curation | Mohamed Yasser | Mohamed Yasser | Mazen, Yousef K., Dr. Hend |
 | Prerequisite DAG | Osama | Osama | Ahmed Y., Dr. Hend |
-| AI extraction & embeddings | Ahmed Yousef | Ahmed Yousef | Ziad |
-| AI mentor | Ziad | Ahmed Yousef | Abdelrahman |
+| AI extraction, embeddings & recommendation service | Ahmed Yousef | Ahmed Yousef | Ziad |
+| AI mentor — AI/backend intelligence | **Ahmed Yousef** | **Ahmed Yousef** | Ziad, Abdelrahman |
 | Evaluation & user study | Ahmed Yousef | Ahmed Yousef | Yousef K., Dr. Hend |
 | Frontend architecture | Ziad | Ziad | Mazen, Yousef K. |
 | Design system & UX | Yousef Khaled | Yousef Khaled | Ziad, Mazen |

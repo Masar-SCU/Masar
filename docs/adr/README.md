@@ -13,7 +13,7 @@ quietly re-litigates it.
 | [0003](0003-job-data-sourcing.md) | Frozen, permitted-source snapshot; no scraping | Accepted | Removes the legal, technical and reproducibility risk from the critical path |
 | [0004](0004-proficiency-scale.md) | 0–5 integer scale, not percentages | Accepted | Removes false precision and makes gap arithmetic meaningful |
 | [0005](0005-zero-budget-hosting.md) | Free-tier hosting with mandatory backups | Accepted | Free tiers sleep, expire and lack backups; design for it |
-| [0006](0006-deterministic-core.md) | Deterministic core, AI as enhancement | Accepted | Resolves the AI contradiction and removes AI from the demo's critical path |
+| [0006](0006-model-based-recommendation.md) | Model-first career recommendation through FastAPI; deterministic logic limited to mandatory constraints and documented fallback | Accepted | Resolves the AI-role contradiction while keeping hard constraints, reliability, and reproducibility under deterministic control |
 
 ## When to write one
 
@@ -49,12 +49,3 @@ Positive, negative, and neutral. The negative section is the one that earns trus
 
 ## Verification
 Dated checklist items with owners, so the decision is confirmed rather than assumed.
-```
-
-## Rules
-
-1. **Never edit an accepted ADR to change its decision.** Write a new one that supersedes it, and mark
-   the old one `Superseded by ADR-NNNN`. The history is the value.
-2. Numbers are permanent. Never reuse or renumber.
-3. Every ADR ends with a **Verification** section. A decision nobody checks is a guess with formatting.
-4. Link ADRs from the documents they affect, so a reader encountering a surprising choice finds the reason immediately.

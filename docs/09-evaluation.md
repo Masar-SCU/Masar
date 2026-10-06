@@ -30,7 +30,7 @@ Concretely, evaluation is what lets the team answer these questions with numbers
 
 | RQ | Question | Method | Success criterion |
 |---|---|---|---|
-| **RQ1** | Does semantic re-ranking improve career recommendation over a deterministic baseline? | Offline, expert-labelled ground truth | NDCG@3 improvement ≥ 0.05 |
+| **RQ1** | Does the model-first recommendation pipeline outperform the deterministic baseline? | Offline, expert-labelled ground truth | NDCG@3 improvement ≥ 0.05 |
 | **RQ2** | How accurately does the NLP pipeline extract skills from job postings? | Offline, manually labelled corpus | Precision ≥ 0.85, recall ≥ 0.75 |
 | **RQ3** | Are the generated roadmaps pedagogically sound? | Expert review | ≥ 80 % of orderings judged correct |
 | **RQ4** | Is the AI mentor grounded in the student's own data? | Manual answer audit | ≥ 90 % of claims traceable, 0 fabricated resources |
@@ -42,7 +42,7 @@ control group of employed graduates, both of which would be impossible in 35 wee
 
 ---
 
-## RQ1 — Does semantic matching beat keyword matching?
+## RQ1: Does the model-first recommendation pipeline outperform the deterministic baseline?
 
 **Owner:** Ahmed Yousef · **When:** Slice 6 (W18–W21)
 
@@ -59,14 +59,15 @@ ambiguous.
 
 ### Conditions compared
 
-| Condition | Method |
-|---|---|
-| **A — Baseline** | Deterministic weighted overlap ([§05 5.4](05-features-mvp.md#54-career-recommendation) stage 1) |
-| **B — Semantic only** | Embedding cosine similarity alone |
-| **C — Hybrid** | `0.70 · baseline + 0.30 · semantic` |
+| Condition | Method | Role |
+|---|---|---|
+| **A — Baseline** | Existing deterministic weighted career ranker | Evaluation benchmark and fallback |
+| **B — Embedding only** | Embedding similarity without reranking | Diagnostic comparison |
+| **C — Model-first** | Embedder + candidate retrieval + reranker | Primary model contribution |
+| **D — Production** | Model-first + mandatory deterministic constraints | Final production pipeline |
 
-Reporting B separately matters: if B alone performs poorly but C still beats A, that is evidence the
-two signals are complementary rather than redundant — a more interesting result than "AI helps".
+Condition C tests the model contribution itself. Condition D verifies the production pipeline and adds
+constraint correctness on top of ranking quality.
 
 ### Metrics
 
@@ -78,23 +79,21 @@ two signals are complementary rather than redundant — a more interesting resul
 ### Reporting format
 
 ```text
-Condition          NDCG@3    P@1     MRR
-A  Baseline         0.__     0.__    0.__
-B  Semantic only    0.__     0.__    0.__
-C  Hybrid           0.__     0.__    0.__
+Condition            NDCG@3    P@1     MRR
+A  Baseline           0.__     0.__    0.__
+B  Embedding only     0.__     0.__    0.__
+C  Model-first        0.__     0.__    0.__
+D  Production         0.__     0.__    0.__
 ```
 
-Also report a weight sweep for the blend (0.5/0.5 through 0.9/0.1), so the chosen 0.70/0.30 is shown
-to be a measured choice rather than a guess.
+Also report **constraint correctness** for D: zero mandatory-constraint violations are required in
+the final production output.
 
 ### If the hypothesis fails
 
-If C does not beat A by the stated margin, **report that honestly and ship the baseline alone.** A
-negative result with a clear method is a legitimate contribution: it says something real about whether
-embeddings add value at this taxonomy scale. Overclaiming here is the fastest way to lose credibility
-in a defence, because it is trivially checkable.
-
----
+If C does not beat A by the stated margin, **report that honestly** and retain A as the documented
+FastAPI fallback. The model-first architecture remains the intended production design, but the evaluation
+result must not be overstated.
 
 ## RQ2 — How accurate is skill extraction?
 

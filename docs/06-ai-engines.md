@@ -1,6 +1,6 @@
 # 06 — AI Engines
 
-**Document owners:** Ahmed Yousef, Ziad Ahmed · **Status:** Baseline
+**Document owner:** Ahmed Yousef · **Status:** Baseline
 
 ---
 
@@ -8,7 +8,8 @@
 
 Resolved from the contradiction in the original documents ([§01](01-project-overview.md#where-ai-sits-precisely)):
 
-> **AI interprets and matches. Deterministic code decides.**
+> **AI provides the primary intelligence for career prediction and semantic matching. Deterministic
+> logic enforces mandatory recommendation constraints and provides a documented fallback.**
 
 Three engines, each with a stated fallback and a measurable success criterion. An AI component
 without a measurable criterion is a demo, not a contribution.
@@ -16,14 +17,14 @@ without a measurable criterion is a demo, not a contribution.
 | Engine | Purpose | Tier | Fallback | Measured by |
 |---|---|---|---|---|
 | **A** — Job-Skill Extraction | Structure unstructured postings | MVP (offline) | Alias dictionary matching | [RQ2](09-evaluation.md#rq2--how-accurate-is-skill-extraction) |
-| **B** — Semantic Matching | Re-rank careers, relate skills | MVP (enhancer) | Deterministic weighted overlap | [RQ1](09-evaluation.md#rq1--does-semantic-matching-beat-keyword-matching) |
+| **B** — Model-First Career Recommendation | Primary career prediction and ranking | MVP | Deterministic baseline inside FastAPI | [RQ1](09-evaluation.md#rq1-does-the-model-first-recommendation-pipeline-outperform-the-deterministic-baseline) |
 | **C** — AI Mentor | Answer grounded questions | Should-have | Templated explanations | [RQ4](09-evaluation.md#rq4--is-the-mentor-grounded) |
 
 **Critical change from the original plan.** The original matrix made Engines A and B
 🔴 MVP-Core — the product would have been undemonstrable without them. Now:
 
 - **Engine A runs offline**, during seeding. If it produces poor output, the taxonomy is corrected by hand and the running system is unaffected. It is on nobody's critical path at demo time.
-- **Engine B is an enhancer.** Career recommendation works without it ([§05 5.4](05-features-mvp.md#54-career-recommendation)).
+- **Engine B is the primary career recommendation engine.** The deterministic baseline remains only as an evaluation benchmark and documented fallback inside FastAPI ([§05 5.4](05-features-mvp.md#54-career-recommendation)).
 - **Engine C is should-have** and never blocks a core flow.
 
 The gap engine and roadmap scheduler — the two MVP-core features — make **zero AI calls**.
@@ -118,11 +119,28 @@ O\*NET/ESCO plus expert judgement ([§04 5.3](04-data-model.md#53-importance-wei
 
 ---
 
-## 3. Engine B — Semantic Matching
+## 3. Engine B — Model-First Career Recommendation
 
-**Owner:** Ahmed Yousef · **Backup:** Ziad · **Runs:** at seed time (catalogue) and per request (profile)
+**Owner:** Ahmed Yousef · **Backup:** Ziad · **Runs:** seed-time preparation plus per request (profile)
 
-### Model choice
+### Pipeline
+
+```mermaid
+flowchart LR
+    P[Student profile + candidate careers] --> E[Embedder]
+    E --> C[Candidate Retrieval]
+    C --> R[Reranker]
+    R --> K[Mandatory Constraints]
+    K --> F[Final Recommendation]
+```
+
+The stages above are components of one internal FastAPI recommendation pipeline. The candidate retrieval
+step operates on precomputed career vectors supplied in the request by .NET; it does not query PostgreSQL.
+Intermediate results are not returned to .NET. FastAPI returns only the final recommendation payload defined by the API contract.
+
+### Embedding model
+
+The existing `all-MiniLM-L6-v2` embedder remains the planned local embedding model:
 
 | Property | `all-MiniLM-L6-v2` | Why it matters here |
 |---|---|---|
@@ -132,7 +150,7 @@ O\*NET/ESCO plus expert judgement ([§04 5.3](04-data-model.md#53-importance-wei
 | Inference | ~10 ms per short text on CPU | Meets [NFR-01](02-requirements.md#nfr-01--performance) |
 | Max sequence | 256 word pieces | Enough for a skill name or career summary; longer text is chunked |
 
-Rejected alternatives, with reasons: hosted embedding APIs (recurring cost and a hard dependency,
+**Rejected alternatives, with reasons:** hosted embedding APIs (recurring cost and a hard dependency,
 against constraint **C1**); larger local models such as `all-mpnet-base-v2` (~110 M parameters — too
 slow on free CPU for a marginal gain at this scale); training our own model (no labelled data, no
 compute, and it is not the project's contribution).
@@ -151,9 +169,11 @@ that is one short text per request.
 
 ### Two uses
 
-**1. Career re-ranking** — see [§05 5.4](05-features-mvp.md#54-career-recommendation).
+**1. Career re-ranking** — the embedding is part of candidate preparation and ranking in the
+model-first recommendation pipeline.
 
-**2. Skill relatedness** — for extraction layer 3 and for suggesting adjacent skills:
+**2. Skill relatedness** — the same embedding capability supports Engine A's semantic extraction
+layer and can support adjacent-skill suggestions:
 
 ```text
 "REST API development"  →  REST API Design  0.91
@@ -162,28 +182,43 @@ that is one short text per request.
                            Backend Dev      0.74
 ```
 
+Career and skill embeddings are computed **once** and persisted by the .NET/data layer. The student profile
+embedding is produced live per request and may be cached according to the service implementation.
+
+### Reranker
+
+The reranker is the primary ranking component after candidate preparation. The exact checkpoint and
+its reference are implementation decisions and must be pinned when selected; this document intentionally
+does not invent a model choice that has not been finalized.
+
+### Mandatory constraints
+
+Mandatory recommendation constraints are deterministic checks executed **inside FastAPI** after model
+ranking and before the final recommendation is returned. This keeps all career-prediction computation
+inside the recommendation service while ensuring hard requirements cannot be violated by the model.
+
 ### Success criterion
 
-Hybrid ranking must beat the baseline on **NDCG@3** against expert-labelled ground truth. If it does
-not, the honest outcome is reported and the baseline ships alone
-([RQ1](09-evaluation.md#rq1--does-semantic-matching-beat-keyword-matching)). A properly measured
-negative result is a legitimate finding, and far better than an unverified claim.
+The model-first pipeline is evaluated against the deterministic baseline on **NDCG@3** and the other
+RQ1 ranking metrics ([RQ1](09-evaluation.md#rq1-does-the-model-first-recommendation-pipeline-outperform-the-deterministic-baseline)).
 
 ### Fallback
 
-Career recommendation degrades to stage 1 only; the API returns `mode: "baseline"` and the UI says
-so. Extraction drops to layers 1, 2 and 4.
-
----
+If primary model inference cannot complete, FastAPI may run the documented deterministic baseline and
+return `mode: "fallback"`. The fallback remains inside FastAPI; the .NET backend does not perform the
+recommendation calculation.
 
 ## 4. Engine C — Context-Aware AI Mentor (RAG)
 
-**Owners:** Ziad Ahmed (integration) + Ahmed Yousef (prompt and retrieval) · **Tier:** Should-have
+**Owner:** Ahmed Yousef · **Tier:** Should-have
 
 ### Purpose
 
 Answer a student's questions using **their own** profile, gaps and roadmap — not generic advice a
-search engine already provides.
+search engine already provides. Ahmed Yousef owns the complete AI side of this engine: the sanitised
+context DTO, RAG/prompt construction, LLM provider abstraction, injection hardening, output validation,
+and AI fallback logic. Mentor UI and .NET request plumbing remain integration/UI responsibilities outside
+the AI engine.
 
 ### 4.1 What is retrieved
 
@@ -201,7 +236,8 @@ corpus, because the relevant context is small, structured, and already in the da
 | Recent completions | last 5 completed items | "SQL 3→4, completed 12 Oct" |
 
 This makes the mentor cheap, fast, and structurally incapable of grounding in another student's
-data — the context is assembled server-side from a single profile ID.
+data — .NET loads the authorized data for one profile, and FastAPI constructs and validates the sanitised
+context without receiving a user ID.
 
 ### 4.2 Prompt structure
 
@@ -317,7 +353,7 @@ free-tier daily allowances, with the counter visible on the admin page and templ
 it. Nothing breaks when the cap is reached; answers simply become templated.
 
 Provider selection and the abstraction that makes it swappable are in
-[ADR-0002](adr/0002-llm-provider.md).
+ADR-0002.
 
 ---
 
@@ -329,7 +365,7 @@ Full request and response shapes are in [§07](07-api-contract.md#10-internal-ai
 |---|---|---|---|
 | `POST /extract-skills` | Text → `(skill, confidence)[]` | Seed pipeline | Yes |
 | `POST /embed` | Text[] → vector[] | Seed pipeline, API | Yes |
-| `POST /match` | Profile text + career ids → similarity[] | API | Yes |
+| `POST /recommend` | Profile + candidate careers + constraints → final recommendations | API | Yes |
 | `POST /mentor` | Question + sanitised context → answer | API | No |
 | `GET /health` | Liveness | Platform | Yes |
 | `GET /ready` | Model loaded and ready | Platform | Yes |
@@ -346,13 +382,13 @@ The complete degradation matrix. Nothing in this table produces an error page.
 
 | Failure | Detection | Behaviour | Student sees |
 |---|---|---|---|
-| AI service down | 20 s timeout, 2 retries | Baseline ranking only | "Computed without semantic matching" |
-| Embedding model fails to load | `/ready` returns 503 | Same as above | Same |
+| Primary model inference fails while FastAPI is available | Recommendation request reaches FastAPI, but the primary model cannot complete | FastAPI runs the deterministic recommendation baseline | "Computed with recommendation fallback" |
+| Embedding model fails to load | `/ready` returns 503 | If FastAPI is available, run the deterministic recommendation baseline; .NET does not reimplement recommendation logic | Same |
 | LLM rate-limited | 429 from provider | Templated mentor answer | A shorter, factual answer |
 | LLM down or timing out | Timeout | Templated mentor answer | Same |
 | Daily AI cap reached | Internal counter | Templated mentor answer | "Detailed answers resume tomorrow" |
-| Extraction quality poor | Evaluation on the labelled set | Disable semantic layer; fall back to taxonomy weights | Nothing — offline concern |
-| Vector index missing | Query error | Sequential cosine scan over 160 rows | Slightly slower, correct results |
+| Extraction quality poor | Evaluation on the labelled set | Correct or disable the affected extraction enhancement; career recommendation uses the available structured inputs | Nothing — offline concern |
+| Vector retrieval index unavailable | Index initialization/query failure | Sequential cosine scan over the vectors supplied to FastAPI | Slightly slower, correct results |
 
 Two properties are worth stating explicitly, because they are the whole point of this design:
 

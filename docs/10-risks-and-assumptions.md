@@ -14,12 +14,13 @@ mitigation that is actively worked, not merely written down.
 
 ### R-01 · A single person owns all three AI engines · **P4 × I5 = 20**
 
-Ahmed Yousef owns extraction, embeddings and evaluation. In the original plan this was worse — no
-backup was named anywhere. An exam week, an illness, or a lost laptop stalls three deliverables.
+Ahmed Yousef owns extraction, embeddings, recommendation and the AI Mentor. In the original plan this
+was worse — no backup was named anywhere. An exam week, an illness, or a lost laptop stalls several
+AI deliverables.
 
 - **Trigger:** any AI task slips more than 5 days, or Ahmed is unreachable for 3 days.
 - **Owner:** Abdelrahman.
-- **Mitigation:** Ziad is a named backup and pairs on the AI service client from Slice 6. All model code lives in the repository with a written README, never only on one machine. Every engine has a non-AI fallback, so an unfinished engine degrades the product rather than blocking it.
+- **Mitigation:** Ziad remains a named backup for AI integration/support work and pairs on the AI service client from Slice 6. All model code lives in the repository with a written README, never only on one machine. The career recommendation pipeline, including its deterministic fallback, runs inside FastAPI, so the backend does not need to reimplement prediction when the primary model is unavailable.
 - **Residual:** evaluation quality would suffer most, since it is the hardest part to hand over.
 
 ### R-02 · The two core engines are owned by one person · **P3 × I5 = 15**
@@ -38,7 +39,7 @@ scraping in their terms.
 
 - **Trigger:** fewer than 300 postings collected by the end of W17.
 - **Owner:** Ahmed Yousef.
-- **Mitigation:** [ADR-0003](adr/0003-job-data-sourcing.md) prefers permitted sources — public APIs, openly licensed datasets, and manual collection with per-source terms recorded. **The fallback is already designed:** importance weights come from O\*NET (CC BY 4.0) plus ESCO plus expert judgement, and the blend in [§04 5.3](04-data-model.md#53-importance-weights) simply reweights. Regional weighting is dropped and reported as future work.
+- **Mitigation:** ADR-0003 prefers permitted sources — public APIs, openly licensed datasets, and manual collection with per-source terms recorded. **The fallback is already designed:** importance weights come from O\*NET (CC BY 4.0) plus ESCO plus expert judgement, and the blend in [§04 5.3](04-data-model.md#53-importance-weights) simply reweights. **If the corpus is insufficient for the intended regional analysis, regional weighting is dropped only in that fallback scenario and reported as future work.**
 - **Note:** this is precisely why large-scale scraping is out of scope. The risk is contained by design rather than mitigated after the fact.
 
 ### R-04 · Free hosting tiers change, expire, or throttle · **P3 × I4 = 12**
@@ -49,13 +50,13 @@ backups; free instances may be restarted at any time.
 
 - **Trigger:** any expiry notice, or a staging outage lasting more than 24 hours.
 - **Owner:** Mohamed Salah.
-- **Mitigation:** [ADR-0005](adr/0005-zero-budget-hosting.md) prefers providers with no database expiry clause. **A weekly `pg_dump` to a private backup location is non-negotiable** — a free tier with no backups plus an expiry clause is exactly how a project loses its data in April. Demo mode ([§03 10](03-architecture.md#10-demo-mode)) means the defence never depends on any provider. GitHub Student Developer Pack credits are checked as a supplementary option.
+- **Mitigation:** ADR-0005 prefers providers with no database expiry clause. **A weekly `pg_dump` to a private backup location is non-negotiable** — a free tier with no backups plus an expiry clause is exactly how a project loses its data in April. Demo mode ([§03 10](03-architecture.md#10-demo-mode)) means the defence never depends on any provider. GitHub Student Developer Pack credits are checked as a supplementary option.
 
 ### R-05 · Free LLM tier quota or availability changes · **P3 × I3 = 9**
 
 - **Trigger:** sustained 429 responses, or a provider policy change.
-- **Owner:** Ziad.
-- **Mitigation:** the mentor is 🔵 Should-have, not MVP. A provider-agnostic interface ([ADR-0002](adr/0002-llm-provider.md)) allows a swap in hours. Templated fallback covers every question intent. Embeddings run locally, so **exactly one feature** is exposed to this risk.
+- **Owner:** Ahmed Yousef.
+- **Mitigation:** the mentor is 🔵 Should-have, not MVP. A provider-agnostic interface (ADR-0002) allows a swap in hours. Templated fallback covers every question intent. Embeddings run locally, so **exactly one feature** is exposed to this risk.
 
 ### R-06 · Curating 160 skills, 350 resources and 60 projects takes longer than planned · **P4 × I3 = 12**
 
@@ -144,7 +145,7 @@ Ordered by exposure. The top six are the ones to actually watch.
 | R-06 | Data curation overruns | 4 | 3 | **12** | Mohamed Yasser |
 | R-11 | Scope creep | 4 | 3 | **12** | Abdelrahman |
 | R-10 | Late integration failure | 2 | 5 | 10 | Abdelrahman |
-| R-05 | LLM tier changes | 3 | 3 | 9 | Ziad |
+| R-05 | LLM tier changes | 3 | 3 | 9 | Ahmed Yousef |
 | R-07 | Too few study participants | 3 | 3 | 9 | Yousef Khaled |
 | R-08 | AI service publicly reachable | 2 | 4 | 8 | Mohamed Salah |
 | R-12 | Exam capacity loss | 4 | 2 | 8 | Abdelrahman |
@@ -167,8 +168,8 @@ assumption nobody re-checks is just a hope.
 | # | Assumption | Owner | Verify by | If false |
 |---|---|---|---|---|
 | A1 | Department course list is obtainable | Abdelrahman | W4 | Map ~15 core courses only |
-| A2 | A free LLM tier remains available | Ziad | W20 | Templated mentor only |
-| A3 | ≥ 500 postings collectible under acceptable terms | Ahmed Yousef | W17 | Taxonomy-only weights; drop regional weighting |
+| A2 | A free LLM tier remains available | Ahmed Yousef | W20 | Templated mentor only |
+| A3 | ≥ 500 postings collectible under acceptable terms | Ahmed Yousef | W17 | Taxonomy-only weights; drop regional weighting only in the insufficient-corpus fallback and report it as future work |
 | A4 | ≥ 15 students available for the study | Yousef Khaled | W16 | Qualitative study, limitation stated |
 | A5 | ~10 productive hours/week per member | Abdelrahman | W6, then monthly | Cut in contingency order |
 | A6 | Free hosting remains sufficient | Mohamed Salah | W2, then monthly | Local demo mode |
@@ -187,12 +188,12 @@ Decisions with lasting consequences get an ADR. These are already taken:
 
 | ADR | Decision | Status |
 |---|---|---|
-| [0001](adr/0001-database-and-vector-store.md) | PostgreSQL + pgvector as the single store | Accepted |
-| [0002](adr/0002-llm-provider.md) | Provider-abstracted free-tier LLM | Accepted |
-| [0003](adr/0003-job-data-sourcing.md) | Frozen, permitted-source snapshot; no scraping | Accepted |
-| [0004](adr/0004-proficiency-scale.md) | 0–5 integer scale, not percentages | Accepted |
-| [0005](adr/0005-zero-budget-hosting.md) | Free-tier hosting with mandatory backups | Accepted |
-| [0006](adr/0006-deterministic-core.md) | Deterministic core, AI as enhancement | Accepted |
+| 0001 | PostgreSQL + pgvector as the single store | Accepted |
+| 0002 | Provider-abstracted free-tier LLM | Accepted |
+| 0003 | Frozen, permitted-source snapshot; no scraping | Accepted |
+| 0004 | 0–5 integer scale, not percentages | Accepted |
+| 0005 | Free-tier hosting with mandatory backups | Accepted |
+| [0006](adr/0006-model-based-recommendation.md) | Model-based career recommendation through FastAPI; deterministic logic limited to mandatory constraints and documented fallback | Accepted |
 
 Changing any of these requires a new ADR that supersedes the old one. Do not silently contradict an
 accepted decision in code — that is how a team ends up with two conflicting architectures and nobody
