@@ -16,7 +16,7 @@ importantly:
 
 | The `.tex` says | Current position |
 |---|---|
-| "The **AI is an enabling component**, not the product itself" | Resolved precisely in [ADR-0006](../docs/adr/0006-deterministic-core.md): AI interprets and matches; deterministic code decides |
+| "The **AI is an enabling component**, not the product itself" | Superseded by [ADR-0006](../docs/adr/0006-model-based-recommendation.md): AI provides the primary intelligence for career prediction and ranking; deterministic logic enforces mandatory constraints and provides the documented baseline/fallback |
 | AI Mentor, NLP Extraction and Semantic Matching are all 🔵 Should-Have | Extraction and semantic matching are 🟡 MVP (offline / enhancer); the mentor is 🔵 Should-have |
 | Only 2 features are MVP-Core, with the AI tiers arranged differently | Matches the current tiering by coincidence, but the reasoning and the fallbacks are new |
 | Skill levels as percentages | 0–5 integer scale — [ADR-0004](../docs/adr/0004-proficiency-scale.md) |
