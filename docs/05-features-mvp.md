@@ -16,7 +16,7 @@ feature nobody can implement twice the same way.
 | 5.1 | [Student Profile](#51-student-profile) | MVP | Mohamed Y. · Mazen |
 | 5.2 | [Skill Calibration Quiz](#52-skill-calibration-quiz) | MVP | Mohamed Y. · Mazen |
 | 5.3 | [Career Assessment](#53-career-assessment) | MVP | Mohamed Y. · Mazen |
-| 5.4 | [Career Recommendation](#54-career-recommendation) | MVP | Osama · Ahmed Y. · Ziad |
+| 5.4 | [Career Recommendation](#54-career-recommendation) | MVP | **Ahmed Y. (AI)** · Ziad (integration) |
 | 5.5 | [**Skill-Gap Analysis**](#55-skill-gap-analysis--core) | **MVP — Core** | Osama · Ziad |
 | 5.6 | [**Personalized Roadmap**](#56-personalized-roadmap--core) | **MVP — Core** | Osama · Ziad |
 | 5.7 | [Career Readiness Score](#57-career-readiness-score) | MVP | Osama · Mazen |
@@ -181,22 +181,35 @@ stored, so re-taking the assessment months later produces a comparable result.
 ## 5.4 Career Recommendation
 
 **Purpose:** rank the 6 careers for this specific student, with reasons.
-**Requirements:** FR-10, FR-11 · **Story:** US-03 · **Flow:** [§03 7.1](03-architecture.md#71-career-recommendation--hybrid-with-a-guaranteed-answer)
+**Requirements:** FR-10, FR-11 · **Story:** US-03 · **Flow:** [§03 7.1](03-architecture.md#71-career-recommendation--model-first-with-a-fastapi-fallback)
 
-### Two-stage design
+### Model-first design
 
-The original specification listed "Semantic Career Matching (Embeddings)" as **MVP-Core**, meaning
-the product was undemonstrable without a working embedding model. That is an unnecessary single
-point of failure for the least predictable component. Restructured:
+Career recommendation is a model-first pipeline. The primary prediction is produced by the AI
+recommendation service, while deterministic logic is limited to mandatory constraints and the
+documented fallback path. The .NET backend does not compute the recommendation score.
 
-| Stage | Method | Tier | If it fails |
+| Stage | Method | Responsibility | Failure handling |
 |---|---|---|---|
-| 1 | Deterministic weighted overlap | **MVP-Core** | Cannot fail — pure arithmetic on local data |
-| 2 | Embedding re-rank | **MVP** | Skipped; stage 1 result is served, UI marks degraded mode |
+| 1 | Embedding | Represent the student profile and career data semantically | FastAPI handles inference failure |
+| 2 | Candidate retrieval | Retrieve against the precomputed career vectors supplied by .NET | Uses data supplied by .NET; FastAPI does not access PostgreSQL |
+| 3 | Reranker | Produce the primary career relevance/ranking signal | FastAPI may use the documented fallback if inference fails |
+| 4 | Mandatory constraints | Enforce hard recommendation conditions | Must not be violated |
+| 5 | Final recommendation | Return the final ranked careers and metadata | Returned to .NET |
 
-### Stage 1 — baseline score
+### Primary model score
 
-For student `u` and career `c`:
+The primary `matchScore` is model-driven. The implementation may use embedding representations and
+a dedicated reranker; the exact model/checkpoint is recorded separately from this architecture document.
+The final score is not defined as a fixed weighted blend with the deterministic baseline.
+
+### Deterministic baseline
+
+The deterministic career-ranking baseline is implemented inside the FastAPI recommendation service
+and is retained for two purposes: RQ1 evaluation and the documented fallback when the primary model
+pipeline cannot complete. It is not the normal production predictor.
+
+For student `u` and career `c`, the baseline is:
 
 ```text
 skill_fit(u,c) = Σ_{s ∈ req(c)}  importance(s,c) · min(level(u,s), required(s,c)) / required(s,c)
@@ -210,44 +223,29 @@ coverage(u,c)   = |{ s ∈ req(c) : level(u,s) ≥ 1 }| / |req(c)|
 baseline(u,c)   = 100 · ( 0.55 · skill_fit + 0.30 · interest_fit + 0.15 · coverage )
 ```
 
-- `skill_fit` is capped per skill, so exceeding a requirement never inflates a score — otherwise one very strong skill would mask five missing ones.
-- `coverage` rewards breadth: a student who has touched most of a career's skills is a better fit than one who is expert in two and blank on ten.
+The baseline score is computed entirely from the recommendation inputs supplied to FastAPI. Its
+weights are part of the recommendation-service implementation and are not used to define the
+primary model score.
+
+- `skill_fit` is capped per skill, so exceeding a requirement never inflates the score.
+- `coverage` rewards breadth across the required skill set.
 - OR-groups contribute only their representative member ([§04 5.1](04-data-model.md#51-how-or-groups-are-evaluated)).
-- All weights live in `ScoringConfig`.
 
-### Stage 2 — semantic re-rank
+The deterministic career-ranking baseline is retained for RQ1 comparison and as the documented
+FastAPI fallback when the primary model pipeline cannot complete.
 
-```text
-semantic(u,c) = cosine( embed(profile_text(u)), embed(career_text(c)) )   -- career embeddings precomputed
-final(u,c)    = 100 · ( 0.70 · baseline/100 + 0.30 · semantic )
-```
+### What crosses the service boundary
 
-`profile_text(u)` is a generated sentence — skill names weighted by level, plus interests and goal
-text — never raw personal data. Whether stage 2 helps at all is measured, not assumed:
-[RQ1](09-evaluation.md#rq1--does-semantic-matching-beat-keyword-matching).
-
-### Worked example
-
-Mariam: Python 3, Java 2, SQL 2, HTML/CSS 3, JavaScript 2, Git 3, Linux 1; interests analytical + visual.
-
-| Rank | Career | skill_fit | interest_fit | coverage | baseline | semantic | **final** |
-|---:|---|---:|---:|---:|---:|---:|---:|
-| 1 | Frontend / Full-Stack | 0.58 | 0.81 | 0.72 | **67** | 0.74 | **69** |
-| 2 | Backend Development | 0.54 | 0.62 | 0.68 | 58 | 0.71 | 62 |
-| 3 | Data Engineering / DS | 0.46 | 0.78 | 0.55 | 56 | 0.69 | 60 |
-| 4 | AI / ML | 0.38 | 0.80 | 0.48 | 51 | 0.72 | 57 |
-| 5 | DevOps / Cloud | 0.29 | 0.41 | 0.40 | 36 | 0.52 | 41 |
-| 6 | Cybersecurity | 0.24 | 0.38 | 0.35 | 32 | 0.44 | 36 |
-
-The UI shows the three contributing terms per career, so the ranking is inspectable rather than a
-number the student must take on faith.
+FastAPI receives only the recommendation inputs required by the computation, such as the student's
+relevant profile/skill data and the candidate career data, including precomputed career embeddings where needed
+for retrieval. `.NET` loads those persisted vectors from PostgreSQL before the request. FastAPI does not access
+PostgreSQL directly and does not return every intermediate representation. Embeddings, retrieved candidates and
+reranker intermediate state remain internal to FastAPI unless a field is explicitly included in the API contract.
 
 ### Acceptance criteria
 
-US-03 AC1–AC5. Plus: the response includes `mode: "hybrid" | "baseline"`, and stage 1 alone
-completes in ≤ 500 ms ([NFR-01](02-requirements.md#nfr-01--performance)).
-
----
+US-03 AC1–AC5. Plus: the public response includes `mode: "model-first" | "fallback"`, and the
+primary recommendation computation is performed by the internal FastAPI service.
 
 ## 5.5 Skill-Gap Analysis — CORE
 
