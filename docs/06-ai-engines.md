@@ -353,7 +353,7 @@ free-tier daily allowances, with the counter visible on the admin page and templ
 it. Nothing breaks when the cap is reached; answers simply become templated.
 
 Provider selection and the abstraction that makes it swappable are in
-ADR-0002.
+[ADR-0002](adr/0002-llm-provider.md).
 
 ---
 

@@ -461,7 +461,7 @@ JOB_POSTING_SKILL
 |---|---|---|---|
 | **O\*NET Database** (U.S. DoL / ETA) | Occupation→skill and Technology Skills mappings, as taxonomy seed | **CC BY 4.0** | Attribution in the app footer and in the report |
 | **ESCO** (European Commission) | Occupation and skill/competence concepts, multilingual labels, alias seed | Free download in CSV/RDF/JSON-LD; reuse under the Commission's terms | Attribution, with the ESCO version recorded |
-| **Job postings** | A frozen snapshot for frequency weighting | Per-source terms — see ADR-0003 | Store raw text only where terms allow; otherwise store extracted skills plus a link |
+| **Job postings** | A frozen snapshot for frequency weighting | Per-source terms — see [ADR-0003](adr/0003-job-data-sourcing.md) | Store raw text only where terms allow; otherwise store extracted skills plus a link |
 | **Curated resources** | Titles and URLs only | Not applicable — links only | No content copied |
 | **Department course catalogue** | Codes, titles, descriptions | Institutional, used with the supervisor's approval | Acknowledged in the report |
 | **`all-MiniLM-L6-v2`** | Sentence embeddings | **Apache-2.0** | Attribution; permits research and commercial use |
@@ -539,7 +539,7 @@ Knowing the real size prevents both premature optimisation and unpleasant surpri
 | `student_skill` | ≤ 15,000 | ~30 per student |
 
 Total well under 100 MB — comfortably inside every free Postgres tier, including the 1 GB caps
-noted in ADR-0005.
+noted in [ADR-0005](adr/0005-zero-budget-hosting.md).
 
 ---
 

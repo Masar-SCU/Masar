@@ -13,13 +13,13 @@
 | Charts | **Recharts** | Needed for the readiness trend and the cohort heatmap | Mazen |
 | Backend | **ASP.NET Core 10 Web API (C#)** | Team's existing skill; active LTS release | Mohamed Y., Osama |
 | ORM | **EF Core 10 + Npgsql** | Migrations, plus `Pgvector.EntityFrameworkCore` for vector columns | Mohamed Y. |
-| Database | **PostgreSQL 16 + pgvector** | One store for both relational and vector data — see ADR-0001 | Mohamed Y. |
+| Database | **PostgreSQL 16 + pgvector** | One store for both relational and vector data — see [ADR-0001](adr/0001-database-and-vector-store.md) | Mohamed Y. |
 | AI service | **Python 3.12 + FastAPI** | The NLP/embedding ecosystem is Python in practice | Ahmed Y. |
 | Embeddings | **sentence-transformers `all-MiniLM-L6-v2`** — 384 dimensions, ~23 M parameters, Apache-2.0, CPU-only | Small enough for a free CPU tier, and the licence permits this use | Ahmed Y. |
-| LLM | **Free-tier hosted API**, provider-abstracted — see ADR-0002 | $0 budget; the abstraction lets the provider be swapped without touching features | **Ahmed Y.** |
+| LLM | **Free-tier hosted API**, provider-abstracted — see [ADR-0002](adr/0002-llm-provider.md) | $0 budget; the abstraction lets the provider be swapped without touching features | **Ahmed Y.** |
 | Containers | **Docker + docker compose** | One-command local setup ([NFR-14](02-requirements.md#nfr-14--portability)) | Mohamed Salah |
 | CI/CD | **GitHub Actions** | Free for public repositories | Mohamed Salah |
-| Hosting | Free tiers — see ADR-0005 | $0 budget | Mohamed Salah |
+| Hosting | Free tiers — see [ADR-0005](adr/0005-zero-budget-hosting.md) | $0 budget | Mohamed Salah |
 
 > **Rule:** no dependency is added without a named reason and a pinned version. `latest` is banned
 > in Dockerfiles, and lockfiles are committed.
@@ -467,7 +467,7 @@ Named so nobody "helpfully" adds them at week 20.
 | GraphQL | REST plus a typed client is enough | OpenAPI-generated TypeScript client |
 | WebSockets / live updates | No collaborative or real-time feature | Request/response |
 | Event sourcing / CQRS | Would add weeks of ceremony for no gain | Straight CRUD plus pure domain calculators |
-| Separate vector database | pgvector covers the scale — ADR-0001 | pgvector in the same Postgres instance |
+| Separate vector database | pgvector covers the scale — [ADR-0001](adr/0001-database-and-vector-store.md) | pgvector in the same Postgres instance |
 
 ---
 

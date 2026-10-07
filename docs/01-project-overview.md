@@ -72,13 +72,13 @@ scope until nothing is finished.
 - **Computer Science students** at Suez Canal University as the primary audience
 - **English** UI, with Arabic-ready infrastructure ([NFR-13](02-requirements.md#nfr-13--internationalisation-readiness))
 - A **web application** — responsive, usable on a phone browser
-- A **frozen, documented snapshot** of job-posting data, not live scraping (ADR-0003)
+- A **frozen, documented snapshot** of job-posting data, not live scraping ([ADR-0003](adr/0003-job-data-sourcing.md))
 
 ### Explicitly out of scope
 
 | Not doing | Why |
 |---|---|
-| Live job scraping at scale | Legal grey area, unstable, and would sit on the critical path. ADR-0003 |
+| Live job scraping at scale | Legal grey area, unstable, and would sit on the critical path. [ADR-0003](adr/0003-job-data-sourcing.md) |
 | Real job matching / applications | Requires employer relationships we do not have |
 | Non-technology careers | The skill taxonomy would not transfer |
 | Native mobile apps | A responsive web app covers the need at a fraction of the cost |
