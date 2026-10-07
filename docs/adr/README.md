@@ -49,3 +49,12 @@ Positive, negative, and neutral. The negative section is the one that earns trus
 
 ## Verification
 Dated checklist items with owners, so the decision is confirmed rather than assumed.
+```
+
+## Rules
+
+1. **Never edit an accepted ADR to change its decision.** Write a new one that supersedes it, and mark
+   the old one `Superseded by ADR-NNNN`. The history is the value.
+2. Numbers are permanent. Never reuse or renumber.
+3. Every ADR ends with a **Verification** section. A decision nobody checks is a guess with formatting.
+4. Link ADRs from the documents they affect, so a reader encountering a surprising choice finds the reason immediately.

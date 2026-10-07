@@ -46,9 +46,7 @@ Available: <https://github.com/pgvector/pgvector>
 **[7]** pgvector contributors, *pgvector-dotnet*.
 Available: <https://github.com/pgvector/pgvector-dotnet>
 — MIT-licensed. Supports Npgsql, Dapper and **EF Core** via `Pgvector.EntityFrameworkCore`. The basis
-for ADR-0001.
-
-> **Bundle note:** ADR-0001 through ADR-0005 are repository-level decisions referenced by this documentation set but are not included in the supplied 13-file documentation bundle. The references are therefore kept as plain ADR identifiers rather than broken relative links.
+for [ADR-0001](adr/0001-database-and-vector-store.md).
 
 **[8]** Y. A. Malkov and D. A. Yashunin, "Efficient and robust approximate nearest neighbor search
 using Hierarchical Navigable Small World graphs," *IEEE TPAMI*, 2020.

@@ -241,7 +241,7 @@ fallback is available when primary model inference fails.
 |---|---|
 | Sanitised Context DTO construction/validation with a field allow-list in FastAPI | **Ahmed Yousef** |
 | RAG prompt construction + injection hardening | **Ahmed Yousef** |
-| LLM provider abstraction (ADR-0002) | **Ahmed Yousef** |
+| LLM provider abstraction ([ADR-0002](adr/0002-llm-provider.md)) | **Ahmed Yousef** |
 | Output validation | **Ahmed Yousef** |
 | Templated fallback for all intents | **Ahmed Yousef** |
 | Rate limiting and the quota counter | Mohamed Yasser |

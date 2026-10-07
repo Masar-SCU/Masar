@@ -242,6 +242,26 @@ for retrieval. `.NET` loads those persisted vectors from PostgreSQL before the r
 PostgreSQL directly and does not return every intermediate representation. Embeddings, retrieved candidates and
 reranker intermediate state remain internal to FastAPI unless a field is explicitly included in the API contract.
 
+### Worked reference example
+
+Mariam: Python 3, Java 2, SQL 2, HTML/CSS 3, JavaScript 2, Git 3, Linux 1; interests analytical + visual.
+
+| Rank | Career | skill\_fit | interest\_fit | coverage | baseline | model | **final** |
+|---:|---|---:|---:|---:|---:|---:|---:|
+| 1 | Frontend / Full-Stack | 0.58 | 0.81 | 0.72 | 67 | 0.74 | **69** |
+| 2 | Backend Development | 0.54 | 0.62 | 0.68 | 58 | 0.71 | 62 |
+| 3 | Data Engineering / DS | 0.46 | 0.78 | 0.55 | 56 | 0.69 | 60 |
+| 4 | AI / ML | 0.38 | 0.80 | 0.48 | 51 | 0.72 | 57 |
+| 5 | DevOps / Cloud | 0.29 | 0.41 | 0.40 | 36 | 0.52 | 41 |
+| 6 | Cybersecurity | 0.24 | 0.38 | 0.35 | 32 | 0.44 | 36 |
+
+- **baseline** is the deterministic score (fallback path, kept for RQ1 comparison).
+- **model** is the primary model-driven score produced by the FastAPI recommendation service.
+- **final** is the score returned to the student; in `mode: "model-first"` it equals the model output,
+  in `mode: "fallback"` it equals the baseline.
+- The UI renders the three contributing terms (`skill_fit`, `interest_fit`, `coverage`) per career
+  as reason badges, so the ranking is inspectable rather than a number the student must take on faith.
+
 ### Acceptance criteria
 
 US-03 AC1–AC5. Plus: the public response includes `mode: "model-first" | "fallback"`, and the

@@ -39,7 +39,7 @@ scraping in their terms.
 
 - **Trigger:** fewer than 300 postings collected by the end of W17.
 - **Owner:** Ahmed Yousef.
-- **Mitigation:** ADR-0003 prefers permitted sources — public APIs, openly licensed datasets, and manual collection with per-source terms recorded. **The fallback is already designed:** importance weights come from O\*NET (CC BY 4.0) plus ESCO plus expert judgement, and the blend in [§04 5.3](04-data-model.md#53-importance-weights) simply reweights. **If the corpus is insufficient for the intended regional analysis, regional weighting is dropped only in that fallback scenario and reported as future work.**
+- **Mitigation:** [ADR-0003](adr/0003-job-data-sourcing.md) prefers permitted sources — public APIs, openly licensed datasets, and manual collection with per-source terms recorded. **The fallback is already designed:** importance weights come from O\*NET (CC BY 4.0) plus ESCO plus expert judgement, and the blend in [§04 5.3](04-data-model.md#53-importance-weights) simply reweights. **If the corpus is insufficient for the intended regional analysis, regional weighting is dropped only in that fallback scenario and reported as future work.**
 - **Note:** this is precisely why large-scale scraping is out of scope. The risk is contained by design rather than mitigated after the fact.
 
 ### R-04 · Free hosting tiers change, expire, or throttle · **P3 × I4 = 12**
@@ -50,13 +50,13 @@ backups; free instances may be restarted at any time.
 
 - **Trigger:** any expiry notice, or a staging outage lasting more than 24 hours.
 - **Owner:** Mohamed Salah.
-- **Mitigation:** ADR-0005 prefers providers with no database expiry clause. **A weekly `pg_dump` to a private backup location is non-negotiable** — a free tier with no backups plus an expiry clause is exactly how a project loses its data in April. Demo mode ([§03 10](03-architecture.md#10-demo-mode)) means the defence never depends on any provider. GitHub Student Developer Pack credits are checked as a supplementary option.
+- **Mitigation:** [ADR-0005](adr/0005-zero-budget-hosting.md) prefers providers with no database expiry clause. **A weekly `pg_dump` to a private backup location is non-negotiable** — a free tier with no backups plus an expiry clause is exactly how a project loses its data in April. Demo mode ([§03 10](03-architecture.md#10-demo-mode)) means the defence never depends on any provider. GitHub Student Developer Pack credits are checked as a supplementary option.
 
 ### R-05 · Free LLM tier quota or availability changes · **P3 × I3 = 9**
 
 - **Trigger:** sustained 429 responses, or a provider policy change.
 - **Owner:** Ahmed Yousef.
-- **Mitigation:** the mentor is 🔵 Should-have, not MVP. A provider-agnostic interface (ADR-0002) allows a swap in hours. Templated fallback covers every question intent. Embeddings run locally, so **exactly one feature** is exposed to this risk.
+- **Mitigation:** the mentor is 🔵 Should-have, not MVP. A provider-agnostic interface ([ADR-0002](adr/0002-llm-provider.md)) allows a swap in hours. Templated fallback covers every question intent. Embeddings run locally, so **exactly one feature** is exposed to this risk.
 
 ### R-06 · Curating 160 skills, 350 resources and 60 projects takes longer than planned · **P4 × I3 = 12**
 
@@ -188,11 +188,11 @@ Decisions with lasting consequences get an ADR. These are already taken:
 
 | ADR | Decision | Status |
 |---|---|---|
-| 0001 | PostgreSQL + pgvector as the single store | Accepted |
-| 0002 | Provider-abstracted free-tier LLM | Accepted |
-| 0003 | Frozen, permitted-source snapshot; no scraping | Accepted |
-| 0004 | 0–5 integer scale, not percentages | Accepted |
-| 0005 | Free-tier hosting with mandatory backups | Accepted |
+| [0001](adr/0001-database-and-vector-store.md) | PostgreSQL + pgvector as the single store | Accepted |
+| [0002](adr/0002-llm-provider.md) | Provider-abstracted free-tier LLM | Accepted |
+| [0003](adr/0003-job-data-sourcing.md) | Frozen, permitted-source snapshot; no scraping | Accepted |
+| [0004](adr/0004-proficiency-scale.md) | 0–5 integer scale, not percentages | Accepted |
+| [0005](adr/0005-zero-budget-hosting.md) | Free-tier hosting with mandatory backups | Accepted |
 | [0006](adr/0006-model-based-recommendation.md) | Model-based career recommendation through FastAPI; deterministic logic limited to mandatory constraints and documented fallback | Accepted |
 
 Changing any of these requires a new ADR that supersedes the old one. Do not silently contradict an

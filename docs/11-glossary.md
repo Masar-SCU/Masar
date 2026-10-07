@@ -12,7 +12,7 @@ with `skillGap`, `gapValue` and `deficit` meaning the same thing in three files.
 | **Skill** | A single learnable technical or professional capability with a canonical name. | competency, ability, tech |
 | **Canonical name** | The one display name for a skill. "PostgreSQL", never "Postgres". | title, label |
 | **Alias** | An alternative string that maps to a canonical skill. Used by extraction and search. | synonym, tag |
-| **Proficiency level** | Integer 0–5 with a written definition. See ADR-0004. | percentage, score, rating |
+| **Proficiency level** | Integer 0–5 with a written definition. See [ADR-0004](adr/0004-proficiency-scale.md). | percentage, score, rating |
 | **Self level** | The level a student claims. | user level |
 | **Calibrated level** | The level a quiz measured. Overrides the self level. | verified level, tested level |
 | **Effective level** | `COALESCE(calibrated, self)`. **The only level any calculation reads.** | current level in code |
@@ -88,7 +88,7 @@ Cite these in commit messages and test names: `feat(gap): implement severity cla
 | Avoid | Because | Use |
 |---|---|---|
 | "AI-powered" as a description of the product | The core is deterministic. The phrase overclaims and invites a question we would then have to walk back. | "AI-assisted" for the mentor; name the specific engine elsewhere |
-| Percentages for skill levels | Implies precision self-assessment cannot deliver. ADR-0004 | Levels 0–5 |
+| Percentages for skill levels | Implies precision self-assessment cannot deliver. [ADR-0004](adr/0004-proficiency-scale.md) | Levels 0–5 |
 | "Machine learning" for the gap engine | It is arithmetic. Calling it ML is inaccurate and would not survive one follow-up question. | "Weighted scoring", "deterministic calculation" |
 | "Job matching" | Out of scope; we match careers, not vacancies. | "Career matching" |
 | "Recommendation engine" for the roadmap | It is a scheduler over a DAG, not a recommender. | "Roadmap scheduler" |
