@@ -56,7 +56,7 @@ flowchart TD
         direction LR
         A1["1. Personality & Work Preferences<br/><i>Likert assessment</i>"] --> A2["2. Skill Identification<br/><i>coursework + self-rating</i>"]
         A2 --> A3["3. Targeted Skill Calibration<br/><i>focused diagnostic quizzes</i>"]
-        A3 --> A4["4. Career Fit & Target Selection<br/><i>hybrid recommendation</i>"]
+        A3 --> A4["4. Career Fit & Target Selection<br/><i>model-first recommendation</i>"]
         A4 --> A5["5. Roadmap Generation<br/><i>prereq DAG + weekly budget</i>"]
     end
 
