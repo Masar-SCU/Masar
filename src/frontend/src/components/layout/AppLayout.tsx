@@ -14,7 +14,6 @@ import {
 export const AppLayout: React.FC = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const handleLogout = () => {
     localStorage.removeItem('masar_token');
     navigate('/login');
