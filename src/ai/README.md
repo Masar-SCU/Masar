@@ -7,7 +7,7 @@ This initial scaffold provides a minimal FastAPI application to support local de
 ## Requirements
 
 * Python 3.12 or later
-* Docker Desktop (for containerized execution)
+* Docker (for containerized execution)
 
 ## Project Structure
 
@@ -34,10 +34,22 @@ python -m venv .venv
 
 ### 2. Activate the virtual environment
 
-Windows Command Prompt:
+**Windows Command Prompt:**
 
 ```cmd
 .venv\Scripts\activate
+```
+
+**Windows PowerShell:**
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+**Linux and macOS (Bash/Zsh):**
+
+```bash
+source .venv/bin/activate
 ```
 
 ### 3. Install dependencies
