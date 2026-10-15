@@ -11,3 +11,11 @@ node_modules/
 # Local scratch
 /tmp/
 *.log
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
