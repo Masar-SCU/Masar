@@ -1,33 +1,37 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppLayout } from './components/layout/AppLayout';
-
-// Placeholder Pages for Slice 0
-function DashboardPage() {
-  return (
-    <div>
-      <h2 className="text-2xl font-bold text-slate-800 mb-2">Welcome to Masar</h2>
-      <p className="text-slate-600">Your career guidance journey begins here. Complete your onboarding to unlock your gap analysis.</p>
-    </div>
-  );
-}
+import { DesignSystemShowcase } from './components/DesignSystemShowcase';
+import { Input, Button } from './components/ui';
 
 function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100">
-      <div className="bg-white p-8 rounded-xl shadow-sm border border-slate-200 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center">Sign in to Masar</h2>
-        <form className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">University Email</label>
-            <input type="email" placeholder="student@suez.edu.eg" className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-500 outline-none" />
+    <div className="min-h-screen flex items-center justify-center bg-neutral-background px-4">
+      <div className="bg-neutral-surface p-8 rounded-lg shadow-sm border border-neutral-border w-full max-w-md space-y-6">
+        <div className="text-center space-y-1">
+          <div className="w-10 h-10 mx-auto rounded-lg bg-brand-600 text-white flex items-center justify-center font-bold text-xl mb-3">
+            M
           </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
-            <input type="password" placeholder="••••••••" className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-500 outline-none" />
-          </div>
-          <button type="button" className="w-full bg-brand-600 text-white py-2 rounded-lg font-medium hover:bg-brand-700">
+          <h1 className="text-h2 font-bold text-neutral-900">Sign in to Masar</h1>
+          <p className="text-b2 text-neutral-600">Enter your university credentials to continue</p>
+        </div>
+
+        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+          <Input
+            label="University Email"
+            type="email"
+            placeholder="student@suez.edu.eg"
+            helperText="Use your official Suez Canal University student email."
+            required
+          />
+          <Input
+            label="Password"
+            type="password"
+            placeholder="••••••••"
+            required
+          />
+          <Button type="submit" variant="primary" className="w-full">
             Sign In
-          </button>
+          </Button>
         </form>
       </div>
     </div>
@@ -39,15 +43,15 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        
+
         {/* Authenticated Routes wrapped in AppLayout */}
         <Route element={<AppLayout />}>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/profile" element={<div className="text-slate-600">Profile Page (Slice 1)</div>} />
-          <Route path="/gap-analysis" element={<div className="text-slate-600">Gap Analysis Page (Slice 2)</div>} />
-          <Route path="/roadmap" element={<div className="text-slate-600">Roadmap Page (Slice 3)</div>} />
-          <Route path="/mentor" element={<div className="text-slate-600">AI Mentor Page (Slice 7)</div>} />
+          <Route path="/dashboard" element={<DesignSystemShowcase />} />
+          <Route path="/profile" element={<div className="text-neutral-600">Profile Page (Slice 1)</div>} />
+          <Route path="/gap-analysis" element={<div className="text-neutral-600">Gap Analysis Page (Slice 2)</div>} />
+          <Route path="/roadmap" element={<div className="text-neutral-600">Roadmap Page (Slice 3)</div>} />
+          <Route path="/mentor" element={<div className="text-neutral-600">AI Mentor Page (Slice 7)</div>} />
         </Route>
       </Routes>
     </BrowserRouter>
