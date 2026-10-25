@@ -8,14 +8,14 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-masar}
-      POSTGRES_USER: ${POSTGRES_USER:-masar}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_dev_password}
+      POSTGRES_USER: ${POSTGRES_USER:-masar_dev}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-masar_dev_password}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-masar} -d ${POSTGRES_DB:-masar}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-masar_dev} -d ${POSTGRES_DB:-masar}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -40,7 +40,8 @@ services:
         condition: service_started
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=${POSTGRES_DB:-masar};Username=${POSTGRES_USER:-masar};Password=${POSTGRES_PASSWORD:-postgres_dev_password}
+      - ConnectionStrings__MasarDb=Host=postgres;Port=5432;Database=${POSTGRES_DB:-masar};Username=${POSTGRES_USER:-masar_dev};Password=${POSTGRES_PASSWORD:-masar_dev_password}
+      - Jwt__Secret=${JWT_SECRET:-masar_dev_jwt_secret_key_minimum_32_characters_for_local_dev!}
       - AiService__BaseUrl=http://ai:8000
       - AiService__Key=${AI_SERVICE_KEY:-masar_local_secret_key_123}
     networks:
