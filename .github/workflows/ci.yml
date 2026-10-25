@@ -11,10 +11,10 @@ permissions:
 
 jobs:
   # =========================================================================
-  # 1. Backend Build & Tests (.NET 10)
+  # 1. Backend Build, Lint & Tests (.NET 10)
   # =========================================================================
   backend:
-    name: .NET API (Build & Test)
+    name: .NET API (Build, Lint & Test)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,6 +27,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore src/backend/Masar.sln
 
+      - name: Verify Code Formatting
+        run: dotnet format src/backend/Masar.sln --verify-no-changes
+
       - name: Build Solution
         run: dotnet build src/backend/Masar.sln --no-restore --configuration Release
 
@@ -34,24 +37,28 @@ jobs:
         run: dotnet test src/backend/Masar.sln --no-build --configuration Release --verbosity normal
 
   # =========================================================================
-  # 2. Frontend Typecheck & Build (React 19 + TypeScript)
+  # 2. Frontend Lint, Typecheck & Build (React 19 + TypeScript)
   # =========================================================================
   frontend:
-    name: React Web (Typecheck & Build)
+    name: React Web (Lint, Typecheck & Build)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
           cache-dependency-path: src/frontend/package-lock.json
 
       - name: Install dependencies
         working-directory: src/frontend
         run: npm ci
+
+      - name: Lint Frontend
+        working-directory: src/frontend
+        run: npm run lint
 
       - name: TypeScript Compile Check
         working-directory: src/frontend
@@ -62,10 +69,10 @@ jobs:
         run: npm run build
 
   # =========================================================================
-  # 3. AI Service Tests (Python 3.12)
+  # 3. AI Service Lint & Tests (Python 3.12)
   # =========================================================================
   ai-service:
-    name: Python AI (Pytest)
+    name: Python AI (Lint & Pytest)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -75,10 +82,13 @@ jobs:
         with:
           python-version: '3.12'
           cache: 'pip'
-          cache-dependency-path: src/ai/requirements.txt
+          cache-dependency-path: src/ai/requirements-dev.txt
 
       - name: Install dependencies
-        run: pip install -r src/ai/requirements.txt
+        run: pip install -r src/ai/requirements-dev.txt
+
+      - name: Lint with Ruff
+        run: ruff check src/ai
 
       - name: Run Pytest
         working-directory: src/ai
