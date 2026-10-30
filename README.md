@@ -96,6 +96,52 @@ Open items before implementation starts, all tracked in
 
 ---
 
+## 🚀 Getting Started & Local Development
+
+Masar runs locally as a multi-service environment orchestrated via Docker Compose.
+
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) & [Docker Compose v2+](https://docs.docker.com/compose/)
+- *(Optional for host development)*: .NET 10 SDK, Node.js 24, Python 3.12
+
+### 1. Environment Setup
+
+Copy the template environment variables:
+
+```bash
+cp .env.example .env
+```
+
+The defaults in `.env.example` are pre-configured for local execution.
+
+### 2. Start Services
+
+Start all containers in detached mode:
+
+```bash
+docker compose up -d
+```
+
+### 3. Service Endpoints
+
+| Service | Technology | URL / Port | Notes |
+|---|---|---|---|
+| **Web Frontend** | React 19 + Vite | `http://localhost:5173` | SPA interface |
+| **Backend API** | ASP.NET Core 10 | `http://localhost:5080/swagger` | REST API & Swagger UI |
+| **AI Service** | FastAPI (Python 3.12) | Internal (`http://ai:8000`) | Private bridge network |
+| **Database** | PostgreSQL 16 + pgvector | `127.0.0.1:5433` | User: `masar_dev`, DB: `masar` |
+
+### 4. Database Migrations (Interim Step)
+
+Until dev auto-migration lands in [#39](https://github.com/Masar-SCU/Masar/issues/39), apply EF Core migrations after containers start:
+
+```bash
+dotnet ef database update --project src/backend/src/Masar.Infrastructure --startup-project src/backend/src/Masar.Api
+```
+
+---
+
 ## Working agreements
 
 - **Branches:** `main` is protected. Work on `feat/<slice>-<short-name>`, `fix/…`, `docs/…`.
