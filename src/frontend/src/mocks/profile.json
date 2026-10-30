@@ -1,0 +1,10 @@
+{
+  "userId": "d3b07384-d113-404d-b0a8-b6159670eb82",
+  "email": "student@ci.suez.edu.eg",
+  "academicYear": 3,
+  "hoursPerWeek": 12,
+  "careerGoalText": "Junior Full-Stack Web Developer with focus on .NET and React",
+  "interests": ["Web Development", "Cloud Architecture", "Database Systems"],
+  "advisorVisibility": true,
+  "researchUse": false
+}

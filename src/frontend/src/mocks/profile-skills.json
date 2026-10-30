@@ -1,0 +1,39 @@
+[
+  {
+    "skillId": 12,
+    "canonicalName": "C# / .NET",
+    "selfLevel": 3,
+    "calibratedLevel": 3,
+    "effectiveLevel": 3,
+    "source": "calibration",
+    "verified": true,
+    "evidenceUrl": "https://github.com/student/api-demo"
+  },
+  {
+    "skillId": 14,
+    "canonicalName": "React",
+    "selfLevel": 4,
+    "calibratedLevel": null,
+    "effectiveLevel": 4,
+    "source": "self",
+    "verified": false
+  },
+  {
+    "skillId": 19,
+    "canonicalName": "PostgreSQL",
+    "selfLevel": 2,
+    "calibratedLevel": null,
+    "effectiveLevel": 2,
+    "source": "course",
+    "verified": true
+  },
+  {
+    "skillId": 44,
+    "canonicalName": "Docker",
+    "selfLevel": 1,
+    "calibratedLevel": null,
+    "effectiveLevel": 1,
+    "source": "self",
+    "verified": false
+  }
+]

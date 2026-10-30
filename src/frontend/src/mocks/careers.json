@@ -1,0 +1,30 @@
+[
+  {
+    "careerId": 1,
+    "name": "Backend Development",
+    "summary": "Design and build scalable server-side systems, RESTful APIs, and database architectures.",
+    "tracks": [
+      { "trackId": 1, "name": ".NET / C#", "isDefault": true },
+      { "trackId": 2, "name": "Node.js / TypeScript", "isDefault": false },
+      { "trackId": 3, "name": "Python / FastAPI", "isDefault": false }
+    ]
+  },
+  {
+    "careerId": 2,
+    "name": "Frontend / Full-Stack",
+    "summary": "Create responsive, accessible, high-performance web applications and design systems.",
+    "tracks": [
+      { "trackId": 4, "name": "React + TypeScript", "isDefault": true },
+      { "trackId": 5, "name": "Next.js Full-Stack", "isDefault": false }
+    ]
+  },
+  {
+    "careerId": 3,
+    "name": "Data & AI Engineering",
+    "summary": "Develop machine learning pipelines, vector retrieval systems, and data infrastructure.",
+    "tracks": [
+      { "trackId": 6, "name": "Applied NLP & LLM Systems", "isDefault": true },
+      { "trackId": 7, "name": "Data Analytics & Engineering", "isDefault": false }
+    ]
+  }
+]
