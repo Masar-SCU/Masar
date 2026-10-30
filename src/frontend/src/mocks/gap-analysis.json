@@ -1,0 +1,86 @@
+{
+  "careerId": 1,
+  "careerName": "Backend Development",
+  "trackName": ".NET",
+  "readinessScore": 65,
+  "computedAt": "2026-10-30T12:00:00Z",
+  "summary": {
+    "critical": 1,
+    "moderate": 2,
+    "minor": 1,
+    "met": 1,
+    "strengths": 1
+  },
+  "rows": [
+    {
+      "skillId": 44,
+      "canonicalName": "Docker",
+      "currentLevel": 1,
+      "requiredLevel": 3,
+      "gap": 2,
+      "importance": 0.85,
+      "priority": 1.70,
+      "severity": "critical",
+      "severityLabel": "Critical",
+      "rationale": "Required in 68% of junior .NET postings and a hard prerequisite for multi-service deployment.",
+      "verified": false,
+      "postingFrequency": 0.68
+    },
+    {
+      "skillId": 45,
+      "canonicalName": "CI/CD Pipelines",
+      "currentLevel": 0,
+      "requiredLevel": 2,
+      "gap": 2,
+      "importance": 0.70,
+      "priority": 1.40,
+      "severity": "moderate",
+      "severityLabel": "Moderate",
+      "rationale": "Appears in 54% of junior developer roles for automated verification.",
+      "verified": false,
+      "postingFrequency": 0.54
+    },
+    {
+      "skillId": 19,
+      "canonicalName": "PostgreSQL",
+      "currentLevel": 2,
+      "requiredLevel": 3,
+      "gap": 1,
+      "importance": 0.75,
+      "priority": 0.75,
+      "severity": "minor",
+      "severityLabel": "Minor",
+      "rationale": "Solid foundation established; indexing and performance tuning needed.",
+      "verified": true,
+      "postingFrequency": 0.61
+    },
+    {
+      "skillId": 12,
+      "canonicalName": "C# / .NET",
+      "currentLevel": 3,
+      "requiredLevel": 3,
+      "gap": 0,
+      "importance": 0.95,
+      "priority": 0.00,
+      "severity": "met",
+      "severityLabel": "Met",
+      "rationale": "Current verified level satisfies junior career requirements.",
+      "verified": true,
+      "postingFrequency": 0.92
+    },
+    {
+      "skillId": 14,
+      "canonicalName": "React",
+      "currentLevel": 4,
+      "requiredLevel": 2,
+      "gap": -2,
+      "importance": 0.60,
+      "priority": 0.00,
+      "severity": "strengths",
+      "severityLabel": "Strength",
+      "rationale": "Exceeds standard backend expectations, enabling versatile full-stack contribution.",
+      "verified": false,
+      "postingFrequency": 0.45
+    }
+  ]
+}
