@@ -1,6 +1,6 @@
 # ADR-0004 — 0–5 integer proficiency scale, not percentages
 
-**Status:** Accepted · **Date:** 2026-09-20 · **Deciders:** Abdelrahman, Osama, Yousef Khaled
+**Status:** Accepted · **Date:** 2026-09-20 · **Deciders:** Abdelrahman, Osama, Yousef Khaled · **Extended by:** [ADR-0007](0007-atomic-roadmap.md)
 
 ---
 
@@ -101,3 +101,14 @@ consistent and machine-verified, which the original was not.
 - [ ] **W3** — `CHECK` constraints in the migration (Mohamed Yasser)
 - [ ] **W5** — gap calculation unit-tested at every level combination, 0–5 × 0–5 (Osama)
 - [ ] **W16** — usability testing confirms students can pick a level without hesitation (Yousef Khaled)
+
+---
+
+## Addendum 2026-11-15 (Derived Mastery and Continuous Readiness via ADR-0007)
+
+1. **Integer Scale Remains Canonical:** The 0–5 integer proficiency scale defined in this ADR remains the sole user-facing rating scale for self-placement, onboarding assessment, career skill requirements, and high-level progress dashboards.
+2. **Mastery-Derived Current Level:** With the adoption of the atomic roadmap ([ADR-0007](0007-atomic-roadmap.md)), current proficiency level $L(s)$ is no longer adjusted manually or by coarse phase completion. Instead, it is computed deterministically from atom completion states:
+   $$L(s) = \max \{ L \in \{0,\dots,5\} : \forall b \le L,\, m_b(s) \ge 0.80 \}$$
+   where $m_b(s) = \frac{\text{completed or assumed atoms in band } b}{\text{total published atoms in band } b}$.
+3. **Continuous Level for Readiness:** To avoid coarse "staircase" feedback and ensure every completed atom immediately rewards the learner, career readiness incorporates the continuous level $c(s) = L(s) + \min(1, \frac{m_{L+1}(s)}{0.80})$. This preserves the conceptual integrity of the 0–5 scale while providing smooth, encouraging feedback.
+

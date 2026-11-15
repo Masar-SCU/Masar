@@ -1,6 +1,6 @@
 # 02 — Requirements
 
-**Document owners:** Abdelrahman Megahed, Yousef Khaled · **Status:** Baseline
+**Document owners:** Abdelrahman Megahed, Yousef Khaled · **Status:** Revised <2026-11-15> (atomic roadmap + defect fixes)
 
 Every requirement has a stable ID. Cite these IDs in commit messages, test names, and the
 report. `FR` = functional, `NFR` = non-functional. Priorities: **M** = MVP-critical,
@@ -12,13 +12,15 @@ report. `FR` = functional, `NFR` = non-functional. Priorities: **M** = MVP-criti
 
 Designing for a named person prevents building for an imaginary average user.
 
+> **Design assumption to validate in usability testing:** The atomic learning format assumes students prefer 5–10 minute bite-sized sessions on mobile or web rather than multi-hour continuous study blocks. This assumption is formally evaluated in the usability study ([§09](09-evaluation.md#5-usability-study)).
+
 ### P1 — Mariam, 3rd year, undecided
 
 20, third year, strong in theory courses, no idea what she wants. Has written C++ and Java for
 coursework and one small web project. Has heard "AI" and "cybersecurity" are good but cannot
 tell them apart in practice. Overwhelmed by roadmap posts on social media.
 
-**Wants:** to be told, with reasons, which two or three paths suit her, and what to do this month.
+**Wants:** to be told, with reasons, which two or three paths suit her, and what micro-step to take today.
 **Fails today because:** every resource assumes she has already chosen.
 
 ### P2 — Omar, 4th year, targeted but unsure
@@ -26,7 +28,7 @@ tell them apart in practice. Overwhelmed by roadmap posts on social media.
 22, fourth year, has decided on backend development and is learning .NET on his own. Does not
 know whether he is employable yet, or what he is still missing.
 
-**Wants:** an honest readiness measurement against a real job standard, and a ranked list of what to fix first.
+**Wants:** an honest readiness measurement against a real job standard, and a clear, bite-sized daily path to close gaps.
 **Fails today because:** job posts list twenty requirements without saying which ones matter most.
 
 ### P3 — Dr. Hend, faculty advisor
@@ -34,7 +36,7 @@ know whether he is employable yet, or what he is still missing.
 Supervises many students. Wants to know where the cohort is collectively weak so teaching and
 extra sessions can target real gaps, and wants evidence the tool gives sound advice.
 
-**Wants:** a cohort view, and confidence that the recommendations are defensible.
+**Wants:** a cohort view showing most-failed atoms and units, and confidence that recommendations are defensible.
 **Fails today because:** the only available signal is exam grades.
 
 ---
@@ -46,14 +48,14 @@ A story is done only when every criterion passes. These become the E2E test name
 
 ### US-00 — First-time onboarding wizard · *P1, P2* · **M**
 
-> As a first-time student, I want a structured onboarding wizard (personality test → coursework & skills → targeted calibration → career fit & roadmap), so that I am guided step-by-step to an actionable plan without being overwhelmed.
+> As a first-time student, I want a structured onboarding wizard (personality test → coursework & skills → targeted placement → career fit & path reveal), so that I am guided step-by-step to an actionable plan without being overwhelmed.
 
 - **AC1** Upon first login, I am automatically routed to the Onboarding Wizard, with step state persisted so I can leave and resume without data loss.
-- **AC2** **Step 1 (Personality & Preferences):** I complete a 15–20 question Likert assessment evaluating my interests, problem-solving preferences, and work styles in under 5 minutes.
-- **AC3** **Step 2 (Coursework & Skills):** I select my academic year and completed department courses, which automatically propose foundational skills with clear course-provenance badges, alongside a fast search to add any additional claimed skills on the 0–5 scale.
-- **AC4** **Step 3 (Targeted Calibration):** For my top 2–3 claimed core technical skills with available quiz banks, I am offered a focused diagnostic quiz (5–8 questions each) to verify my baseline, with a clear option to calibrate remaining skills later.
-- **AC5** **Step 4 (Career Fit & Selection):** I view ranked career recommendations showing both interest fit and skill fit, explore tracks, and select my committed target career.
-- **AC6** **Step 5 (Roadmap Plan):** I enter my available weekly study hours, and the system generates my prerequisite-ordered roadmap and capstone project, seamlessly landing me on my active dashboard.
+- **AC2** **Step 1 (Personality & Preferences):** I complete a 20-item Likert assessment (7 interest, 4 work-style, 6 problem-type, 3 career-intent) evaluating my preferences in under 4 minutes.
+- **AC3** **Step 2 (Coursework & Skills):** I select my academic year and completed department courses, which automatically propose foundational skills with course-provenance badges (with manual entry as baseline when mapping data is unavailable), alongside a fast search to add any additional claimed skills on the 0–5 scale in under 3 minutes.
+- **AC4** **Step 3 (Targeted Placement):** For up to 2–3 claimed core technical skills, I am offered an adaptive diagnostic placement probe (≤ 5 min, capped at level 4 verified), with a clear option to skip and verify skills later from the path.
+- **AC5** **Step 4 (Career Fit & Selection):** I view ranked career recommendations showing both interest fit and skill fit, explore tracks, and select my committed target career in under 2 minutes.
+- **AC6** **Step 5 (Daily Goal & Path Reveal):** I select my daily study goal (10, 20, 30, 45, or 60 min, defaulted from my weekly study hours), see my atomic roadmap revealed with projected finish date, and land directly in my first micro-lesson.
 
 ### US-01 — Build a skill profile · *P1, P2* · **M**
 
@@ -66,100 +68,163 @@ A story is done only when every criterion passes. These become the E2E test name
 - **AC5** My profile persists across sessions and is editable at any time.
 - **AC6** A profile-completeness indicator tells me what is still missing.
 
-### US-02 — Calibrate a claimed skill · *P2* · **M**
+### US-02 — Take an adaptive placement probe · *P2* · **S**
 
-> As a student, I want a short quiz on the skills I claim, so my profile is not just an opinion.
+> As a student, I want a diagnostic probe on the skills I claim, so my profile is verified rather than guessed.
 
-- **AC1** For any claimed skill that has a quiz, I can take a 5–8 question quiz.
-- **AC2** The result produces a *calibrated* level shown next to my *self-reported* level.
-- **AC3** If the two differ by 2 levels or more, the system says so plainly, and gap analysis uses the calibrated value.
-- **AC4** I may retake a quiz after 7 days; the most recent result wins.
-- **AC5** Skipping calibration never blocks me — the profile still works with self-reported levels, flagged as unverified.
+- **AC1** For claimed core skills with diagnostic items, I can take an adaptive placement probe (up to 8 items).
+- **AC2** The result marks atoms up to the tested band as `assumed` (`source = 'placement'`, `verified = true`), capped at level 4.
+- **AC3** If the tested level is 2 or more levels below my claim, the system explains this constructively, and gap analysis uses the verified level.
+- **AC4** I may retake a placement probe after 7 days; items are sampled without replacement across retakes.
+- **AC5** Skipping placement never blocks me — the profile uses self-reported claims marked as unverified.
 
 ### US-03 — Discover matching careers · *P1* · **M**
 
 > As a student, I want ranked career suggestions, so that I can narrow six options down to two.
 
 - **AC1** After completing the assessment I see all 6 careers ranked with a match score from 0 to 100.
-- **AC2** Each result shows **why** it matched: the specific skills and interests that contributed.
+- **AC2** Each result shows **why** it matched: inspectable baseline terms (`skill_fit`, `interest_fit`, `coverage`) displayed as reason badges.
 - **AC3** I can open any career to see its required skills with importance weights.
 - **AC4** I can pick any career as my target, including one that was not ranked first.
-- **AC5** The ASP.NET backend requests recommendations from the internal FastAPI recommendation service; the frontend never calls the AI service directly. If primary model inference fails while FastAPI remains available, the documented deterministic fallback may be used and the result is marked as degraded.
+- **AC5** The ASP.NET backend requests recommendations from the internal FastAPI recommendation service; the frontend never calls the AI service directly. If the primary model pipeline is unavailable, .NET falls back gracefully to unranked career summaries with a retry option.
 
 ### US-04 — See my gap · *P1, P2* · **M**
 
 > As a student, I want to see exactly which skills I lack for my target career, so I know what to work on.
 
-- **AC1** I see every required skill with my level, the target level, the gap, and a severity class.
-- **AC2** Severity ordering is consistent — no skill with a larger weighted gap is ever ranked below one with a smaller weighted gap.
-- **AC3** Each gap has a one-sentence explanation of why it matters for that career.
-- **AC4** I see a single **Career Readiness Score** as a percentage.
+- **AC1** I see every required skill with my current integer level $L(s)$, target level, gap, and severity class.
+- **AC2** Severity ordering is strictly monotone — no skill with a larger weighted priority is ever classified below one with a smaller priority.
+- **AC3** Each gap includes an inspectable rationale and a progress bar showing continuous fractional mastery toward the next level.
+- **AC4** I see a single **Career Readiness Score** as a percentage computed from continuous mastery $c(s)$.
 - **AC5** Skills where I exceed the target are shown as strengths, not omitted.
 - **AC6** The full analysis renders in under 2 seconds ([NFR-01](#nfr-01--performance)).
 
-### US-05 — Get an ordered plan · *P1, P2* · **M**
+### US-05 — Get an ordered atomic roadmap · *P1, P2* · **M**
 
-> As a student, I want a sequenced plan with a weekly time budget, so I can actually start.
+> As a student, I want an ordered path of bite-sized learning units, so I know exactly what to learn next.
 
-- **AC1** I enter my available hours per week and the plan is scheduled against it.
-- **AC2** The plan is split into phases, each with an estimated hour cost and a target date.
-- **AC3** No item ever appears before its prerequisites.
-- **AC4** Each item links to at least one curated, free resource.
-- **AC5** The plan ends with a capstone project covering at least three of my gap skills.
-- **AC6** Regenerating the plan with unchanged inputs produces an identical plan (determinism).
+- **AC1** I see my roadmap structured as stages and units with estimated minutes and projected completion dates based on my daily goal.
+- **AC2** No atom or unit is unlocked before its prerequisite skills and hard prerequisite atoms are satisfied.
+- **AC3** Canonical unit order is authored and validated in CI, guaranteeing a stable, sensible curriculum.
+- **AC4** Each unit ends with an 8-exercise Checkpoint, and each stage concludes with a practical Project node.
+- **AC5** The final Job-ready stage ends with a Capstone project covering at least three of my gap skills.
+- **AC6** The path is completely deterministic: identical inputs yield an identical unit sequence.
 
-### US-06 — Track progress and re-plan · *P2* · **M**
+### US-06 — Learn atoms and watch readiness move · *P2* · **M**
 
-> As a student, I want to mark items complete and watch the plan adapt, so effort feels rewarded.
+> As a student, I want to complete lessons and watch my readiness score increase smoothly, so my effort feels rewarded.
 
-- **AC1** I can mark any roadmap item complete, with a completion date.
-- **AC2** Completion raises the relevant skill level by a documented rule and updates the readiness score.
-- **AC3** The roadmap recalculates and reveals newly unblocked items.
-- **AC4** I can see my readiness-score history as a chart over time.
-- **AC5** I can undo a completion, and all derived values revert.
+- **AC1** Completing an atom's lesson with $\ge 60\%$ first-try accuracy marks the atom `learned` and awards XP.
+- **AC2** Every completed atom immediately increases my continuous readiness score $c(s)$, providing visible fractional progress.
+- **AC3** When band atoms reach the mastery threshold ($\tau = 0.80$), derived integer level $L(s)$ increments, reducing my gap.
+- **AC4** Lesson completion is idempotent via `idempotencyKey` and safely queues offline during network hiccups.
+- **AC5** I can reset an atom's state (`reset atom`), which cleanly recalculates derived mastery and readiness without side effects.
+- **AC6** I can view my readiness history as an append-only time series chart.
 
 ### US-07 — Ask the mentor · *P1, P2* · **S**
 
-> As a student, I want to ask questions and get answers about *my* situation, not generic advice.
+> As a student, I want to ask questions and get answers grounded in my real learning progress and relevant atoms.
 
-- **AC1** The mentor answers using my profile, target career, gaps and roadmap as context.
-- **AC2** Answers reference which of my data points they used (e.g. "your Docker level is 1/5").
-- **AC3** When asked something outside its knowledge it says so instead of inventing an answer.
-- **AC4** When the LLM is unavailable, a templated explanation is shown instead of an error.
-- **AC5** No other student's data can ever appear in my answers.
+- **AC1** The mentor answers using an allow-listed, sanitised context DTO (target career, current unit, recent atoms, streak).
+- **AC2** The mentor retrieves relevant authored atom excerpts to ground explanations and provides clickable deep links to atoms.
+- **AC3** When asked something outside its domain it declines politely rather than hallucinating.
+- **AC4** When the LLM service is unreachable or times out, a templated explanation is displayed immediately.
+- **AC5** No personal identifiers (name, email) are sent to the external model provider.
 
 ### US-08 — Compare targets before committing · *P1* · **S**
 
 > As a student, I want to preview a different target career, so I can compare before deciding.
 
-- **AC1** I can select any career and see the resulting readiness score and top 5 gaps without changing my saved target.
+- **AC1** I can select any career and see the resulting readiness score, unit count, and top gaps without changing my saved target.
 - **AC2** A side-by-side comparison of two careers is available.
 - **AC3** Nothing is persisted until I explicitly confirm the change.
 
 ### US-09 — Prepare for an internship · *P2* · **S**
 
-> As a student, I want to know whether I am ready to apply, so I stop guessing.
+> As a student, I want to know whether I am ready to apply for internships, so I stop guessing.
 
-- **AC1** For my target career I see a checklist: minimum skill thresholds, portfolio projects, CV items.
-- **AC2** Each item shows met / not met, derived from my actual profile.
-- **AC3** An overall "internship-ready" state is shown, with the specific blockers listed.
+- **AC1** For my target career I see a clear checklist: required skill thresholds, completed portfolio projects, and CV items.
+- **AC2** Each criterion shows met / not met; project criteria derive from completed project nodes in the atomic path.
+- **AC3** An overall "internship-ready" state is displayed with specific remaining blockers.
 
 ### US-10 — See the cohort's gaps · *P3* · **S**
 
 > As an advisor, I want to see where my students are collectively weak, so I can target teaching.
 
-- **AC1** I see aggregate skill gaps across all consenting students as a ranked heatmap.
+- **AC1** I see aggregate skill gaps across consenting students as a ranked heatmap.
 - **AC2** I can filter by academic year and by target career.
-- **AC3** Individual students are **not** identifiable unless they explicitly opted in.
-- **AC4** I can export the aggregate view as CSV.
+- **AC3** Any cell or cohort smaller than $k = 5$ students is strictly suppressed to protect privacy.
+- **AC4** I can export aggregate cohort data as CSV.
 
 ### US-11 — Pre-fill from coursework · *P1* · **S**
 
-> As a student, I want my completed courses to pre-fill skills, so I don't start from zero.
+> As a student, I want my completed courses to pre-fill known atoms, so I do not start from scratch.
 
-- **AC1** Selecting completed courses proposes skill levels derived from the course→skill map.
-- **AC2** Proposals are clearly marked as proposals; I confirm or edit each one.
-- **AC3** The source of each proposal is visible (e.g. "from CS302 Database Systems").
+- **AC1** Selecting completed department courses proposes unverified assumed atoms mapped from the syllabus.
+- **AC2** Proposals are clearly marked as unverified; I confirm or edit each proposal before it applies to my profile.
+- **AC3** The course source is displayed on each assumed atom.
+
+### US-12 — Play a micro-lesson · *P1, P2* · **M**
+
+> As a student, I want an engaging, focused lesson experience with immediate feedback, so I learn efficiently in minutes.
+
+- **AC1** The lesson player opens in full-screen focus mode with a segmented progress bar and one exercise at a time.
+- **AC2** Exercises include concept cards, multiple choice, code bug prediction, fill-in tokens, and pair matching.
+- **AC3** Incorrectly answered exercises are automatically re-queued at the end of the lesson (up to twice).
+- **AC4** The sticky bottom sheet gives instant local feedback with an explanation snippet and a "Report a problem" button.
+- **AC5** Full keyboard support (Enter to check/continue, 1–4 keys to select) and screen-reader live regions are supported.
+- **AC6** The lesson completion screen displays accuracy, base and bonus XP earned, streak updates, and readiness score gain.
+
+### US-13 — Keep a streak and set a daily goal · *P1, P2* · **M**
+
+> As a student, I want to set a daily goal and build a learning streak, so I stay motivated to practice consistently.
+
+- **AC1** I can select a daily study goal (10, 20, 30, 45, or 60 minutes) defaulted from my weekly study budget.
+- **AC2** Completing any XP-earning session increments my daily streak based on my local calendar day (IANA timezone).
+- **AC3** Streak freezes (earned 1 per 7-day streak, maximum 2 held) automatically prevent streak loss for one missed day.
+- **AC4** I can activate an Exam-Week Pause for up to 14 days (twice per academic term) to protect my streak during exams.
+
+### US-14 — Review what I learned · *P2* · **S**
+
+> As a student, I want spaced review of previous atoms, so I retain what I learned over time.
+
+- **AC1** The "Practice" tab displays the count of atoms currently due for spaced review.
+- **AC2** A review session presents up to 8 due atoms scheduled across 5 Leitner boxes (intervals: 1, 3, 7, 14, 30 days).
+- **AC3** Answering correctly advances the atom to the next box; answering incorrectly resets it to Box 1.
+- **AC4** Due review items or decayed review strength never lower my derived mastery level $L(s)$ or my readiness score.
+
+### US-15 — Test out of a unit · *P2* · **S**
+
+> As a student, I want to test out of material I already know, so I can advance quickly to new topics.
+
+- **AC1** From any unit header, I can attempt an early Checkpoint test-out consisting of 8 sampled exercises.
+- **AC2** Passing with $\ge 85\%$ accuracy marks all in-scope atoms of the unit as `assumed` (`source = 'test_out'`, `verified = true`).
+- **AC3** If a unit contains unverified assumed atoms and a regular checkpoint score is $< 60\%$, those atoms are reopened.
+
+### US-16 — Browse my path and jump to a unit · *P1, P2* · **M**
+
+> As a student, I want to view my path of learning nodes and easily navigate units, so I always know where I am.
+
+- **AC1** The path renders as a winding vertical graph of nodes grouped into units with state badges (`locked`, `available`, `current`, `learned`, `shaky`, `assumed`).
+- **AC2** Node states are communicated using both distinct icons and colors, satisfying accessibility requirements.
+- **AC3** List virtualization renders only the current unit $\pm 2$ units, ensuring 60 FPS performance on mobile devices.
+- **AC4** I can toggle between `canonical` authored order and `prioritized` mode (re-sorting units within stages by gap priority).
+
+### US-17 — Report a content problem · *P1, P2* · **M**
+
+> As a student, I want to flag errors or typos in exercises, so content issues get fixed quickly.
+
+- **AC1** A "Report a problem" button is accessible on every exercise feedback sheet.
+- **AC2** I can pick a reason (`wrong_answer`, `unclear`, `broken_code`, `typo`, `other`) and submit optional notes.
+- **AC3** The report submits asynchronously without interrupting the lesson session.
+
+### US-18 — View cohort atom-level analytics · *P3* · **S**
+
+> As an advisor, I want to see which specific atoms and units confuse students most, so I can adjust lectures.
+
+- **AC1** I can view a ranked report of the most-failed atoms and units across the student cohort.
+- **AC2** The report supports filtering by academic year and target career.
+- **AC3** Any atom with fewer than $k = 5$ student attempts is suppressed to preserve privacy.
 
 ---
 
@@ -169,111 +234,128 @@ A story is done only when every criterion passes. These become the E2E test name
 |---|---|---|---|
 | **Accounts & profile** | | | |
 | FR-00 | Persist onboarding wizard state and progress step, enabling seamless resume and step-gated onboarding completion | M | US-00 |
-| FR-01 | Register with email + password; passwords stored using a modern KDF (see [NFR-06](#nfr-06--authentication)) | M | US-01 |
-| FR-02 | Log in / log out; sessions via short-lived access token + refresh token | M | US-01 |
-| FR-03 | Store academic year, interests, and career goal text | M | US-01 |
-| FR-04 | Self-rate skills on the 0–5 [proficiency scale](04-data-model.md#3-the-proficiency-scale) | M | US-01 |
-| FR-05 | Record completed courses from a seeded department course list | M | US-01, US-11 |
+| FR-01 | Register with email + password; passwords stored using modern KDF ([NFR-06](#nfr-06--authentication)) | M | US-01 |
+| FR-02 | Log in / log out; sessions via short-lived access token + HttpOnly refresh cookie | M | US-01 |
+| FR-03 | Store academic year, interests, timezone, daily goal, and career goal text | M | US-01, US-13 |
+| FR-04 | Self-rate skills on 0–5 scale as initial seed for assumed atoms | M | US-01 |
+| FR-05 | Record completed courses from seeded department catalogue | M | US-01, US-11 |
 | FR-06 | Compute and display profile completeness as a percentage | M | US-01 |
-| FR-07 | Attach evidence (repository or certificate URL) to a skill claim | S | — |
-| **Assessment & calibration** | | | |
-| FR-08 | Deliver an interest + preference questionnaire | M | US-03 |
-| FR-09 | Deliver per-skill calibration quizzes and store calibrated levels | M | US-02 |
-| FR-10 | Rank all careers using the AI recommendation service with a 0–100 model-driven match score and per-career reasons, subject to mandatory constraints | M | US-03 |
-| FR-11 | Let the student set, and later change, a target career | M | US-03 |
-| **Gap & roadmap** | | | |
-| FR-12 | Compute per-skill gap, weighted priority and severity class | M | US-04 |
-| FR-13 | Compute the Career Readiness Score | M | US-04 |
-| FR-14 | Generate a one-sentence rationale per gap | M | US-04 |
+| FR-07 | Attach portfolio evidence (repository URL) to a project or skill | S | US-09 |
+| **Assessment & recommendations** | | | |
+| FR-08 | Deliver 20-item Likert interest and preference questionnaire in $\le 4$ minutes | M | US-00 |
+| FR-09 | Diagnostic skill assessment | M | US-00, US-02 |
+| FR-10 | Rank all 6 careers using AI recommendation service with match score and inspectable reason badges | M | US-03 |
+| FR-11 | Let the student select and change committed target career and track | M | US-03 |
+| **Gap analysis & readiness** | | | |
+| FR-12 | Compute per-skill gap, weighted priority and severity class from derived mastery $L(s)$ | M | US-04 |
+| FR-13 | Compute Career Readiness Score from continuous fractional mastery $c(s)$ | M | US-04, US-06 |
+| FR-14 | Generate a one-sentence rationale per gap based on posting demand and taxonomy | M | US-04 |
 | FR-15 | Preview readiness against a non-committed target career | S | US-08 |
-| FR-16 | Generate a prerequisite-ordered roadmap from the gap set | M | US-05 |
-| FR-17 | Pack roadmap items into phases against an hours-per-week budget, with dates | M | US-05 |
-| FR-18 | Guarantee determinism: identical inputs produce an identical roadmap | M | US-05 |
-| FR-19 | Detect and reject cycles in the prerequisite graph at seed time | M | US-05 |
-| **Content** | | | |
-| FR-20 | Attach ≥ 1 curated free resource to every roadmap item | M | US-05 |
-| FR-21 | Recommend projects selected by gap coverage | M | US-05 |
-| FR-22 | Select one capstone project covering ≥ 3 gap skills | M | US-05 |
-| **Progress** | | | |
-| FR-23 | Mark roadmap items complete / incomplete | M | US-06 |
-| FR-24 | Apply the documented skill-increment rule on completion | M | US-06 |
-| FR-25 | Recalculate gap, readiness and roadmap after any progress change | M | US-06 |
-| FR-26 | Persist readiness-score history and render it as a time series | M | US-06 |
+| FR-16 | *Superseded by FR-38 and FR-39.* (Authored canonical path and per-student atomic filtering replace runtime phase generation) | — | — |
+| FR-17 | *Superseded by FR-39 and FR-45.* (Atomic path with daily goals and unit projected completion dates replaces 40-hour phase packing) | — | — |
+| FR-18 | *Superseded by FR-38.* (Deterministic canonical path sequence stamped with algorithm_version and input_hash) | — | — |
+| FR-19 | *Superseded by FR-37.* (CI graph validation enforces acyclicity on both skill and atom prerequisite graphs) | — | — |
+| **Content & projects** | | | |
+| FR-20 | Attach curated free deep-dive resources to atoms (`ATOM_RESOURCE`) | S | US-05 |
+| FR-21 | Recommend practical stage project nodes with milestone criteria feeding portfolio | S | US-05, US-09 |
+| FR-22 | Stage 4 Capstone project node covering $\ge 3$ gap skills | M | US-05 |
+| **Progress & mastery** | | | |
+| FR-23 | *Superseded by FR-40 and FR-41.* (Lesson player completion and authoritative server re-grading replace manual checkoff) | — | — |
+| FR-24 | *Superseded by FR-42.* (Mastery derived from atom states replaces manual skill-increment rule) | — | — |
+| FR-25 | *Superseded by FR-41 and FR-42.* (Incremental recalculation of skill mastery and readiness on lesson completion) | — | — |
+| FR-26 | Persist readiness-score history as append-only daily snapshots and render time series | M | US-04, US-06 |
 | **AI mentor** | | | |
-| FR-27 | Answer questions grounded in the student's own data (RAG) | S | US-07 |
+| FR-27 | Answer questions grounded in student's allow-listed progress context | S | US-07 |
 | FR-28 | Show which student data points grounded each answer | S | US-07 |
 | FR-29 | Rate-limit mentor requests per user ([NFR-09](#nfr-09--abuse-and-cost-control)) | S | US-07 |
 | **Internship & advisor** | | | |
-| FR-30 | Internship-readiness checklist per career, evaluated from the profile | S | US-09 |
-| FR-31 | Advisor role with a cohort gap heatmap | S | US-10 |
-| FR-32 | Aggregate views suppress groups smaller than 5 students | S | US-10 |
+| FR-30 | Internship-readiness checklist per career evaluated from profile and project nodes | S | US-09 |
+| FR-31 | Advisor role with cohort gap heatmap | S | US-10 |
+| FR-32 | Aggregate views suppress groups smaller than $k = 5$ students | S | US-10, US-18 |
 | FR-33 | CSV export of aggregate cohort data | S | US-10 |
 | **Administration** | | | |
-| FR-34 | Admin CRUD for careers, skills, resources, projects and quiz items | M | — |
-| FR-35 | Seed/reset the database from versioned seed files | M | — |
-| FR-36 | Deterministic demo mode with fixed fixtures and no external calls | M | — |
+| FR-34 | Admin CRUD for catalogue, atoms, exercises, and units | M | FR-50 |
+| FR-35 | Seed/reset database from versioned seed files | M | — |
+| FR-36 | Deterministic demo mode with fixed fixtures and no external network calls | M | — |
+| **Atomic Roadmap & Learning Loop (New)** | | | |
+| FR-37 | Atom catalogue with skill/unit/band, plus skill and atom prerequisite graphs with cycle detection | M | US-05, US-16 |
+| FR-38 | Authored canonical path per (career, track), deterministic, versioned, validated in CI | M | US-05, US-16 |
+| FR-39 | Per-student path = canonical path filtered by scope and state; `prioritized` mode at unit level | M | US-05, US-16 |
+| FR-40 | Lesson player with MVP exercise types, instant feedback, re-queue of misses | M | US-06, US-12 |
+| FR-41 | Authoritative server re-grading and idempotent completion | M | US-06, US-12 |
+| FR-42 | Mastery derived from atoms: integer level $L(s)$ for gap, continuous level $c(s)$ for readiness | M | US-04, US-06 |
+| FR-43 | Checkpoints and test-out (reopen unverified assumed atoms on checkpoint failure) | S | US-15 |
+| FR-44 | Adaptive placement (wizard Step 3, capped at level 4 verified) | S | US-00, US-02 |
+| FR-45 | XP, streak (timezone-correct), daily goal | M | US-13 |
+| FR-46 | Spaced review queue (Leitner boxes 1..5) | S | US-14 |
+| FR-47 | Exam-week streak pause (up to 14 days) and streak freezes | S | US-13 |
+| FR-48 | Achievements system | C | — |
+| FR-49 | Weekly leagues (opt-in, nickname-only) | C | — |
+| <a id="fr-50"></a>FR-50 | Content status workflow, reports queue, admin validation | M | US-17 |
+| FR-51 | CI content validator (graph, coverage, schema, blind-solve flags) | M | — |
+| FR-52 | Mentor retrieval over atoms with deep links; stored explanations for "explain my answer" | S | US-07 |
+| FR-53 | Portfolio items and project nodes feeding the internship checklist | S | US-09 |
+| FR-54 | Advisor atom-level cohort analytics ($k \ge 5$ suppression) | S | US-18 |
 
 ---
 
 ## 4. Non-functional requirements
 
-These were entirely absent from the original specification. A supervisor will ask for them, and
-several (security, privacy) cannot be retrofitted late without rework.
-
 ### NFR-01 — Performance
 
 | Operation | Target (95th percentile) |
 |---|---|
-| Any page interactive | ≤ 3 s on a 3G-class connection |
-| Gap analysis for one student | ≤ 2 s |
-| Roadmap generation | ≤ 3 s |
-| Career recommendation (model-first) | ≤ 4 s |
-| Career recommendation (baseline only) | ≤ 500 ms |
-| AI mentor first token | ≤ 5 s |
+| Any page interactive | $\le 3$ s on a 3G-class connection |
+| Gap analysis for one student | $\le 2$ s |
+| Path summary endpoint | $\le 1.5$ s |
+| Lesson start (static bundle, cached) | $\le 1$ s |
+| Local exercise feedback | $\le 100$ ms |
+| Lesson completion round-trip | $\le 1$ s |
+| Career recommendation (model-first) | $\le 4$ s (8 s timeout, 1 retry) |
+| Career recommendation (baseline fallback) | $\le 500$ ms |
+| AI mentor first token | $\le 5$ s (12 s timeout, **no retry**) |
 
-Rationale: gap analysis and roadmap generation are pure computation over a few hundred rows, so
-anything slower indicates an N+1 query problem. Career embeddings are computed at seed time and
-cached — never per request.
+Connect timeout budget is 2 s. On timeout, the system falls back immediately without hanging user experience.
 
 ### NFR-02 — Scale
 
-Designed for **500 registered students, 50 concurrent**. That is the realistic size of one
-faculty cohort. Do not build for a million users; do not write code that breaks at 500.
+Designed for **500 registered students, 50 concurrent**, tracking up to $500 \times 1,000 = 500,000$ student atom states and derived progress records.
 
 ### NFR-03 — Availability
 
-Best-effort. Free hosting tiers sleep when idle (ADR-0005),
-so the first request after an idle period may take up to 60 s. Therefore:
+Best-effort on zero-budget infrastructure (ADR-0005):
 
-- A visible loading state, never a blank screen or a raw timeout error.
-- A scheduled warm-up before any demo or review session.
-- **Demo mode** (FR-36) runs entirely locally, so the defence never depends on a third party.
+- Versioned static content bundles (`/content/v{n}/unit-{id}.json`) are served directly from the static host, ensuring lessons start instantly even if the API backend is cold-starting.
+- Client-side exercise feedback operates locally; session completions are queued in the browser and retried with identical idempotency keys.
+- Free uptime ping warms the backend API during active cohort hours.
+- **Demo mode** (FR-36) operates entirely offline with bundled fixtures.
 
 ### NFR-04 — Usability
 
-- A new student reaches their first gap analysis in **≤ 10 minutes** without help.
-- Every destructive action is confirmable and reversible.
-- Every AI-produced value is visually marked as AI-produced.
-- Verified by usability testing with ≥ 5 real students ([§09](09-evaluation.md#5-usability-study)).
+- A new student starts their first lesson in **$\le 10$ minutes** unaided with placement skipped; **$\le 15$ minutes** with placement.
+- Gap analysis is available immediately upon career selection ($\approx 9$ minutes without placement).
+- Every destructive action is confirmable and reversible (e.g. `reset atom`).
+- AI-produced values are visually marked as AI-assisted.
+- Verified by usability testing with $\ge 5$ real students ([§09](09-evaluation.md#5-usability-study)).
 
 ### NFR-05 — Accessibility
 
 Target **WCAG 2.1 Level AA**:
 
-- Contrast ratio ≥ 4.5:1 for body text.
-- Full keyboard navigation with visible focus indicators.
-- All form inputs have programmatically associated labels.
-- **Severity and status are never communicated by colour alone** — always colour *plus* text or icon. This directly affects the gap table, the most important screen in the product.
-- Meaningful images have alt text; decorative images are hidden from assistive technology.
-- Every chart has an accessible table equivalent.
+- Contrast ratio $\ge 4.5:1$ for body text across all playful UI palettes.
+- Severity, streak status, and node states are **never communicated by colour alone** — always icon + label + colour.
+- Full keyboard navigation (Enter to check/continue, number keys to select options) with visible focus indicators.
+- Non-drag tap alternatives for all matching and token-reordering exercises.
+- `prefers-reduced-motion` strictly honored: disables confetti, animated transitions, and path motion.
+- Code blocks rendered as LTR islands inside RTL layouts; all charts provide accessible table equivalents.
 
 ### NFR-06 — Authentication
 
-- ASP.NET Core Identity with **PBKDF2** password hashing (framework default) or **Argon2id**. Never a bare hash.
-- **JWT access token, 15-minute lifetime**; refresh token, 7 days, rotated on use and revocable.
-- Passwords: minimum 10 characters, checked against a common-password deny list.
-- Login rate-limited to **5 attempts per 15 minutes per account**, with a generic failure message that does not reveal whether the email exists.
-- Email verification before an account is treated as belonging to a real student.
+- ASP.NET Core Identity with **PBKDF2** password hashing or **Argon2id**.
+- Short-lived JWT access token kept in memory (15 min lifetime); refresh token stored in an `HttpOnly; Secure; SameSite=Lax` cookie (7 days, rotated on use).
+- Minimum 10 characters password checked against common deny list.
+- Rate-limited login: 5 attempts per 15 minutes per account and per-IP throttling with generic failure messages.
+- Email verification required before student account activation.
 
 ### NFR-07 — Authorization
 
@@ -281,96 +363,118 @@ Three roles: `Student`, `Advisor`, `Admin`.
 
 | Rule | Enforcement |
 |---|---|
-| A student may read and write **only their own** profile, gaps, roadmap and progress | Server-side ownership check on every request; never trust an ID sent by the client |
-| An advisor may read **aggregate** cohort data only | Separate endpoints that return aggregates, never rows |
-| An advisor may read an individual profile **only with explicit opt-in** | Consent flag checked server-side |
-| Only an admin may write catalogue content | Role policy on all admin endpoints |
-| The AI service is **not publicly routable** | Internal network plus a shared-secret header; see [§03](03-architecture.md#6-service-to-service-authentication) |
-
-> Every endpoint is deny-by-default. A missing authorization attribute is a review blocker.
+| A student may read and write **only their own** profile, gaps, roadmap, attempts and game state | Server-side ownership check on every request; never trust client IDs |
+| An advisor may read **aggregate** cohort data only | Dedicated aggregate endpoints; cell suppression for $k < 5$ |
+| An advisor may read an individual profile **only with explicit opt-in** | `consent_advisor_visibility` checked server-side |
+| Only an admin may publish catalogue content, validate graphs, or review reports | Role policy on all admin endpoints |
+| The AI service is **not publicly routable** | Internal network plus shared-secret header ([§03](03-architecture.md#6-service-to-service-authentication)) |
 
 ### NFR-08 — Privacy and data protection
 
-Student skill data is sensitive: it is a record of what a person *cannot* do.
-
-- **Minimisation.** Collect nothing that no feature consumes. No national ID, no address, no phone number.
-- **Consent.** Separate, revocable opt-in for (a) advisor visibility of the individual profile and (b) inclusion of the student's data in the evaluation study.
-- **Deletion.** A student can delete their account; personal rows are hard-deleted within 30 days. Only irreversibly anonymised aggregates may remain.
-- **Third-party AI.** The mentor prompt carries only explicitly allow-listed, relevant computed student-context fields required for grounded responses (for example target career, readiness, gaps, strengths, roadmap context, rationale, and recent completions). It never carries the student’s name, email, student ID, university identity unless explicitly required by the project, or uncontrolled/free-form personal profile text. The `Sanitised Context DTO` is the enforcement boundary. See [§06](06-ai-engines.md#44-privacy-in-the-mentor-prompt).
-- **Transport.** HTTPS everywhere, HSTS enabled.
-- **At rest.** No plaintext credentials, tokens, or secrets in the database or the repository.
-- **Logs.** Never log tokens, passwords, or full prompt contents. Personal identifiers in logs are truncated.
+- **Minimisation:** Collect no national ID, address, or phone number.
+- **Consent:** Explicit, separate opt-in flags for `consent_advisor_visibility` and `consent_research_use`.
+- **Mentor free-text scrubbing:** Student mentor questions are capped at 300 characters, scrubbed via regex for emails, phone numbers, and URLs, and preceded by a visible disclosure.
+- **LLM terms disclosure:** Clear student-facing disclosure and consent shown before first mentor interaction explaining external model processing.
+- **Telemetry minimisation:** Telemetry records only exercise timing and correctness; no personal free text is logged.
 
 ### NFR-09 — Abuse and cost control
 
-The budget is **$0**, so an unbounded loop against a free tier is an outage.
-
-- Mentor: **10 requests per user per hour** and **200 per day system-wide**, enforced server-side.
-- Embeddings for catalogue content are generated **at seed time only** and cached in the database.
-- All external AI calls: 20-second timeout, at most 2 retries with exponential backoff, then the fallback path.
-- A daily call counter is exposed on an admin page so the ceiling is visible before it is hit.
+- Mentor: 10 requests per user per hour and 200 per day system-wide.
+- Offline content drafting uses a **separate dev-only API key and quota**, completely isolated from runtime student traffic.
+- Stored per-exercise explanations are used by default for "Explain my answer" (zero LLM calls); external LLM is invoked only upon explicit "Ask the mentor" clicks.
+- Strict timeout budgets: connect 2 s; `/recommend` 8 s (1 retry); `/mentor` 12 s (**no retry**); offline fallback immediately on failure.
 
 ### NFR-10 — Input handling and injection resistance
 
-- All queries through EF Core parameterisation. No string-concatenated SQL.
-- Every request body validated against an explicit schema; unknown fields rejected.
-- Output encoded on render; React's default escaping is never bypassed with `dangerouslySetInnerHTML`.
-- **Prompt injection:** any student free text placed in an LLM prompt is treated as untrusted data, wrapped in explicit delimiters, and preceded by a system instruction stating that content inside the delimiters is data and never instructions. Mentor output is rendered as plain text, never as HTML. Detail in [§06](06-ai-engines.md#45-prompt-injection-hardening).
-- File uploads are out of scope for the MVP, which removes an entire attack surface.
+- EF Core parameterisation across all queries; no raw SQL string concatenation.
+- Request payloads strictly validated against schemas.
+- Mentor prompt isolates student text within explicit delimiters and strict system instructions ([§06](06-ai-engines.md#45-prompt-injection-hardening)). Output rendered as plain text.
 
 ### NFR-11 — Maintainability
 
-- Backend layered `Api → Application → Domain → Infrastructure`. The gap and scheduler algorithms live in `Domain` with **no framework or database dependency**, so they are unit-testable in isolation.
-- All tuning constants (severity thresholds, scoring weights, increment rules) live in one configuration class, never as scattered literals.
-- Public methods on domain services carry documentation comments.
-- Every merged PR leaves `main` green.
+- Layered architecture: `Api → Application → Domain → Infrastructure`.
+- `Domain` contains pure domain logic (`PathBuilder`, `MasteryCalculator`, `XpCalculator`, `StreakCalculator`, `ReviewScheduler`, `AtomGraphValidator`) with zero database or framework dependencies, making it 100% unit-testable.
+- All constants ($\tau = 0.80$, XP rewards, Leitner intervals, timeout limits) reside in a single configuration class.
 
 ### NFR-12 — Testability
 
 | Layer | Minimum |
 |---|---|
-| Domain (gap, readiness, scheduler) | **≥ 80 % line coverage**, including cycle detection and tie-breaking |
-| API | Integration tests for every endpoint's happy path plus its 401/403 paths |
-| AI service | Unit tests for extraction and matching against a fixed labelled set |
-| Frontend | Component tests for the gap table and the roadmap view |
-| E2E | One test per MVP user story, named `US-xx` |
+| Domain (path, mastery, streak, XP, review, validator) | **$\ge 80\%$ line coverage**, including cycle detection and boundary cases |
+| API | Integration tests for every endpoint happy path and 401/403/422 paths |
+| AI service | Unit tests for extraction and recommendation against fixed evaluation sets |
+| Frontend | Component tests for lesson player, node states, and path virtualisation |
+| E2E | One test per user story, named `US-xx` |
 
 ### NFR-13 — Internationalisation readiness
 
-The project title is bilingual, so Arabic support will be asked about.
-
-- All UI strings come from resource files. **Zero hard-coded user-visible English inside components.**
-- Layout tested with `dir="rtl"`; no hard-coded left/right offsets where logical properties work.
-- Dates and numbers formatted through the platform locale API.
-- Shipping an Arabic translation is **not** an MVP commitment. Being *able* to add one without refactoring is.
+- Zero hard-coded English strings in UI components; all text sourced from localization dictionaries.
+- Layouts tested with `dir="rtl"`.
+- Code snippets formatted as isolated LTR blocks within RTL screens.
+- Atom content schema includes `language` attribute (`DEFAULT 'en'`) to support future Arabic micro-lesson translations.
 
 ### NFR-14 — Portability
 
-Runs locally with a single `docker compose up`, database included. No team member should need
-cloud access to develop. Local Postgres uses the `pgvector/pgvector` image so vector behaviour
-matches production.
+Full stack runs locally via single `docker compose up`. Local PostgreSQL uses `pgvector/pgvector` image to match production behavior.
 
 ### NFR-15 — Legal and licensing
 
-- Every seeded data source records its licence and required attribution ([§04](04-data-model.md#9-seed-data-sources-and-licences)).
-- Curated resources are **links only**; no third-party content is copied.
-- The repository carries an explicit licence file.
-- Model weights are used only under licences permitting this use (Apache-2.0 / MIT).
+- Every seeded data source records licence and attribution obligations ([§04](04-data-model.md#9-seed-data-sources-and-licences)).
+- Micro-lessons and exercises feature original phrasing authored by team members and reviewed offline; no copyrighted text is copied. External roadmaps are consulted for topic scope only.
+- Curated resource links are links only.
+
+### NFR-16 — Content quality
+
+- Every student-visible atom must be in `published` status, requiring automated CI validation and human domain review.
+- Every atom must provide $\ge 3$ validated exercises.
+- Advanced atoms (bands 4 and 5) require two independent human reviews before publication.
+
+### NFR-17 — Content versioning and state migration
+
+- `atom.slug` is permanent.
+- Material content revisions generate a new atom version with `replaced_by` pointing to the replacement.
+- Existing student mastery and attempt history automatically migrate forward; deprecated atoms are hidden from paths but never hard-deleted.
+
+### NFR-18 — Engagement ethics
+
+- Tone is encouraging, plain, and constructive; zero guilt-tripping copy or streak-loss shaming.
+- Push/email notifications are strictly opt-in, limited to maximum 1 per day, and observe quiet hours.
+- Zero real-money mechanics, paid skips, or artificial timers.
+- No social comparison without explicit opt-in; celebratory animations are capped at $\le 3$ seconds.
+
+### NFR-19 — Motion and sound safety
+
+- Adheres to WCAG 2.1 SC 2.3.1 (no flashing $> 3$ per second) and SC 2.3.3 (motion from interactions).
+- Confetti, bouncing path nodes, and celebration animations are disabled when `prefers-reduced-motion: reduce` is detected.
+- Audio cues are muted by default and require deliberate user activation.
+
+### NFR-20 — Time and timezone handling
+
+- All daily streak, daily goal, and snapshot boundaries use the student's configured IANA timezone (default `Africa/Cairo`, correctly handling Egypt DST transitions).
+- All domain date/time calculations consume an injected `IClock` abstraction; direct calls to `DateTime.Now` or hardcoded UTC offsets are forbidden.
+
+### NFR-21 — Data retention
+
+- Raw `EXERCISE_ATTEMPT` records are retained for **30 days maximum**, after which an automated retention job aggregates them into permanent atom difficulty and discrimination metrics and purges the raw attempt rows.
 
 ---
 
 ## 5. Assumptions
 
-Each of these, if false, changes the plan. Tracked in [§10](10-risks-and-assumptions.md).
-
 | # | Assumption | If false |
 |---|---|---|
 | A1 | The department's course list is obtainable in a usable form | Curriculum mapping degrades to a small hand-entered subset |
 | A2 | A free LLM tier remains available at sufficient quota | Mentor falls back to templated explanations |
-| A3 | ≥ 500 job postings can be collected for the 6 careers under acceptable terms | Importance weights fall back to O\*NET/ESCO alone and regional weighting is dropped only for that insufficient-corpus fallback; it is reported as future work |
-| A4 | ≥ 15 students are available for the evaluation study | The study becomes qualitative, with the sample-size limitation stated |
-| A5 | All 8 members have ~10 productive hours/week outside exam periods | Should-have features are cut in priority order |
-| A6 | Free hosting tiers remain sufficient | The demo runs from a local machine in demo mode |
+| A3 | $\ge 500$ job postings can be collected under acceptable terms | Importance weights fall back to O\*NET/ESCO alone |
+| A4 | $\ge 15$ students are available for the evaluation study | The study becomes qualitative with sample size limitations stated |
+| A5 | All 8 members have ~10 productive hours/week outside exams | Scope reduced strictly along contingency priorities |
+| A6 | Free hosting tiers remain sufficient | The demo runs locally in demo mode |
+| A7 | Static hosting reliably serves pre-built unit bundles | Bundles served directly by .NET API with local caching |
+| A8 | Egypt timezone DST transitions adhere to standard tzdata | System allows manual timezone override in profile settings |
+| A9 | Free LLM quota suffices for offline batch content drafting | Batch drafting throttled or supplemented with local quantized models |
+| A10 | $\ge 5$ reviewers provide 3.5 h/week for content review | Career scope reduced to 3–4 core careers (R-06) |
+| A11 | Students value gamified atomic learning over linear task lists | Usability study (RQ5/RQ8) measures engagement; fallback to simple list view |
+| A12 | Static host serves pre-rendered unit content bundles without egress costs | Bundles served via compressed API endpoint |
 
 ---
 
@@ -379,7 +483,7 @@ Each of these, if false, changes the plan. Tracked in [§10](10-risks-and-assump
 | # | Constraint | Consequence |
 |---|---|---|
 | C1 | **$0 budget, everything included** | No paid APIs, hosting, or data. Drives ADR-0002 and ADR-0005 |
-| C2 | Fixed final review, **20 May 2027** | Feature freeze 4 weeks earlier; scope is the only flexible variable |
+| C2 | Fixed final review, **20 May 2027** | Feature freeze ≈ 4.7 weeks (33 days) earlier (Fri 17 Apr 2027); scope is the only flexible variable |
 | C3 | Team skill mix is fixed (.NET, React, Python) | No stack changes mid-project |
 | C4 | Exam periods reduce capacity | Modelled as low-velocity weeks in [§08](08-plan-and-timeline.md) |
 | C5 | No employer partnerships | Job matching stays out of scope |

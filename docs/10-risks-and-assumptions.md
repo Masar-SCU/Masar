@@ -1,203 +1,221 @@
 # 10 — Risks & Assumptions
 
-**Document owner:** Abdelrahman Megahed · **Reviewed:** monthly at the team sync
+**Document owner:** Abdelrahman Megahed · **Status:** Revised <2026-11-15> (atomic roadmap + defect fixes) · **Reviewed:** monthly at team sync
 
 A risk register is only useful if every entry has a **trigger** (how you know it is happening) and an
 **owner** (who acts). A list of worries without those is decoration.
 
-Scoring: probability and impact each 1–5; **exposure = P × I**. Anything at exposure ≥ 12 gets a
+Scoring: probability and impact each 1–5; **exposure = P × I**. Anything at exposure $\ge 12$ gets a
 mitigation that is actively worked, not merely written down.
 
 ---
 
 ## 1. Top risks
 
-### R-01 · A single person owns all three AI engines · **P4 × I5 = 20**
+### R-15 · Content volume for ~4,050 atoms overwhelms team capacity · **P5 × I5 = 25**
 
-Ahmed Yousef owns extraction, embeddings, recommendation and the AI Mentor. In the original plan this
-was worse — no backup was named anywhere. An exam week, an illness, or a lost laptop stalls several
-AI deliverables.
+Hand-authoring 4,050 micro-lessons and ~16,000 exercises at 20 min/atom would require ~1,350 hours, which is completely impossible for an 8-person team.
 
-- **Trigger:** any AI task slips more than 5 days, or Ahmed is unreachable for 3 days.
-- **Owner:** Abdelrahman.
-- **Mitigation:** Ziad remains a named backup for AI integration/support work and pairs on the AI service client from Slice 6. All model code lives in the repository with a written README, never only on one machine. The career recommendation pipeline, including its deterministic fallback, runs inside FastAPI, so the backend does not need to reimplement prediction when the primary model is unavailable.
-- **Residual:** evaluation quality would suffer most, since it is the hardest part to hand over.
+- **Trigger:** $< 600$ published atoms by W17, or $< 1,500$ published atoms by W23.
+- **Owner:** Abdelrahman Megahed.
+- **Mitigation:** Execute the offline content factory pipeline ([14 — Content Pipeline](14-content-pipeline.md)): LLM-assisted drafting with strict schema constraints, automated blind-solve validation, and human review ($\approx 4$ min/atom review budget, $\approx 3.5$ h/week across 5 reviewers). Tooling owned by Mohamed Salah.
+- **Fallback (R-06):** Reduce full content depth to 3–4 core careers (Backend .NET, Frontend/Full-Stack, Data), providing outlines for remaining careers. Stated honestly in the final report.
 
-### R-02 · The two core engines are owned by one person · **P3 × I5 = 15**
+### R-01 · Single person owns all runtime AI services · **P4 × I5 = 20**
 
-Osama owns `GapCalculator`, `ReadinessCalculator` and `RoadmapScheduler` — the features that
-**cannot** be cut.
+Ahmed Yousef owns extraction, sentence embeddings, recommendation, and AI mentor intelligence. In the original plan, no backup was named anywhere.
 
-- **Trigger:** Slice 2 or Slice 3 slips by more than a week.
-- **Owner:** Abdelrahman.
-- **Mitigation:** Mohamed Yasser is the named backup and reviews every PR in these areas. The algorithms are fully specified in [§05](05-features-mvp.md) with worked numeric examples, so a second person can implement them from the document alone. `Domain` has no infrastructure dependencies, making it the easiest code in the project to pick up.
+- **Trigger:** Any AI deliverable slips $> 5$ days, or Ahmed is unreachable for 3 days.
+- **Owner:** Abdelrahman Megahed.
+- **Mitigation:** Ziad pairs on the AI service client. Content factory CLI tooling is transferred to Mohamed Salah ([F-33](10-risks-and-assumptions.md)). Open Decision OD-6 nominates Mohamed Yasser or Mohamed Salah for read access and reviews on FastAPI code from Slice 6.
+- **Residual:** A second AI-capable developer remains a known gap; recommendation fallback inside FastAPI protects the core demo.
+
+### R-16 · LLM-drafted learning content contains subtle errors or hallucinations · **P4 × I4 = 16**
+
+AI-drafted micro-lessons could introduce subtle conceptual bugs, incorrect code outputs, or flawed exercise keys.
+
+- **Trigger:** Exercise error reports $> 5\%$ in pilot or blind-solve disagreement $> 10\%$.
+- **Owner:** Ahmed Yousef (checks) · Mohamed Yasser (curation).
+- **Mitigation:** Automated CI blind-solve validation (second model pass answers without the key; discrepancies flagged); automated code syntax/execution check in CI; strict human review checklist; double human review on level 4–5 atoms; in-player "Report a problem" button ([FR-50](02-requirements.md#fr-50)). External URLs are rejected by CI.
+
+### R-17 · Mid-project architecture redesign at Week 9 creates execution churn · **P4 × I4 = 16**
+
+Transitioning from phase scheduling to the Duolingo-style atomic roadmap at W9 requires schema migrations, API contract changes, and UI redesign.
+
+- **Trigger:** S3′ deliverables slip past W11 (5 Dec 2026).
+- **Owner:** Abdelrahman Megahed.
+- **Mitigation:** Re-baseline plan (§08 §0); freeze API contract v2.0.0 by W10 ([ADR-0007](adr/0007-atomic-roadmap.md)); zero parallel legacy maintenance (clean cutover). Pilot unit (`sql-fundamentals`) verifies the complete vertical loop before mass authoring.
+
+### R-02 · Single person owns core domain calculators · **P3 × I5 = 15**
+
+Osama owns `PathBuilder`, `MasteryCalculator`, `GapCalculator`, `ReadinessCalculator`, `XpCalculator`, and `StreakCalculator`.
+
+- **Trigger:** S3′ or S4′ domain deliverables slip $> 7$ days.
+- **Owner:** Abdelrahman Megahed.
+- **Mitigation:** Mohamed Yasser is the named consulted backup and reviews all PRs. Domain classes are pure functions over plain objects with an injected `IClock` and zero I/O dependencies, making them fully documented and unit-testable.
 
 ### R-03 · Job posting data cannot be collected legally or in sufficient volume · **P3 × I4 = 12**
 
-Importance weights, regional weighting and RQ2 all depend on the corpus, and many job sites prohibit
-scraping in their terms.
-
-- **Trigger:** fewer than 300 postings collected by the end of W17.
+- **Trigger:** Fewer than 300 postings collected by end of W17.
 - **Owner:** Ahmed Yousef.
-- **Mitigation:** [ADR-0003](adr/0003-job-data-sourcing.md) prefers permitted sources — public APIs, openly licensed datasets, and manual collection with per-source terms recorded. **The fallback is already designed:** importance weights come from O\*NET (CC BY 4.0) plus ESCO plus expert judgement, and the blend in [§04 5.3](04-data-model.md#53-importance-weights) simply reweights. **If the corpus is insufficient for the intended regional analysis, regional weighting is dropped only in that fallback scenario and reported as future work.**
-- **Note:** this is precisely why large-scale scraping is out of scope. The risk is contained by design rather than mitigated after the fact.
+- **Mitigation:** [ADR-0003](adr/0003-job-data-sourcing.md) uses permitted public APIs and open datasets. If corpus collection lags, importance weights fall back to O\*NET and ESCO taxonomies plus expert review. Regional weighting is dropped only in that fallback.
 
-### R-04 · Free hosting tiers change, expire, or throttle · **P3 × I4 = 12**
+<a id="r-04"></a>
+### R-04 · Free hosting tiers sleep, expire, or throttle · **P3 × I4 = 12**
 
-Verified constraints on common free tiers: web services sleep after inactivity with cold starts up to
-roughly 60 s; some free managed Postgres instances **expire 30 days after creation** and provide no
-backups; free instances may be restarted at any time.
+Free web services sleep after inactivity (up to 60 s cold start); managed databases may lack automated backups.
 
-- **Trigger:** any expiry notice, or a staging outage lasting more than 24 hours.
+- **Trigger:** Service cold-start latency $> 10$ s, or database expiry warning.
 - **Owner:** Mohamed Salah.
-- **Mitigation:** [ADR-0005](adr/0005-zero-budget-hosting.md) prefers providers with no database expiry clause. **A weekly `pg_dump` to a private backup location is non-negotiable** — a free tier with no backups plus an expiry clause is exactly how a project loses its data in April. Demo mode ([§03 10](03-architecture.md#10-demo-mode)) means the defence never depends on any provider. GitHub Student Developer Pack credits are checked as a supplementary option.
+- **Mitigation:** Pre-rendered static content bundles (`/content/v{n}/*.json`) served from static CDN (Cloudflare Pages / Vercel), ensuring lessons start instantly ([ADR-0010](adr/0010-lesson-grading-authority-and-content-delivery.md)). Client evaluates exercises locally; automated uptime ping keeps backend warm during cohort hours. Weekly automated `pg_dump` backups; offline demo mode ([ADR-0005](adr/0005-zero-budget-hosting.md)).
 
-### R-05 · Free LLM tier quota or availability changes · **P3 × I3 = 9**
+### R-06 · Curation of deep-dive resources and projects overruns · **P4 × I3 = 12**
 
-- **Trigger:** sustained 429 responses, or a provider policy change.
-- **Owner:** Ahmed Yousef.
-- **Mitigation:** the mentor is 🔵 Should-have, not MVP. A provider-agnostic interface ([ADR-0002](adr/0002-llm-provider.md)) allows a swap in hours. Templated fallback covers every question intent. Embeddings run locally, so **exactly one feature** is exposed to this risk.
-
-### R-06 · Curating 160 skills, 350 resources and 60 projects takes longer than planned · **P4 × I3 = 12**
-
-The most commonly underestimated task in projects like this: unglamorous, large, and easy to defer
-until it blocks everything.
-
-- **Trigger:** fewer than 100 skills or 200 resources by the end of W17.
+- **Trigger:** Fewer than 100 resources or 20 projects by W17.
 - **Owner:** Mohamed Yasser.
-- **Mitigation:** staged targets — 60 skills in Slice 1, 140 by W17. Work is parallelised across four people during the exam period, seeded from O\*NET/ESCO rather than written from scratch, and the admin panel exists specifically to make curation fast. The coverage report ([§05 5.16](05-features-mvp.md#516-admin-content-panel)) surfaces gaps automatically.
-- **Fallback:** reduce to 4 careers instead of 6. A complete 4 beats a hollow 6.
+- **Mitigation:** Scope contained to ~250 deep-dive links (optional reading attached to atoms) and 40–60 stage projects. Resources are curated links only (never LLM-generated).
 
-### R-07 · Fewer than 15 students available for the usability study · **P3 × I3 = 9**
+### R-11 · Scope creep beyond core learning loop · **P4 × I3 = 12**
 
-- **Trigger:** fewer than 8 recruited by the end of W16.
+- **Trigger:** Unassigned issues created or non-core feature development started.
+- **Owner:** Abdelrahman Megahed.
+- **Mitigation:** Strict priority matrix in [§08 2](08-plan-and-timeline.md#2-priority-matrix--single-source-of-truth). Leagues, quests, and complex resume builders are designated ⚪ Later/Could and cut first. Feature freeze on Fri 17 Apr 2027 is non-negotiable.
+
+### R-18 · Frontend team overloaded by gamified interactive components · **P3 × I4 = 12**
+
+Building the winding path, interactive exercise types, XP animations, and review queue could overwhelm frontend capacity.
+
+- **Trigger:** Lesson player prototype not interactive by W11.
+- **Owner:** Ziad (Lead Frontend).
+- **Mitigation:** Radix headless primitives; path nodes use standard CSS/SVG; list virtualisation via TanStack Virtual renders current unit $\pm 2$ only; non-executing structured exercises avoid code sandbox complexity; leagues and quests deferred to Could-have.
+
+### R-19 · Host cold starts degrade the micro-lesson experience · **P4 × I3 = 12**
+
+A 60 s host wake-up destroys the feeling of a fast 5-minute Duolingo-style lesson.
+
+- **Trigger:** Lesson loading screen $> 2$ s on mobile.
+- **Owner:** Mohamed Salah · Ziad.
+- **Mitigation:** Static bundles pre-fetched and cached locally; lesson sessions start immediately against cached content; answer evaluation is instant on client; completion requests queue locally and retry with idempotency keys; uptime keep-alive ping.
+
+### R-20 · Content licensing and third-party copyright claims · **P3 × I4 = 12**
+
+- **Trigger:** Content similarity check matches external copyrighted roadmap text.
+- **Owner:** Abdelrahman Megahed.
+- **Mitigation:** Original phrasing mandatory across all atoms ([NFR-15](02-requirements.md#nfr-15--legal-and-licensing)). External roadmaps referenced for topic scope only; review checklist explicitly checks originality.
+
+### R-21 · Free-tier RAM exceeded by Python ML runtime · **P3 × I4 = 12**
+
+FastAPI + PyTorch + sentence-transformers could exceed the 512 MB memory limit of free container hosting (F-27).
+
+- **Trigger:** Container RSS exceeds 450 MB in CI staging.
+- **Owner:** Ahmed Yousef.
+- **Mitigation:** Use ONNX Runtime or 8-bit quantized models; load a single shared embedding model; precompute all static career and atom embeddings at seed time; profile container peak RSS in CI.
+
+### R-22 · LLM free-tier terms allow training on user inputs · **P3 × I4 = 12**
+
+- **Trigger:** Provider privacy terms state free-tier API inputs may be used for model training (F-28).
+- **Owner:** Ahmed Yousef.
+- **Mitigation:** Strict allow-list Sanitised Context DTO assembled in .NET strips all personal identifiers; student question scrubbed for emails, phone numbers, and URLs; student-facing disclosure and consent shown before first mentor interaction ([NFR-08](02-requirements.md#nfr-08--privacy-and-data-protection)).
+
+### R-05 · Free LLM tier quota exhaustion or throttling · **P3 × I3 = 9**
+
+- **Trigger:** 429 quota errors from provider.
+- **Owner:** Ahmed Yousef.
+- **Mitigation:** Mentor is Should-have. Provider-abstracted adapter ([ADR-0002](adr/0002-llm-provider.md)); daily system cap of 200 calls; stored exercise explanations handle "explain my answer" with 0 LLM calls; templated fallback handles all intents.
+
+### R-07 · Fewer than 15 students available for usability study · **P3 × I3 = 9**
+
+- **Trigger:** $< 8$ students recruited by W16.
 - **Owner:** Yousef Khaled.
-- **Mitigation:** recruit early through the department with the supervisor's endorsement, run round 1 during the exam period while students are on campus, and accept remote participation.
-- **Fallback:** report a qualitative study with the sample-size limitation stated explicitly in [§09 7](09-evaluation.md#7-threats-to-validity). A small honest study beats an invented large one.
+- **Mitigation:** Department recruitment endorsed by Dr. Hend; Round 1 scheduled during W15–W17 exams while students are on campus.
 
-### R-08 · The AI service is publicly reachable on the chosen host · **P2 × I4 = 8**
+<a id="r-08"></a>
+### R-08 · AI service publicly reachable on free hosting · **P2 × I4 = 8**
 
-Some free tiers do not offer private networking. A publicly reachable AI service means anyone can
-drain the LLM quota.
-
-- **Trigger:** discovered during Slice 6 deployment.
+- **Trigger:** AI endpoint responds to unauthenticated public requests.
 - **Owner:** Mohamed Salah.
-- **Mitigation:** shared-secret header on every request with a constant-time comparison, IP allow-listing where available, rate limiting at the AI service itself in addition to the API, and a monitored request counter.
+- **Mitigation:** Private container networking; `X-Masar-Service-Key` constant-time verification; IP allow-listing where available.
 
-### R-09 · Department course catalogue is unavailable · **P2 × I3 = 6**
+### R-23 · Streak and daily goal timezone / DST bugs · **P3 × I2 = 6**
 
-- **Trigger:** not obtained by the end of Slice 7.
-- **Owner:** Abdelrahman, with Dr. Hend.
-- **Mitigation:** request it in **week 1**, not week 24. This is a dependency on another person's time, which is always the slowest kind. Partial data still supports mapping the ~15 core courses.
-- **Fallback:** the feature is cut at contingency position 5, and the novelty claim is reduced accordingly.
-
-### R-10 · Integration fails late because services were built in isolation · **P2 × I5 = 10**
-
-The classic multi-person project failure — and the specific outcome the original horizontal phase plan
-would have produced.
-
-- **Trigger:** any slice ending without a working end-to-end path.
-- **Owner:** Abdelrahman.
-- **Mitigation:** the entire slice structure exists to prevent this. Slice 0 connects all three services in week 1, every slice ends deployed to staging, and the API contract is frozen in week 2 and generated rather than hand-written.
-
-### R-11 · Scope creep · **P4 × I3 = 12**
-
-Eight motivated people will invent features. The original document already listed résumé builders and
-interview simulators in two contradictory tiers.
-
-- **Trigger:** any work started that is not in the current slice.
-- **Owner:** Abdelrahman.
-- **Mitigation:** the priority matrix in [§08 2](08-plan-and-timeline.md#2-priority-matrix--single-source-of-truth) is the single source of truth, and ⚪ Later items are listed explicitly so they read as already-considered-and-deferred rather than as exciting new ideas. Unassigned issues are not scheduled work. Feature freeze on 17 Apr 2027.
-
-### R-12 · Exam periods consume more capacity than assumed · **P4 × I2 = 8**
-
-- **Trigger:** two consecutive weeks below half the expected throughput.
-- **Owner:** Abdelrahman.
-- **Mitigation:** W15–W17 is already planned at ~40 % capacity with low-coupling work; five weeks of margin sit between feature freeze and the defence; and the contingency cut order is decided in advance.
-
-### R-13 · Gap or roadmap output looks obviously wrong to a reviewer · **P2 × I4 = 8**
-
-The original spec's gap table was internally inconsistent and its roadmap did not follow from its own
-gaps. Left unfixed, a committee would have found it within minutes.
-
-- **Trigger:** any inconsistency found in review or usability testing.
+- **Trigger:** Students report lost streaks due to UTC vs local date mismatch.
 - **Owner:** Osama.
-- **Mitigation:** severity is a pure function of `priority`, which makes non-monotone ordering impossible ([§05 5.5](05-features-mvp.md#55-skill-gap-analysis--core)). Property-based tests assert monotonicity and prerequisite correctness, expert review (RQ3) checks plausibility, and the worked examples in this documentation set are machine-verified.
+- **Mitigation:** All date boundaries computed using student's IANA timezone (default `Africa/Cairo`) and injected `IClock` abstraction ([NFR-20](02-requirements.md#nfr-20--time-and-timezone-handling)); automated unit tests cover Egypt DST transition dates.
 
-### R-14 · A team member leaves or disengages · **P2 × I4 = 8**
+### R-24 · Database storage growth from exercise attempts · **P2 × I3 = 6**
 
-- **Trigger:** no contribution for 10 consecutive days.
-- **Owner:** Abdelrahman, escalating to Dr. Hend.
-- **Mitigation:** every critical workstream has a named backup ([§08 7](08-plan-and-timeline.md#7-raci-by-workstream)), everything lives in the repository rather than on one laptop, and twice-weekly written standups make disengagement visible within days instead of weeks.
+- **Trigger:** Database volume exceeds 300 MB on free 1 GB tier.
+- **Owner:** Mohamed Salah.
+- **Mitigation:** Automated scheduled retention job purges raw `EXERCISE_ATTEMPT` records older than 30 days after aggregating them into permanent difficulty metrics ([NFR-21](02-requirements.md#nfr-21--data-retention)).
 
 ---
 
 ## 2. Risk summary
 
-Ordered by exposure. The top six are the ones to actually watch.
+Ordered by exposure ($P \times I$):
 
 | ID | Risk | P | I | Exposure | Owner |
-|---|---|:-:|:-:|:-:|---|
-| R-01 | Single owner for all AI engines | 4 | 5 | **20** | Abdelrahman |
-| R-02 | Single owner for the core engines | 3 | 5 | **15** | Abdelrahman |
-| R-03 | Job data unavailable | 3 | 4 | **12** | Ahmed Yousef |
-| R-04 | Free hosting expires or throttles | 3 | 4 | **12** | Mohamed Salah |
-| R-06 | Data curation overruns | 4 | 3 | **12** | Mohamed Yasser |
-| R-11 | Scope creep | 4 | 3 | **12** | Abdelrahman |
-| R-10 | Late integration failure | 2 | 5 | 10 | Abdelrahman |
-| R-05 | LLM tier changes | 3 | 3 | 9 | Ahmed Yousef |
-| R-07 | Too few study participants | 3 | 3 | 9 | Yousef Khaled |
-| R-08 | AI service publicly reachable | 2 | 4 | 8 | Mohamed Salah |
-| R-12 | Exam capacity loss | 4 | 2 | 8 | Abdelrahman |
-| R-13 | Visibly wrong output | 2 | 4 | 8 | Osama |
-| R-14 | Member disengages | 2 | 4 | 8 | Abdelrahman |
-| R-09 | Course catalogue unavailable | 2 | 3 | 6 | Abdelrahman |
-
-**The two highest risks are about people, not technology.** That is usually true of student projects
-and usually absent from their documentation. The mitigation for both is identical: named backups,
-everything in the repository, and fallbacks that let an unfinished component degrade the product
-rather than stop it.
+|---|---|:---:|:---:|:---:|---|
+| **R-15** | Content volume for ~4,050 atoms overwhelms capacity | 5 | 5 | **25** | Abdelrahman |
+| **R-01** | Single person owns all runtime AI services | 4 | 5 | **20** | Abdelrahman |
+| **R-16** | LLM-drafted content errors or hallucinations | 4 | 4 | **16** | Ahmed Yousef |
+| **R-17** | Mid-project architecture redesign at W9 | 4 | 4 | **16** | Abdelrahman |
+| **R-02** | Single person owns core domain calculators | 3 | 5 | **15** | Abdelrahman |
+| **R-03** | Job posting data unavailable legally or in volume | 3 | 4 | **12** | Ahmed Yousef |
+| **R-04** | Free hosting expires, sleeps, or throttles | 3 | 4 | **12** | Mohamed Salah |
+| **R-06** | Curation of resources and projects overruns | 4 | 3 | **12** | Mohamed Yasser |
+| **R-11** | Scope creep beyond core learning loop | 4 | 3 | **12** | Abdelrahman |
+| **R-18** | Frontend overloaded by gamified UI | 3 | 4 | **12** | Ziad |
+| **R-19** | Host cold starts degrade micro-lesson UX | 4 | 3 | **12** | Mohamed Salah |
+| **R-20** | Content licensing and accidental copying | 3 | 4 | **12** | Abdelrahman |
+| **R-21** | Free-tier RAM exceeded by Python ML runtime | 3 | 4 | **12** | Ahmed Yousef |
+| **R-22** | LLM free-tier data-use terms | 3 | 4 | **12** | Ahmed Yousef |
+| **R-10** | Integration fails late | 2 | 5 | 10 | Abdelrahman |
+| **R-05** | Free LLM quota exhaustion | 3 | 3 | 9 | Ahmed Yousef |
+| **R-07** | Fewer than 15 usability participants | 3 | 3 | 9 | Yousef Khaled |
+| **R-08** | AI service publicly reachable | 2 | 4 | 8 | Mohamed Salah |
+| **R-12** | Exam capacity reduction | 4 | 2 | 8 | Abdelrahman |
+| **R-13** | Output looks visibly wrong to reviewer | 2 | 4 | 8 | Osama |
+| **R-14** | Team member disengages | 2 | 4 | 8 | Abdelrahman |
+| **R-23** | Streak and timezone / DST bugs | 3 | 2 | 6 | Osama |
+| **R-24** | DB growth from exercise attempts | 2 | 3 | 6 | Mohamed Salah |
+| **R-09** | Course catalogue unavailable | 2 | 3 | 6 | Abdelrahman |
 
 ---
 
 ## 3. Assumptions register
 
-Repeated from [§02 5](02-requirements.md#5-assumptions) with owners and verification dates, because an
-assumption nobody re-checks is just a hope.
-
 | # | Assumption | Owner | Verify by | If false |
 |---|---|---|---|---|
 | A1 | Department course list is obtainable | Abdelrahman | W4 | Map ~15 core courses only |
-| A2 | A free LLM tier remains available | Ahmed Yousef | W20 | Templated mentor only |
-| A3 | ≥ 500 postings collectible under acceptable terms | Ahmed Yousef | W17 | Taxonomy-only weights; drop regional weighting only in the insufficient-corpus fallback and report it as future work |
-| A4 | ≥ 15 students available for the study | Yousef Khaled | W16 | Qualitative study, limitation stated |
-| A5 | ~10 productive hours/week per member | Abdelrahman | W6, then monthly | Cut in contingency order |
-| A6 | Free hosting remains sufficient | Mohamed Salah | W2, then monthly | Local demo mode |
-| A7 | pgvector is available on the chosen free Postgres | Mohamed Salah | **W1** | Store vectors as `float[]` and compute cosine in application code — viable at 160 rows |
-| A8 | Dr. Hend can review roadmaps and labels | Abdelrahman | W20 | One external practitioner reviewer, noted as a limitation |
-
-**A7 is verified in week 1**, before any code depends on it. Discovering in week 18 that the chosen
-free Postgres does not support the `vector` extension would be an expensive surprise; discovering it in
-week 1 costs an afternoon.
+| A2 | Free LLM tier remains available | Ahmed Yousef | W20 | Templated mentor fallback |
+| A3 | $\ge 500$ postings collectible under acceptable terms | Ahmed Yousef | W17 | Taxonomy-only weights; drop regional weighting |
+| A4 | $\ge 15$ students available for usability study | Yousef Khaled | W16 | Qualitative study, sample size limitation stated |
+| A5 | ~10 productive hours/week per member outside exams | Abdelrahman | Monthly | Cut scope in contingency order |
+| A6 | Free hosting remains sufficient | Mohamed Salah | Monthly | Run local demo mode |
+| A7 | pgvector available on free Postgres | Mohamed Salah | **W1** | Store vectors as `float[]` and compute in app code |
+| A8 | Dr. Hend reviews roadmaps and labels | Abdelrahman | W20 | External practitioner reviewer |
+| A9 | Free LLM quota suffices for offline batch content drafting | Ahmed Yousef | **W10** | Throttle drafting batches; use quantized local models |
+| A10 | $\ge 5$ reviewers provide 3.5 h/week for content review | Abdelrahman | **W12** | Reduce full depth to 3–4 core careers (R-06) |
+| A11 | Students value gamified atomic learning over linear task lists | Yousef Khaled | W16 | Usability study (RQ5/RQ8) tests engagement; toggleable plain list |
+| A12 | Static CDN host serves pre-rendered unit content bundles without egress costs | Mohamed Salah | **W11** | Serve compressed bundles via .NET API endpoint |
 
 ---
 
 ## 4. Decision log
 
-Decisions with lasting consequences get an ADR. These are already taken:
-
 | ADR | Decision | Status |
 |---|---|---|
-| [0001](adr/0001-database-and-vector-store.md) | PostgreSQL + pgvector as the single store | Accepted |
-| [0002](adr/0002-llm-provider.md) | Provider-abstracted free-tier LLM | Accepted |
-| [0003](adr/0003-job-data-sourcing.md) | Frozen, permitted-source snapshot; no scraping | Accepted |
-| [0004](adr/0004-proficiency-scale.md) | 0–5 integer scale, not percentages | Accepted |
-| [0005](adr/0005-zero-budget-hosting.md) | Free-tier hosting with mandatory backups | Accepted |
-| [0006](adr/0006-model-based-recommendation.md) | Model-based career recommendation through FastAPI; deterministic logic limited to mandatory constraints and documented fallback | Accepted |
-
-Changing any of these requires a new ADR that supersedes the old one. Do not silently contradict an
-accepted decision in code — that is how a team ends up with two conflicting architectures and nobody
-able to say which one is current.
+| [0001](adr/0001-database-and-vector-store.md) | PostgreSQL + pgvector as single relational and vector store | Accepted (Addendum 2026-11-15) |
+| [0002](adr/0002-llm-provider.md) | Provider-abstracted free-tier LLM with privacy allow-list | Accepted (Addendum 2026-11-15) |
+| [0003](adr/0003-job-data-sourcing.md) | Frozen, permitted-source job snapshot; no scraping | Accepted |
+| [0004](adr/0004-proficiency-scale.md) | 0–5 integer proficiency scale, not percentages | Accepted (Extended by ADR-0007) |
+| [0005](adr/0005-zero-budget-hosting.md) | Free-tier hosting with mandatory backups and demo mode | Accepted (Addendum 2026-11-15) |
+| [0006](adr/0006-model-based-recommendation.md) | Model-based career recommendation in FastAPI with fallback | Accepted (Extended by ADR-0007) |
+| [0007](adr/0007-atomic-roadmap.md) | Atomic Roadmap replaces phase-based scheduling | **Accepted (2026-11-15)** |
+| [0008](adr/0008-content-authoring-pipeline.md) | Offline LLM-assisted drafting with CI checks and human review | **Accepted (2026-11-15)** |
+| [0009](adr/0009-gamification-and-engagement-ethics.md) | Gamification mechanics and engagement ethics | **Accepted (2026-11-15)** |
+| [0010](adr/0010-lesson-grading-authority-and-content-delivery.md) | Authoritative server re-grading and static content bundles | **Accepted (2026-11-15)** |
 
 ---
 

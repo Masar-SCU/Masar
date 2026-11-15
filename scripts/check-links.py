@@ -26,6 +26,7 @@ import unicodedata
 
 LINK = re.compile(r"\[([^\]]*)\]\(([^)\s]+)\)")
 HEADING = re.compile(r"^#{1,6}\s+(.*)$")
+HTML_ANCHOR = re.compile(r"""<a\s+[^>]*(?:id|name)=["']([^"']+)["']""", re.IGNORECASE)
 SKIP_SCHEMES = ("http://", "https://", "mailto:", "tel:")
 
 
@@ -72,6 +73,8 @@ def anchors_of(path: str) -> set[str]:
             match = HEADING.match(line)
             if match:
                 anchors.add(github_slug(match.group(1)))
+            for am in HTML_ANCHOR.finditer(line):
+                anchors.add(am.group(1))
     return anchors
 
 
