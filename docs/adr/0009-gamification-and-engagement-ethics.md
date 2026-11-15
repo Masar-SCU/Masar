@@ -9,6 +9,7 @@
 Independent self-study platforms in software engineering experience high drop-off rates. Research in educational gamification ([Hamari et al. 2014, Dicheva et al. 2015](../12-references.md#7-knowledge-tracing-spaced-repetition-and-gamification-literature)) demonstrates that well-designed engagement loops (clear goals, transparent progression, immediate feedback, and reward milestones) significantly boost daily practice and retention.
 
 However, popular commercial learning platforms frequently rely on predatory, stress-inducing dark patterns:
+
 1. **Punitive "Lives" / "Hearts":** Locking learners out of practice when they make mistakes, penalizing the very experimentation and debugging central to engineering education.
 2. **Aggressive Push Notifications:** Guilt-inducing notifications that create resentment and engagement fatigue.
 3. **High-Stakes Leaderboard Stress:** Unfair public ranking ladders that encourage superficial speed over deep comprehension.
@@ -18,14 +19,19 @@ Masar requires an engagement framework that motivates continuous daily habit for
 ## Options considered
 
 ### A — No gamification (Plain checklist / LMS model)
+
 Present learning materials as a flat list of checkable tasks.
+
 - *Rejected:* Minimal engagement; fails to build the daily study habits critical for bridging the employment gap.
 
 ### B — Direct clone of commercial freemium mechanics (Hearts / Lives)
+
 Incorporate a 5-heart system where mistakes deplete lives, requiring waiting periods or micro-purchases.
+
 - *Rejected:* Anti-educational. Engineering requires trial, error, and failure. Penalizing mistakes encourages cheating, discourages difficult exercises, and causes acute student anxiety.
 
 ### C — Positive-only, non-punitive engagement mechanics with ethical constraints *(chosen)*
+
 Implement non-punitive mechanics centered on daily consistency (streaks), mastery progression (XP), personalized daily targets (10–60 min), and spaced recall (review queues), strictly excluding lockouts, lives, or manipulative dark patterns.
 
 ## Decision
@@ -48,15 +54,18 @@ Implement non-punitive mechanics centered on daily consistency (streaks), master
 ## Consequences
 
 ### Positive
+
 - **High Student Retention:** Micro-goals and streaks create durable study habits without cognitive fatigue.
 - **Psychological Safety:** Encourages experimentation and learning from errors without fear of penalties or lockouts.
 - **Ethical Academic Standards:** Demonstrates responsible engineering design suitable for university defense and peer review.
 
 ### Negative
+
 - **Reduced Coercive Urgency:** May produce slightly lower short-term check-in metrics compared to predatory dark-pattern mechanics, but yields vastly higher long-term learning quality.
 - **Timezone Complexity:** Requires robust backend handling of student IANA timezones and midnight cutoffs for streak calculation.
 
 ### Neutral
+
 - XP is an internal engagement currency; it has no monetary value and cannot be traded.
 
 ## Verification
@@ -64,4 +73,3 @@ Implement non-punitive mechanics centered on daily consistency (streaks), master
 - [ ] **W12** — Daily streak evaluation engine verified against edge cases (daylight savings, midnight transitions, streak freezes) (Osama)
 - [ ] **W14** — UI celebration components pass WCAG 2.1 SC 2.3.1 and 2.3.3 automated accessibility tests (Mazen)
 - [ ] **W16** — User testing (RQ5 / usability) confirms learners report positive motivation and zero lockout anxiety (Yousef Khaled)
-

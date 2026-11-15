@@ -51,6 +51,7 @@ graph TD
 ### Desktop Responsive Adaptations
 
 On desktop viewports ($\ge 1024\text{ px}$), the screen expands into a high-productivity three-column layout:
+
 - **Left Column (240 px):** Persistent brand header, navigation menu, and quick profile switcher.
 - **Center Column (Fluid, max 720 px):** The primary view content (Path, Practice, Career, or Mentor).
 - **Right Companion Panel (320 px):** Always-visible daily summary card containing:
@@ -160,6 +161,7 @@ The Lesson Player is an immersive, distraction-free environment that maximizes f
 ### Lesson Completion Screen
 
 Upon finishing the final exercise, the player transitions to a celebration summary:
+
 - **XP Earned Card:** Base XP (+15 XP) plus First-Try Accuracy Bonus (+5 XP if $\ge 80\%$ correct on first pass).
 - **Streak Status:** Flame counter incrementing with animated celebration ring.
 - **Readiness Impact:** Real-time continuous readiness update: *"Backend Readiness: 64.2% $\to$ 64.6% (+0.4%)"*.
@@ -307,6 +309,7 @@ To support empirical evaluation of Masar's educational effectiveness ([RQ7 & RQ8
 - `review_card_answered`: `{ atom_id, leitner_box_from, leitner_box_to, latency_ms }`
 
 ### Privacy Constraints
+
 - **Zero Free-Text Capture:** Telemetry streams never capture student chat messages, free-form notes, or personally identifiable information.
 - **Aggregated Analytics:** Student logs are analyzed in aggregate for psychometric item analysis (identifying ambiguous exercises or unexpected failure spikes).
 - **Advisor Suppression:** Advisor cohort dashboards suppress analytics for any atom or unit with fewer than 5 student attempts ($k \ge 5$) to prevent deanonymization.

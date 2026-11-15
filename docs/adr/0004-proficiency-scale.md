@@ -111,4 +111,3 @@ consistent and machine-verified, which the original was not.
    $$L(s) = \max \{ L \in \{0,\dots,5\} : \forall b \le L,\, m_b(s) \ge 0.80 \}$$
    where $m_b(s) = \frac{\text{completed or assumed atoms in band } b}{\text{total published atoms in band } b}$.
 3. **Continuous Level for Readiness:** To avoid coarse "staircase" feedback and ensure every completed atom immediately rewards the learner, career readiness incorporates the continuous level $c(s) = L(s) + \min(1, \frac{m_{L+1}(s)}{0.80})$. This preserves the conceptual integrity of the 0–5 scale while providing smooth, encouraging feedback.
-

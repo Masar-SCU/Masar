@@ -66,6 +66,7 @@ Concretely, evaluation is what lets the team answer these questions with numbers
 ### Statistical reporting
 
 To address small-sample uncertainty ($30 \times 6$), results report:
+
 - **NDCG@3**, Precision@1, Mean Reciprocal Rank (MRR), and Spearman rank correlation $\rho$.
 - **Bootstrap 95% confidence intervals** (1,000 resamples) and a paired Wilcoxon signed-rank test between Condition A and Condition D.
 - If the NDCG@3 difference is $< 0.05$ or the 95% CI includes zero, the finding is reported honestly as **inconclusive**, and the baseline is retained as the production fallback.
@@ -177,6 +178,7 @@ Replaces the previous phase-based roadmap evaluation (F-35, C.11):
 **Owner:** Ahmed Yousef · **When:** Slice 8
 
 Within-subject comparison ($n = 10$ students) comparing manual skill search vs course-based pre-fill.
+
 - **Target:** $\ge 40\%$ reduction in manual search clicks.
 - **Recall bonus:** Verification that course mapping surfaces relevant skills students forgot to list manually.
 
@@ -188,6 +190,7 @@ Within-subject comparison ($n = 10$ students) comparing manual skill search vs c
 **Owner:** Ahmed Yousef · **When:** Slice 10
 
 Single-group exploratory trial on one complete unit (`sql-fundamentals`, $\approx 16$ atoms) with $n \ge 10$ students:
+
 - Pre-test (8 objective questions).
 - Complete the unit's micro-lessons and exercises.
 - Post-test (8 isomorphic objective questions).
@@ -201,6 +204,7 @@ Single-group exploratory trial on one complete unit (`sql-fundamentals`, $\appro
 **Owner:** Yousef Khaled · **When:** Slice 10
 
 Two-week pilot observing daily activity telemetry across $n \ge 15$ students:
+
 - Share of students active $\ge 3$ local calendar days per week.
 - Average completed micro-lessons per active day.
 - Retention rate across Leitner spaced-review sessions.
@@ -211,6 +215,7 @@ Two-week pilot observing daily activity telemetry across $n \ge 15$ students:
 ## 11. Threats to validity
 
 <a id="7-threats-to-validity"></a>
+
 ### Construct validity
 
 | Threat | Mitigation |

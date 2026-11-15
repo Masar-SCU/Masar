@@ -15,7 +15,8 @@
     "MD024": { "siblings_only": true },
 
     // MD033 inline HTML: <br/> inside table cells and Mermaid labels is needed.
-    "MD033": { "allowed_elements": ["br", "sub", "sup", "kbd", "details", "summary"] },
+    // Explicit <a> anchors are permitted for stable markdown linking.
+    "MD033": { "allowed_elements": ["a", "br", "sub", "sup", "kbd", "details", "summary"] },
 
     // MD034 bare URLs: we use <angle brackets>, which this rule accepts.
     "MD034": true,
@@ -40,6 +41,10 @@
   "globs": ["**/*.md"],
   "ignores": [
     "node_modules/**",
-    ".git/**"
+    "**/node_modules/**",
+    ".git/**",
+    ".personal/**",
+    "**/.venv/**",
+    ".venv/**"
   ]
 }

@@ -100,4 +100,3 @@ script — the endpoint is blocked outright in production
 3. **Open Decisions Registered:**
    - **OD-5:** Evaluation of static hosting provider for atomic content bundles.
    - **OD-9:** Evaluation of zero-budget transactional email sender service (e.g., Resend, Brevo, or SendGrid free tier) for account email verification and weekly progress digests.
-

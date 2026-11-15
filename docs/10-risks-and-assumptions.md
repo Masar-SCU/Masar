@@ -61,6 +61,7 @@ Osama owns `PathBuilder`, `MasteryCalculator`, `GapCalculator`, `ReadinessCalcul
 - **Mitigation:** [ADR-0003](adr/0003-job-data-sourcing.md) uses permitted public APIs and open datasets. If corpus collection lags, importance weights fall back to O\*NET and ESCO taxonomies plus expert review. Regional weighting is dropped only in that fallback.
 
 <a id="r-04"></a>
+
 ### R-04 · Free hosting tiers sleep, expire, or throttle · **P3 × I4 = 12**
 
 Free web services sleep after inactivity (up to 60 s cold start); managed databases may lack automated backups.
@@ -130,6 +131,7 @@ FastAPI + PyTorch + sentence-transformers could exceed the 512 MB memory limit o
 - **Mitigation:** Department recruitment endorsed by Dr. Hend; Round 1 scheduled during W15–W17 exams while students are on campus.
 
 <a id="r-08"></a>
+
 ### R-08 · AI service publicly reachable on free hosting · **P2 × I4 = 8**
 
 - **Trigger:** AI endpoint responds to unauthenticated public requests.

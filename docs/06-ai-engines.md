@@ -21,6 +21,7 @@ without a measurable criterion is a demo, not a contribution.
 | **D** — Offline Content Drafting | Assist drafting of ~4,050 learning atoms | MVP (offline) | Human outlines & reduced career scope | [NFR-16](02-requirements.md#nfr-16--content-quality), RQ3 |
 
 **Critical architecture rule:**
+
 - **Engine A and Engine D run strictly offline**, outside the application runtime.
 - **Engine B is the primary career recommender.** If unavailable, it degrades gracefully to unranked summaries.
 - **Engine C is should-have** and is never on a blocking user path.
@@ -157,6 +158,7 @@ To conserve quota and provide instant feedback, "Explain my answer" taps in the 
 ### 4.4 Privacy in the mentor prompt
 
 [NFR-08](02-requirements.md#nfr-08--privacy-and-data-protection) is enforced structurally by defense in depth:
+
 1. **.NET builds the Sanitised Context DTO** from an explicit allow-list: target career, current unit, recent atoms, streak, daily goal. Zero personal identifiers (name, email, student ID) are included.
 2. **Student question scrubbing:** Capped at 300 characters; regex scrubs emails, phone numbers, and URLs before transmission.
 3. **FastAPI re-validates** the DTO against its strict Pydantic allow-list schema before constructing the LLM prompt.
@@ -219,6 +221,7 @@ Constraint **C1** mandates a $0 budget. AI quotas are separated into runtime and
 | Embedding model memory pressure (F-27) | Container RSS $\ge 450$ MB | ONNX / quantized runtime caps memory | Normal operation without container OOM |
 
 Two properties are stated explicitly:
+
 1. **No MVP-core loop can fail because of AI.** Gap analysis, atomic roadmap, progress tracking, and mastery derivation make zero AI calls.
 2. **Every degradation is visible but non-blocking.**
 

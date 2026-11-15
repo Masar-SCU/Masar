@@ -28,7 +28,9 @@ If a decision remains unaddressed past its deadline, the project automatically a
 ## 2. Detailed Decision Records
 
 <a id="od-1"></a>
+
 ### OD-1 — Career recommendation reranker approach
+
 - **Question:** What reranker architecture should Engine B use in FastAPI for the second stage of career recommendation?
 - **Options Considered:**
   1. *Zero-shot Cross-Encoder (e.g., `cross-encoder/ms-marco-MiniLM-L-6-v2`):* High semantic ranking accuracy, but exceeds memory and latency constraints on free-tier CPU hosting (> 1.2s inference).
@@ -40,7 +42,9 @@ If a decision remains unaddressed past its deadline, the project automatically a
 ---
 
 <a id="od-2"></a>
+
 ### OD-2 — Inclusion of leagues and quests in MVP
+
 - **Question:** Should Masar implement competitive cohort leagues (leaderboards) and periodic quests in the initial MVP?
 - **Options Considered:**
   1. *Yes:* Maximize competitive engagement.
@@ -51,7 +55,9 @@ If a decision remains unaddressed past its deadline, the project automatically a
 ---
 
 <a id="od-3"></a>
+
 ### OD-3 — Mascot and visual identity design
+
 - **Question:** What is Masar's visual identity, and should the platform feature a mascot character?
 - **Options Considered:**
   1. *No Mascot:* Pure utility interface (academic dashboard style).
@@ -63,7 +69,9 @@ If a decision remains unaddressed past its deadline, the project automatically a
 ---
 
 <a id="od-4"></a>
+
 ### OD-4 — Notification delivery channels
+
 - **Question:** How should daily practice reminders and weekly digest reports be delivered to students?
 - **Options Considered:**
   1. *Web Push Notifications (Service Workers):* High browser permission friction; unreliable across iOS Safari.
@@ -75,7 +83,9 @@ If a decision remains unaddressed past its deadline, the project automatically a
 ---
 
 <a id="od-5"></a>
+
 ### OD-5 — Static content bundle hosting provider
+
 - **Question:** Where should pre-compiled static unit JSON bundles (`/content/bundles/*.json`) be deployed?
 - **Options Considered:**
   1. *Same Static Host as the SPA (e.g., GitHub Pages or Vercel):* Zero cost, global edge CDN caching, simple CI build and deploy step.
@@ -87,7 +97,9 @@ If a decision remains unaddressed past its deadline, the project automatically a
 ---
 
 <a id="od-6"></a>
+
 ### OD-6 — AI backup staffing and Ahmed's scope
+
 - **Question:** Who backs up Ahmed Yousef on FastAPI, MiniLM embeddings, and prompt engineering if he faces capacity constraints, and how is his scope controlled?
 - **Options Considered:**
   1. *Assign Ziad as Secondary AI Developer:* Ziad already understands Python and REST APIs; pairs on FastAPI endpoints and Engine D prompt templates.
@@ -99,7 +111,9 @@ If a decision remains unaddressed past its deadline, the project automatically a
 ---
 
 <a id="od-7"></a>
+
 ### OD-7 — Career track depth contingency threshold
+
 - **Question:** If content authoring velocity lags behind schedule at the W23 milestone, how should the team adjust track depth?
 - **Options Considered:**
   1. *Author Shallow Atoms across all 6 Careers:* Reduces depth to Level 1–2 for all roles.
@@ -111,7 +125,9 @@ If a decision remains unaddressed past its deadline, the project automatically a
 ---
 
 <a id="od-8"></a>
+
 ### OD-8 — Bilingual Arabic atom translations
+
 - **Question:** Should learning atom explanations and exercises be fully translated into Arabic for the MVP?
 - **Options Considered:**
   1. *Full Bilingual Curriculum:* Double the authoring and review workload (~8,100 total atoms).
@@ -123,7 +139,9 @@ If a decision remains unaddressed past its deadline, the project automatically a
 ---
 
 <a id="od-9"></a>
+
 ### OD-9 — Transactional email service selection
+
 - **Question:** Which zero-cost email service provider should be selected for sending student verification tokens and weekly digest updates?
 - **Options Considered:**
   1. *Resend:* 3,000 free emails/month, 100 emails/day; modern REST API, exceptional deliverability.
@@ -135,7 +153,9 @@ If a decision remains unaddressed past its deadline, the project automatically a
 ---
 
 <a id="od-10"></a>
+
 ### OD-10 — Legacy `/api/roadmap` transition handling
+
 - **Question:** How should the deprecated v1 `/api/roadmap` endpoints be handled in the API v2 release?
 - **Options Considered:**
   1. *Maintain Parallel Compatibility Layer:* Emulate coarse phases by grouping atoms into synthetic phases on the fly.

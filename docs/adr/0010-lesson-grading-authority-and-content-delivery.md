@@ -9,6 +9,7 @@
 Interactive micro-lessons (~4,050 atoms) require responsive exercise evaluation. When a student selects a multiple-choice option, reorders code lines in a Parsons problem, or fills a syntax blank, they require instant feedback (< 100 ms) to stay engaged.
 
 However, client-server architectures face key tensions:
+
 1. **Latency vs. Backend Load:** Sending every click to the backend over mobile networks introduces latency (300–800 ms), breaking the conversational flow of micro-learning, while exhausting free-tier backend container compute and connection pools.
 2. **Cheating & Integrity:** Purely client-side grading allows trivial manipulation of requests (e.g., submitting fake completion payloads), which would corrupt academic evaluation datasets (RQ7, RQ8) and cohort analytics.
 3. **Bandwidth & Cold Starts:** Serving dynamic JSON content bundles from the .NET backend subjects learners to container cold starts (up to 60s) on free-tier hosting ([ADR-0005](0005-zero-budget-hosting.md)).
@@ -16,14 +17,19 @@ However, client-server architectures face key tensions:
 ## Options considered
 
 ### A — Pure server-side execution and grading
+
 Browser transmits every individual exercise answer to the backend API for verification.
+
 - *Rejected:* Unacceptable interactive latency; easily overloads free-tier web hosting during cohort evaluations.
 
 ### B — Pure client-side grading with trusted client reporting
+
 Browser grades all exercises locally and sends a simple "atom completed" boolean to the server.
+
 - *Rejected:* Zero verification; easily cheated via browser console; invalidates academic research data integrity.
 
 ### C — Static CDN delivery + instant local grading + authoritative server re-grading *(chosen)*
+
 Static content bundles are distributed via CDN. The browser evaluates exercises immediately for smooth UI feedback and re-queues mistakes within the session. Upon lesson completion, the browser submits the complete attempt trace to the server. The backend authoritatively re-grades the attempt, validates timing sanity, records attempts, and updates student state idempotently.
 
 ## Decision
@@ -49,16 +55,19 @@ Static content bundles are distributed via CDN. The browser evaluates exercises 
 ## Consequences
 
 ### Positive
+
 - **Instantaneous UX:** Zero perceived network latency (< 100 ms) during interactive exercise stepping.
 - **Drastically Reduced Backend Load:** Backend compute is required only once per completed lesson, rather than on every user click.
 - **Resilience to Cold Starts:** Content loads instantly from CDN even if backend containers are sleeping.
 - **Data Integrity:** Academic evaluation metrics (error rates, attempts, completion times) are server-validated and tamper-resistant.
 
 ### Negative
+
 - **Bundle Visibility:** Exercise solutions exist in the static JSON bundle. Technical students could inspect network traffic to find answers. This trade-off is accepted: Masar is a formative learning platform, not a proctored certification exam. The authoritative re-grade and timing checks prevent automated script abuse.
 - **Cache Invalidation:** Updates to published atom content require cache-busting bundle file hashes (`{unit_slug}.{hash}.json`).
 
 ### Neutral
+
 - Offline progress synchronization can be supported cleanly in future releases via the idempotency key mechanism.
 
 ## Verification
@@ -67,4 +76,3 @@ Static content bundles are distributed via CDN. The browser evaluates exercises 
 - [ ] **W12** — Authoritative re-grading endpoint rejects tampered payloads and records valid attempts idempotently (Osama)
 - [ ] **W14** — End-to-end lesson completion latency measured under 200 ms total network time on staging (Ziad)
 - [ ] **W20** — Load test verifies 100 concurrent students completing lessons without backend saturation (Mohamed Salah)
-

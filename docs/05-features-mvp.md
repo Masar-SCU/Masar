@@ -279,6 +279,7 @@ All 11 skills reproduced with verified decimal boundaries:
 | **Git** | 0.80 | 3 | 4 | 0 | 0.00 | ★ Strength | 100 % |
 
 *Notes:*
+
 - **Boundary check:** Testing at priority exactly 1.50 evaluates to **Critical** (inclusive lower bound). Relational DB Design at 0.75 evaluates to **Moderate**.
 - **Actionable link:** Tapping "Close this gap" on any row directly navigates to and highlights the next uncompleted atom for that skill in the student's atomic roadmap.
 
@@ -329,6 +330,7 @@ Where continuous level $c(s)$ is:
 $$c(s) = L(s) + \min\left(1, \frac{m_{L+1}}{\tau}\right) \quad (\text{with } \tau = 0.80)$$
 
 Properties:
+
 - **Smooth feedback:** Every completed atom increases $m_{L+1}$, raising $c(s)$ and immediately lifting the headline readiness score.
 - **Monotone with progress:** Learning progress can only increase readiness. Recalibration via placement can lower it (the UI states this plainly). Spaced repetition decay **never** reduces readiness or $L(s)$ (F-19).
 - **Importance-weighted and bounded in $[0, 100]$.**
@@ -453,6 +455,7 @@ Compares the current profile against an alternative career without mutating save
 **Requirements:** supports US-03 AC2 and US-04 AC3
 
 Exposes:
+
 - **Why this career ranked here:** baseline terms (`skill_fit`, `interest_fit`, `coverage`).
 - **Why this atom is here:** prerequisite lineage, importance weight source, and skill gap priority.
 - **Why this unit is next:** stage sequence and gap priority rank.

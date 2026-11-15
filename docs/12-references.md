@@ -169,6 +169,7 @@ The following citations support the pedagogical and algorithmic foundations of t
 ---
 
 <a id="7-literature-check-schedule"></a>
+
 ## 8. To be added
 
 Sources needed but not yet gathered, with an owner and a target week so they do not quietly disappear.

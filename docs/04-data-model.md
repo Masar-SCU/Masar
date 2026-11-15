@@ -251,6 +251,7 @@ importance = 0.50 · normalised_posting_frequency   -- from the job corpus
 
 **Required level derivation rule (F-14):**
 To eliminate arbitrary required levels, `required_level` is determined by a documented default mapping from `importance`, subject to supervisor override:
+
 - $\text{importance} \ge 0.85 \implies \text{required\_level} = 4$
 - $0.60 \le \text{importance} < 0.85 \implies \text{required\_level} = 3$
 - $0.30 \le \text{importance} < 0.60 \implies \text{required\_level} = 2$

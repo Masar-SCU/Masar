@@ -143,6 +143,7 @@ flowchart TB
 ```
 
 Key rules:
+
 - **`Domain` references nothing.** All calculators are pure functions accepting plain arguments and an injected `IClock`.
 - **Query budget:** Gap analysis executes in $\le 2$ queries; lesson completion executes in $\le 8$ queries within a single database transaction.
 
@@ -390,6 +391,7 @@ flowchart TB
 ## 10. Demo mode
 
 When `MASAR_DEMO_MODE=true`:
+
 - Pre-seeded student account (Omar) loads with known skills, active streak, and preset unit bundle fixtures.
 - The AI service serves canned responses; zero external network requests are made.
 - Placement probes and mentor questions return deterministic recorded responses.

@@ -9,6 +9,7 @@ This document provides a comprehensive audit trail of all defect corrections (Pa
 ## 1. Executive Summary of Changes
 
 On 15 November 2026, the Masar engineering documentation underwent a comprehensive architectural and pedagogical overhaul:
+
 1. **Resolved 41 Documented Defects (F-01 through F-41):** Eliminated internal contradictions, fixed arithmetic errors, unified terminology, added missing constraints, and restored consistency across project schedules, data models, requirements, and evaluation protocols.
 2. **Transitioned from Coarse Phases to an Atomic Roadmap (Part C):** Replaced passive, unpaced 40-hour phase scheduling with an active, prerequisite-aware directed acyclic graph (DAG) of ~4,050 micro-lessons (atoms, 3–8 minutes each), complete with unit guidebooks, stage checkpoints, and milestone projects.
 3. **Derived Mathematical Mastery:** Replaced subjective percentage inputs with an objective continuous mastery metric $c(s)$ derived directly from completed learning atoms, preserving the 0–5 integer proficiency scale while making progress smooth and encouraging.
@@ -20,6 +21,7 @@ On 15 November 2026, the Masar engineering documentation underwent a comprehensi
 ## 2. Audit of Defect Fixes (Part A: F-01 to F-41)
 
 ### A1. Direct Contradictions and Arithmetic Bugs
+
 - **F-01 (Done):** Replaced legacy calibration quiz references across `01-project-overview.md` and `05-features-mvp.md` with the unified 20-item onboarding placement assessment and stage checkpoints.
 - **F-02 (Done):** Shortened and re-scoped NFR-04 in `02-requirements.md` and `13-learning-experience.md`: first lesson started $\le 10$ min unaided (placement skipped), $\le 15$ min with placement.
 - **F-03 (Done):** Corrected feature-freeze margin in `02-requirements.md` (C2) and `08-plan-and-timeline.md`: 17 April 2027 to 20 May 2027 is verified as exactly **33 days $\approx 4.7$ weeks** (not 5 weeks).
@@ -31,6 +33,7 @@ On 15 November 2026, the Masar engineering documentation underwent a comprehensi
 - **F-09 (Done):** Bumped API contract version to `2.0.0` in `07-api-contract.md`, added `GET /api/meta` endpoint, and introduced formal API contract changelog.
 
 ### A2. Algorithm and Data Model Defects
+
 - **F-10 (Done):** Resolved calibration vs. progress contradiction in `04-data-model.md` and `05-features-mvp.md`: student proficiency is derived directly from completed atoms, updating dynamically upon lesson completion.
 - **F-11 (Done):** Replaced conflicting hour estimation formulas in `04-data-model.md` §7.3 with concrete atom-based estimates (3–8 minutes per atom, total hours = atoms $\times$ 5 min / 60).
 - **F-12 (Done):** Added PostgreSQL 15+ `UNIQUE NULLS NOT DISTINCT` constraint to `user_career_target` in `04-data-model.md` to prevent duplicate active career selections.
@@ -45,6 +48,7 @@ On 15 November 2026, the Masar engineering documentation underwent a comprehensi
 - **F-21 (Done):** Clarified prerequisite cycle detection: validated at content compilation time via topological sort (Kahn's algorithm) in CI and at runtime in .NET.
 
 ### A3. Architecture and AI Engine Defects
+
 - **F-22 (Done):** Introduced 30-item evaluation dev-set in `06-ai-engines.md` and `09-evaluation.md` for hyperparameter tuning separate from test sets.
 - **F-23 (Done):** Formally specified mandatory recommendation constraints in `06-ai-engines.md` §3.2 (domain filtering, excluded careers, minimum content threshold $\ge 80\%$ published atoms).
 - **F-24 (Done):** Specified Sentence-BERT embedding dimension (384-d, `all-MiniLM-L6-v2`) and cosine distance metrics in `06-ai-engines.md`.
@@ -55,6 +59,7 @@ On 15 November 2026, the Masar engineering documentation underwent a comprehensi
 - **F-29 (Done):** Added `Engine D` (Offline Content Drafting) to `06-ai-engines.md` with independent quota and validation gates.
 
 ### A4. Plan, Evaluation, and Scope Defects
+
 - **F-30 (Done):** Re-baselined plan in `08-plan-and-timeline.md` as of Sunday 15 November 2026 (Week 9), noting Mid-Term Review (W6, 1 Nov) is completed.
 - **F-31 (Done):** Added `status` column with `to be confirmed by Abdelrahman` across all slices in `08-plan-and-timeline.md`.
 - **F-32 (Done):** Formally inserted Exam Block (W15–W17, 40% capacity) into `08-plan-and-timeline.md`.

@@ -9,6 +9,7 @@
 Adopting the Atomic Roadmap ([ADR-0007](0007-atomic-roadmap.md)) establishes a target corpus of approximately 4,050 micro-lessons across all tracked tech careers (with ~1,200 atoms required for the Tier 1 MVP across Backend, Frontend, and Data roles).
 
 Creating this volume of structured educational content presents severe constraints:
+
 1. **Student Capacity:** Hand-authoring 4,050 lessons with explanations and interactive exercises would require ~120 hours of manual writing per team member, creating severe burn-out and derailment risk.
 2. **Pedagogical Consistency:** Content authored ad-hoc across 6 individuals tends to vary widely in exercise style, explanation depth, and terminology.
 3. **Accuracy and Hallucination Risk:** Generative AI models frequently invent non-existent APIs, produce broken code snippets, or generate hallucinated documentation URLs.
@@ -17,14 +18,19 @@ Creating this volume of structured educational content presents severe constrain
 ## Options considered
 
 ### A — 100% manual authoring by team members
+
 Write every unit and atom definition by hand in Markdown/JSON.
+
 - *Rejected:* Insufficient velocity; the team cannot author > 1,000 high-quality interactive atoms alongside core engineering work.
 
 ### B — Dynamic runtime generation by LLM
+
 Generate lessons dynamically in response to student requests using runtime LLM prompts.
+
 - *Rejected:* Introduces non-deterministic errors, high latency (> 3s), catastrophic API rate limiting on free tiers, and direct exposure of students to AI hallucinations.
 
 ### C — Offline LLM-assisted drafting with CI verification and mandatory human sign-off *(chosen)*
+
 Utilize an offline authoring CLI (`content-cli`) powered by LLM prompts to produce candidate JSON draft bundles. All drafts undergo automated CI checks (schema validation, blind-solve, link checking) and require explicit human review and sign-off before publication.
 
 ## Decision
@@ -45,6 +51,7 @@ Utilize an offline authoring CLI (`content-cli`) powered by LLM prompts to produ
 5. **Stage 5 (Publish):** Approved atoms are compiled into static unit bundles, committed to version control, and synced to production CDN and PostgreSQL.
 
 ### Operational Rules
+
 - **Dedicated Developer Quota:** LLM drafting runs offline on developer workstations using an independent API key and quota; it never competes with the student-facing AI Mentor runtime quota.
 - **Transparency:** All published atoms carry an explicit metadata tag: `source: "ai-drafted-human-reviewed"`.
 - **Permanent Slugs:** Atom slugs are permanent immutable IDs. Content updates create new atom versions with `replaced_by` pointers; deprecated atoms are retired, never deleted.
@@ -52,16 +59,19 @@ Utilize an offline authoring CLI (`content-cli`) powered by LLM prompts to produ
 ## Consequences
 
 ### Positive
+
 - **Feasible Velocity:** Increases authoring throughput from ~2 atoms/hour to ~10–15 atoms/hour per reviewer.
 - **Guaranteed Validity:** CI prevents broken JSON, invalid exercise keys, or missing explanations from reaching students.
 - **High Pedagogical Quality:** Human review ensures correct technical context, clear explanations, and alignment with academic standards.
 - **Zero Runtime LLM Cost:** Lessons are statically served; zero AI calls during student learning.
 
 ### Negative
+
 - **Review Workload:** Requires systematic team discipline; team members must dedicate 4–6 hours weekly during authoring sprints (W13–W28).
 - **Tooling Overhead:** Requires developing and maintaining the offline `content-cli` tool.
 
 ### Neutral
+
 - Content lives in Git (`content/` directory), providing full version history, branching, and auditability.
 
 ## Verification
@@ -71,4 +81,3 @@ Utilize an offline authoring CLI (`content-cli`) powered by LLM prompts to produ
 - [ ] **W17** — Milestone: Tier 1 content complete (1,200 atoms across 3 careers) with 100% human review approval (All)
 - [ ] **W23** — Milestone: Tier 2 content complete (2,400 cumulative atoms) (All)
 - [ ] **W28** — Content freeze: Tier 3 content complete (4,050 cumulative atoms) (All)
-

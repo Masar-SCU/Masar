@@ -9,6 +9,7 @@
 The adoption of the Atomic Roadmap ([ADR-0007](adr/0007-atomic-roadmap.md)) establishes a target corpus of approximately **4,050 micro-lessons (atoms)** across all six tracked technology tracks at Suez Canal University.
 
 ### The Reality Check
+
 Hand-crafting 4,050 interactive micro-lessons—each complete with concise conceptual explanations, verified code examples, and 3–6 interactive exercises—requires approximately 20 minutes of authoring per atom. That equates to **1,350 person-hours** of writing. In a 35-week undergraduate capstone project already demanding substantial backend, frontend, AI, and evaluation engineering, manual authoring of this volume is mathematically impossible without catastrophic project failure.
 
 Conversely, dynamically generating content at runtime via LLMs is equally unviable: it introduces unpredictable hallucinations, broken code, latency spikes (> 3s), and quickly exhausts free-tier API quotas.
@@ -33,6 +34,7 @@ flowchart LR
 ```
 
 ### Stage 1: Pedagogical Outline (Human-Authored)
+
 - **Actor:** Domain Lead (assigned team member per career track).
 - **Activity:** The domain lead creates a YAML unit outline specifying:
   - Skill and proficiency band (0–5).
@@ -41,6 +43,7 @@ flowchart LR
   - **Rule:** Each objective must state a single, atomic learning outcome (e.g., *"Construct an inner join between two tables with foreign key constraints"*). Objectives containing conjunctions (*"and"*, *"as well as"*) are rejected by policy.
 
 ### Stage 2: Assisted Drafting (`content-cli`)
+
 - **Actor:** Offline authoring CLI (`tools/content-cli`), operated by team members.
 - **Activity:** The CLI sends structured prompts to a developer-keyed LLM (utilizing dedicated development quota, completely isolated from runtime mentor quotas; see [ADR-0002](adr/0002-llm-provider.md) and [ADR-0008](adr/0008-content-authoring-pipeline.md)).
 - **Batching:** Generates batches of 3–5 atoms per prompt.
@@ -51,6 +54,7 @@ flowchart LR
   - `exercises`: 3–6 interactive items (multiple choice, parsons problems, syntax blanks), with at least 1 diagnostic placement probe per skill band.
 
 ### Stage 3: Automated CI Validation & Blind-Solve Testing
+
 - **Actor:** Automated GitHub Actions runner (`.github/workflows/content-ci.yml`).
 - **Validation Gates:**
   1. **Schema Integrity:** Strict JSON Schema validation against the canonical `Atom` entity specification.
@@ -61,6 +65,7 @@ flowchart LR
   6. **Profanity & Neutrality Filter:** Ensures inclusive, academically professional language.
 
 ### Stage 4: Human Peer Review & Sign-Off
+
 - **Actor:** Team Reviewers (Abdelrahman, Mohamed Yasser, Osama, Ziad, Mazen, Ahmed Yousef).
 - **Review Budget:** ~4 minutes per atom (reviewing code, checking distractor plausibility, verifying explanations).
 - **Review Checklist:**
@@ -72,6 +77,7 @@ flowchart LR
 - **State Transition:** `status` advances from `draft` $\to$ `reviewed` $\to$ `approved`.
 
 ### Stage 5: Bundle Compilation & Publication
+
 - **Actor:** Automated Release Workflow.
 - **Activity:** Approved atoms (`status: "approved"`) are compiled into immutable, hash-versioned static unit bundles (`{unit_slug}.{hash}.json`), published to the static CDN, and synced to production PostgreSQL.
 - **State Transition:** `status` is set to `published`. Only `published` atoms are visible to students.
@@ -123,11 +129,13 @@ gantt
 | **Tier 3** | **W28** (03 Apr 2027) | **~4,050** | Expands AI/ML, DevOps, and Cybersecurity tracks across all bands. | **Full Catalogue:** Final content freeze prior to hardening and defense. |
 
 ### Throughput Arithmetic
+
 - **Tier 1 (W11–W17 = 6 weeks active):** Requires $\approx 170\text{ atoms/week}$. Across 5 active reviewers, this equates to ~34 atoms/person/week ($\approx 2.3\text{ hours/week}$).
 - **Tier 2 (W18–W23 = 6 weeks):** Requires $\approx 200\text{ atoms/week}$ (~40 atoms/person/week, $\approx 2.7\text{ hours/week}$).
 - **Tier 3 (W24–W28 = 5 weeks):** Requires $\approx 360\text{ atoms/week}$ (~72 atoms/person/week, $\approx 4.8\text{ hours/week}$).
 
 ### Content Gating and Recommended Fallback
+
 A career track is recommendable in production only when its active content satisfies the minimum publishable threshold ([F-23 constraint 2](06-ai-engines.md#32-candidate-filtering-and-mandatory-constraints)).
 
 > [!IMPORTANT]
@@ -150,6 +158,7 @@ To accommodate content pipeline operations alongside core software engineering, 
 | **Ahmed Yousef** | AI Engines (FastAPI, MiniLM, RAG Mentor) | **Prompt & Retrieval Lead:** LLM drafting prompt engineering, blind-solve test harness, mentor atom retrieval. |
 
 ### Exam Period Protocol (W15–W17)
+
 During the university mid-term examination period (estimated 40% team engineering capacity), all heavy architectural coding is paused. Team members focus exclusively on asynchronous human peer review of pre-drafted batches, which can be performed in short, interruptible 20-minute sessions.
 
 ---
@@ -165,4 +174,3 @@ The pipeline maintains a post-launch quality feedback loop driven by real studen
 ---
 
 **Next:** [15 — Open Decisions Log](15-open-decisions.md)
-

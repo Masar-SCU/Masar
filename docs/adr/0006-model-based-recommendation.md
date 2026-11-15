@@ -150,4 +150,3 @@ for evaluation/fallback.
 
 1. **Semantic Profile Baseline (F-05 / F-23):** The deterministic baseline used for evaluation (RQ1) and fallback is refined to compute a semantic profile similarity score across required career skills rather than a naive lexical overlap. Mandatory recommendation constraints (domain filtering, student career exclusions, and minimum eligibility criteria) are formally enforced as deterministic hard filters prior to final ranking.
 2. **Extension by ADR-0007 (Atomic Roadmap):** The concept of "roadmap" is extended from coarse, static phase scheduling (FR-16..19) to an atomic directed acyclic graph of units and lessons (~4,050 atoms). The core principle of ADR-0006 is preserved without exception: path sequencing, prerequisite gating, mastery derivation, and gap progression remain **100% deterministic** with zero AI calls in the runtime learning loop.
-
