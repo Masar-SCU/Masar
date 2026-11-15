@@ -53,7 +53,7 @@ def github_slug(text: str) -> str:
 def markdown_files(root: str) -> list[str]:
     found = []
     for dirpath, dirnames, filenames in os.walk(root):
-        dirnames[:] = [d for d in dirnames if d not in (".git", "node_modules")]
+        dirnames[:] = [d for d in dirnames if not d.startswith(".") and d != "node_modules"]
         for name in filenames:
             if name.endswith(".md"):
                 found.append(os.path.normpath(os.path.join(dirpath, name)))
