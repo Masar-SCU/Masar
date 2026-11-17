@@ -1,12 +1,12 @@
 # 01 — Project Overview
 
-**Document owner:** Abdelrahman Megahed · **Status:** Revised <2026-11-15> (atomic roadmap + defect fixes)
+**Document owner:** Abdelrahman Megahed · **Status:** Revised <2026-11-17> (atomic roadmap & timeline re-baseline)
 
 ---
 
 ## 1. Project information
 
-*(Atomic roadmap revision: 15 November 2026)*
+*(Atomic roadmap revision: 15 November 2026 · Timeline re-baselined: 17 November 2026)*
 
 | Field | Details |
 |---|---|
@@ -16,8 +16,24 @@
 | **Department** | Computer Science |
 | **Supervisor** | Dr. Hend Shabaan |
 | **Team size** | 8 |
-| **Timeline** | 17 Nov 2026 → 30 Jun 2027 (32 weeks) |
+| **Timeline** | 17 Nov 2026 → 30 Jun 2027 (32 weeks / 225 days) |
 | **Type** | Graduation Project |
+
+### 1.1 Key Milestones & Timeline Summary
+
+The project follows a 32-calendar-week (225-day) schedule starting from scratch on **17 November 2026** and concluding with the university graduation defence on **30 June 2027**. Development is structured into 11 vertical slices (S0–S10) with a dedicated pre-defence stabilization buffer:
+
+| Milestone | Date / Week | Focus & Major Deliverables |
+|---|---|---|
+| **Project Kickoff (S0)** | 17 Nov 2026 (W1) | Clean architecture skeleton, Docker environments, CI/CD pipeline, and development baselines. |
+| **Mid-Term Review (S3)** | 8 Feb 2027 (W12) | Core deterministic gap engine, onboarding wizard, and Tier 1 seed atom corpus (~1,000 atoms). |
+| **AI Integration (S6)** | 12 Apr 2027 (W21) | Model-first career recommendation, offline blind-solve validation, and RAG-based AI mentor. |
+| **Content Freeze** | 24 May 2027 (W27) | Curriculum authoring locked; final Tier 3 corpus (~4,050 micro-lessons) complete. |
+| **Feature Freeze (S9)** | 7 Jun 2027 (W29) | Complete codebase freeze across backend, frontend, and AI microservice; zero new features. |
+| **Stabilization Buffer (S10)** | 7 Jun → 30 Jun 2027 | 23 calendar days ($\approx 3.3$ weeks) for E2E testing, evaluation experiments (RQ1–RQ8), and defence rehearsal. |
+| **Final Project Defence** | 30 Jun 2027 (W32) | Graduation project presentation and faculty evaluation at Suez Canal University. |
+
+*Comprehensive sprint schedules, dependency graphs, Gantt charts, and contingency plans are detailed in [08 — Plan & Timeline](08-plan-and-timeline.md).*
 
 ---
 
