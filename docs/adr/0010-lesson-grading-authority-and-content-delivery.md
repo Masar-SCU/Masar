@@ -47,10 +47,10 @@ Static content bundles are distributed via CDN. The browser evaluates exercises 
    - The React Lesson Player evaluates student answers locally in memory against the bundle's exercise metadata.
    - Mistakes trigger immediate explanatory feedback and automatically re-queue the question at the end of the lesson session until mastered.
 3. **Authoritative Server Re-Grading:**
-   - Upon session completion, the client posts an attempt payload to `/api/lessons/complete` containing: `atom_id`, `session_id`, `duration_seconds`, and array of exercise selections/timings.
+   - Upon session completion, the client posts an attempt payload to `/api/lessons/{sessionId}/complete` containing: `atomId`, `sessionId`, `durationSeconds`, and array of exercise `attempts` with timing telemetry (per `docs/07-api-contract.md` §6).
    - The .NET backend independently validates the submitted answers against the authoritative database record for that atom.
    - **Anti-Cheat Sanity Checks:** The server verifies reasonable timing thresholds (e.g., flagging attempts completing 5 exercises in under 15 seconds).
-   - **Idempotent State Update:** Upon successful re-grade, the server updates `atom_state` (`status: "completed"`, increments revision counts), logs `exercise_attempt` records, awards XP, updates daily streak, and derives updated skill mastery. Repeated submissions with the same `session_id` are idempotent.
+   - **Idempotent State Update:** Upon successful re-grade, the server updates `student_atom_state` (setting `status` to `'learned'` or `'shaky'`, conforming to `CHECK (status IN ('learned', 'shaky', 'assumed'))`, and increments revision counts), logs `exercise_attempt` records, awards XP, updates daily streak, and derives updated skill mastery. Repeated submissions with the same `sessionId` are idempotent.
 
 ## Consequences
 
@@ -63,7 +63,7 @@ Static content bundles are distributed via CDN. The browser evaluates exercises 
 
 ### Negative
 
-- **Bundle Visibility:** Exercise solutions exist in the static JSON bundle. Technical students could inspect network traffic to find answers. This trade-off is accepted: Masar is a formative learning platform, not a proctored certification exam. The authoritative re-grade and timing checks prevent automated script abuse.
+- **Bundle Visibility & Assessment Scope:** Exercise solutions exist in the static JSON bundle strictly for low-stakes, formative daily practice lessons, where instant offline feedback is paramount. For high-stakes evaluations (Unit Checkpoints and Placement Test-Outs granting `verified = true` and unlocking path units), question payloads delivered to the client omit answer keys and correct choice identifiers, and grading is performed strictly server-side against backend records. Authoritative server re-grading and timing checks prevent automated script abuse on formative sessions as well.
 - **Cache Invalidation:** Updates to published atom content require cache-busting bundle file hashes (`{unit_slug}.{hash}.json`).
 
 ### Neutral

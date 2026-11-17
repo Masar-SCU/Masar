@@ -109,8 +109,8 @@ To comply with accessibility requirements (WCAG 2.1 SC 1.4.1), node states are *
 
 1. **Unit Banners:** Header separating curriculum units. Displays Unit Title, description, completed atom count, "Guidebook" button (opens a modal summarizing key syntax and mental models), and "Test Out" button (launches unit checkpoint).
 2. **Current Atom Sticky Bubble:** A floating, high-visibility "START LESSON" callout pins directly adjacent to the student's active atom. Tapping anywhere on the active node or bubble launches the lesson immediately.
-3. **Stage Checkpoints:** Distinct hexagonal shield nodes located at the terminus of major stages. Checkpoints test multiple concepts under time limits; passing with $\ge 80\%$ unlocks the next stage and awards +50 XP.
-4. **Milestone Project Nodes:** Diamond-shaped nodes representing portfolio milestones (e.g., "Build a REST API with Auth"). Clicking opens the project brief, repository template, acceptance rubric, and submission modal.
+3. **Unit Checkpoints:** Distinct hexagonal shield nodes located at the terminus of each Unit (evaluating 3–5 atoms with 8 exercises). Passing with $\ge 75\%$ (6/8 correct, per `docs/05-features-mvp.md` §5.2) verifies the unit concepts, grants `verified = true` on corresponding skill bands, unlocks downstream units, and awards +50 XP.
+4. **Stage Capstone Project Nodes:** Distinct diamond-shaped milestone nodes positioned at the terminus of each Stage (Foundations, Core, Advanced, Job-ready). Capstone projects require building portfolio artifacts (e.g., "Build a REST API with Auth"). Submitting an accepted project satisfies stage completion criteria, feeds the internship readiness checklist, and awards +100 XP.
 5. **DOM Virtualization:** To guarantee 60 fps smooth scrolling on mobile devices across long roadmaps containing hundreds of nodes, the path view renders only the current unit plus two adjacent units above and below ($\pm 2$ units). Offscreen units are unmounted and replaced with placeholder spacer divs.
 
 ---
@@ -233,7 +233,7 @@ XP reflects focused practice time and active cognitive effort. XP has no monetar
 | **Atom Lesson Completed** | +15 XP | Standard reward upon finishing all exercises in an atom. |
 | **First-Pass Bonus** | +5 XP | Awarded if all exercises in the lesson were answered correctly on first attempt. |
 | **Spaced Review Completed** | +10 XP | Awarded for completing a scheduled review card session in the Practice tab. |
-| **Unit Checkpoint Passed** | +50 XP | Awarded for scoring $\ge 80\%$ on an authoritative stage checkpoint. |
+| **Unit Checkpoint Passed** | +50 XP | Awarded for scoring $\ge 75\%$ (6/8 exercises) on an authoritative unit checkpoint. |
 | **Milestone Project Submitted**| +100 XP | Awarded upon submitting an accepted portfolio milestone project. |
 
 ### Daily Goals, Streaks, and Timezones
@@ -245,7 +245,7 @@ XP reflects focused practice time and active cognitive effort. XP has no monetar
    - Students can equip up to **2 Streak Freezes** simultaneously.
    - Streak Freezes are earned naturally through 7-day streak milestones (never purchased with real money).
    - If a student misses a day, a Streak Freeze is consumed automatically, preserving the streak counter and notifying the student gently.
-5. **Exam-Week Pause Flow:** Students can pause their streak for up to 21 consecutive days during official university examination periods. Pausing locks the streak without penalty and halts automated reminder emails.
+5. **Exam-Week Pause Flow:** Students can pause their streak for up to 14 consecutive days during official university examination periods (per FR-47). Pausing locks the streak without penalty and halts automated reminder emails.
 
 ### Copy Tone and Voice Guide
 

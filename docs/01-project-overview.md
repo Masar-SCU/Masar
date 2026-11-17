@@ -16,7 +16,7 @@
 | **Department** | Computer Science |
 | **Supervisor** | Dr. Hend Shabaan |
 | **Team size** | 8 |
-| **Timeline** | 20 Sep 2026 → 20 May 2027 (35 weeks) |
+| **Timeline** | 17 Nov 2026 → 30 Jun 2027 (32 weeks) |
 | **Type** | Graduation Project |
 
 ---

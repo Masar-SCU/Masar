@@ -80,7 +80,7 @@ Free web services sleep after inactivity (up to 60 s cold start); managed databa
 
 - **Trigger:** Unassigned issues created or non-core feature development started.
 - **Owner:** Abdelrahman Megahed.
-- **Mitigation:** Strict priority matrix in [§08 2](08-plan-and-timeline.md#2-priority-matrix--single-source-of-truth). Leagues, quests, and complex resume builders are designated ⚪ Later/Could and cut first. Feature freeze on Fri 17 Apr 2027 is non-negotiable.
+- **Mitigation:** Strict priority matrix in [§08 2](08-plan-and-timeline.md#2-priority-matrix--single-source-of-truth). Leagues, quests, and complex resume builders are designated ⚪ Later/Could and cut first. Feature freeze on Sun 7 Jun 2027 is non-negotiable.
 
 ### R-18 · Frontend team overloaded by gamified interactive components · **P3 × I4 = 12**
 

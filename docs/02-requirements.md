@@ -483,7 +483,7 @@ Full stack runs locally via single `docker compose up`. Local PostgreSQL uses `p
 | # | Constraint | Consequence |
 |---|---|---|
 | C1 | **$0 budget, everything included** | No paid APIs, hosting, or data. Drives ADR-0002 and ADR-0005 |
-| C2 | Fixed final review, **20 May 2027** | Feature freeze ≈ 4.7 weeks (33 days) earlier (Fri 17 Apr 2027); scope is the only flexible variable |
+| C2 | Fixed final defence, **30 June 2027** | Feature freeze ≈ 3.3 weeks (23 days) earlier (Sun 7 Jun 2027); scope is the only flexible variable |
 | C3 | Team skill mix is fixed (.NET, React, Python) | No stack changes mid-project |
 | C4 | Exam periods reduce capacity | Modelled as low-velocity weeks in [§08](08-plan-and-timeline.md) |
 | C5 | No employer partnerships | Job matching stays out of scope |

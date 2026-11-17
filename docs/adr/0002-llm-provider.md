@@ -14,8 +14,8 @@ Two properties of the situation shape the decision:
 
 1. **Free tiers change.** Quotas, model names and availability all move on a timescale shorter than a
    35-week project. Binding the codebase to one provider's SDK is a scheduled outage.
-2. **Only one feature needs an LLM.** Embeddings run locally
-   ([§06 5](../06-ai-engines.md#5-cost-and-quota-budget)), so the mentor is the entire exposure.
+2. **Only one runtime feature needs an LLM.** Embeddings run locally
+   ([§06 5](../06-ai-engines.md#5-cost-and-quota-budget)), so the AI Mentor (Engine C) is the sole user-facing runtime LLM consumer. Offline content drafting (Engine D, [ADR-0008](0008-content-authoring-pipeline.md)) is strictly a developer-time tool operating on separate developer API quotas.
 
 ## Options considered
 

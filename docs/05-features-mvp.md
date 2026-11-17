@@ -378,7 +378,7 @@ The integer gap table continues to display "SQL $3 \to 4$" until band 4 reaches 
 
 ```mermaid
 flowchart LR
-    A["POST /api/lessons/{id}/complete<br/>(selections + idempotencyKey)"] --> B["Authoritative<br/>Server Re-grading"]
+    A["POST /api/lessons/{sessionId}/complete<br/>(atomId + attempts + idempotencyKey)"] --> B["Authoritative<br/>Server Re-grading"]
     B --> C["Update Atom State<br/>(learned/shaky, attempts)"]
     C --> D["Update Skill Progress<br/>(derived L and continuous c)"]
     D --> E["Award XP & Update Streak<br/>(student timezone)"]
@@ -491,7 +491,7 @@ Exposes:
 **Purpose:** sustain consistent daily study habits through ethical motivation mechanics.
 **Requirements:** FR-45, FR-47, FR-48, FR-49 · **Story:** US-13 · **Status:** New feature
 
-- **XP values:** Lesson base 10 XP; +5 bonus for 100% accuracy; +2 bonus for $\ge 80\%$; Review 8 XP; Checkpoint 25 XP; Project milestone 50 XP; Replays 2 XP (max 20 XP/day).
+- **XP values:** Lesson base 15 XP; +5 first-pass bonus ($\ge 80\%$); Review 10 XP; Unit Checkpoint 50 XP; Stage Project milestone 100 XP; Replays 2 XP (max 20 XP/day).
 - **Streak calculation:** Evaluated against student's IANA timezone (`Africa/Cairo`) using an injected clock. Streak freezes (max 2) consumed automatically for missed days.
 - **Exam-Week Pause:** Students can pause streaks for up to 14 days during university exam periods (max twice per academic term).
 - **Ethics (NFR-18):** No blocking hearts or lives; mistakes cost only an in-session re-queue. No guilt-tripping notifications.

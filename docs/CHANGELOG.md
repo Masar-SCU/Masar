@@ -1,8 +1,28 @@
 # Masar Documentation Revision Changelog
 
-**Revision Date:** 2026-11-15 (Week 9) · **Baseline Specification Version:** 2.0.0 · **Lead Architect:** Abdelrahman
+**Revision Date:** 2026-11-17 · **Baseline Specification Version:** 2.0.0 · **Lead Architect:** Abdelrahman Megahed
 
-This document provides a comprehensive audit trail of all defect corrections (Part A: F-01 to F-41), architectural improvements (Part B: B.1 to B.14), and the major pedagogical overhaul to an Atomic Roadmap (Part C) applied across the Masar documentation repository.
+This document provides a comprehensive audit trail of all defect corrections (Part A: F-01 to F-41), architectural improvements (Part B: B.1 to B.14), the major pedagogical overhaul to an Atomic Roadmap (Part C), and the alignment fixes addressing PR #41 peer reviews.
+
+---
+
+## 0. Peer Review Alignment & Timeline Re-baseline (2026-11-17)
+
+Following technical peer review from Ziad Ahmed (`ziad-Ahmed401`) on PR #41, twelve specification alignments and a master timeline re-baseline were executed:
+
+1. **Roadmap Stages Alignment ([ADR-0007](adr/0007-atomic-roadmap.md)):** Unified stage enumeration to the 4 canonical stages (`Foundations`, `Core`, `Advanced`, `Job-ready`) indexed 1..4 across `04-data-model.md`, `05-features-mvp.md`, and `07-api-contract.md`.
+2. **Atom Corpus Milestone Targets ([ADR-0008](adr/0008-content-authoring-pipeline.md)):** Aligned targets to Tier 1 = ~1,000 atoms (Foundations + Backend .NET track), Tier 2 = ~2,200 cumulative atoms (Frontend + Data Engineering), and Tier 3 = ~4,050 cumulative atoms.
+3. **Exam Streak Pause Duration ([13 §6](13-learning-experience.md#6-gamification-and-engagement-rules)):** Capped exam streak pause to 14 consecutive days to match FR-47 and US-13.
+4. **XP Economy Calibration ([05 §5.18](05-features-mvp.md#518-gamification)):** Synchronized XP reward values across all specifications: Lesson 15 XP (+5 first-pass bonus for $\ge 80\%$), Review 10 XP, Unit Checkpoint 50 XP, Stage Project 100 XP.
+5. **Mastery State Constraint Alignment ([ADR-0007](adr/0007-atomic-roadmap.md), [ADR-0010](adr/0010-lesson-grading-authority-and-content-delivery.md)):** Replaced informal `assumed_known`/`completed` terminology with canonical states `learned`, `shaky`, and `assumed` strictly matching PostgreSQL constraint `CHECK (status IN ('learned', 'shaky', 'assumed'))`.
+6. **API Route Parameterization ([03 §7.2](03-architecture.md#72-path-and-lesson-flow--static-content-with-authoritative-re-grading), [05 §5.9](05-features-mvp.md#59-lessons-mastery-and-progress), [ADR-0010](adr/0010-lesson-grading-authority-and-content-delivery.md)):** Standardized completion route references to canonical `POST /api/lessons/{sessionId}/complete`.
+7. **Assessment Integrity & Key Exposure ([ADR-0010](adr/0010-lesson-grading-authority-and-content-delivery.md)):** Explicitly limited static client bundling with answer keys to low-stakes formative practice; high-stakes Unit Checkpoints and Placement Test-Outs omit answer keys from client payloads and evaluate strictly server-side.
+8. **Blind-Solve Verification Protocol ([14 §2](14-content-pipeline.md#2-five-stage-pipeline-architecture)):** Mandated that 100% of individual exercises where the blind solver disagreed with the declared key require human review and resolution before sign-off.
+9. **LLM Provider Quota Scope ([ADR-0002](adr/0002-llm-provider.md), [06 §1](06-ai-engines.md#1-position-of-ai-in-masar)):** Clarified that the AI Mentor (Engine C) is the sole *runtime/user-facing* LLM consumer, while offline content drafting (Engine D) operates strictly as a development-time tool using developer API quotas.
+10. **Checkpoint Passing Accuracy ([13 §3](13-learning-experience.md#3-path-screen-specification), [13 §6](13-learning-experience.md#6-gamification-and-engagement-rules)):** Harmonized passing accuracy to $\ge 75\%$ (6 of 8 exercises correct), matching `05-features-mvp.md` §5.2.
+11. **Unit Checkpoint vs. Stage Capstone Distinction ([13 §3](13-learning-experience.md#3-path-screen-specification)):** Distinctly separated Unit Checkpoints (end of 3–5 atom units, 8 questions, +50 XP) from Stage Capstone Projects (end of stage, portfolio build, +100 XP).
+12. **Payload Property Casing ([ADR-0010](adr/0010-lesson-grading-authority-and-content-delivery.md)):** Standardized payload fields to `camelCase` (`atomId`, `sessionId`, `durationSeconds`, `attempts`).
+13. **Master Timeline Re-baseline ([08-plan-and-timeline.md](08-plan-and-timeline.md)):** Re-baselined execution from scratch starting **Tuesday 17 November 2026** through **Wednesday 30 June 2027 (32 weeks / 225 days)**, establishing S0–S10 vertical slices with feature freeze on Sun 7 June 2027.
 
 ---
 

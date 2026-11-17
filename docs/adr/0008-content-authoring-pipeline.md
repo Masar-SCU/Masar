@@ -6,7 +6,7 @@
 
 ## Context
 
-Adopting the Atomic Roadmap ([ADR-0007](0007-atomic-roadmap.md)) establishes a target corpus of approximately 4,050 micro-lessons across all tracked tech careers (with ~1,200 atoms required for the Tier 1 MVP across Backend, Frontend, and Data roles).
+Adopting the Atomic Roadmap ([ADR-0007](0007-atomic-roadmap.md)) establishes a target corpus of approximately 4,050 micro-lessons across all tracked tech careers (with ~1,000 atoms required for the Tier 1 MVP across Shared Foundations and the Backend .NET track).
 
 Creating this volume of structured educational content presents severe constraints:
 
@@ -78,6 +78,6 @@ Utilize an offline authoring CLI (`content-cli`) powered by LLM prompts to produ
 
 - [ ] **W11** — `content-cli` operational; JSON schema validation and blind-solve runner implemented (Osama, Ahmed Yousef)
 - [ ] **W13** — Tier 1 authoring kickoff: initial 200 atoms drafted and validated through CI (Mohamed Yasser, Mazen)
-- [ ] **W17** — Milestone: Tier 1 content complete (1,200 atoms across 3 careers) with 100% human review approval (All)
-- [ ] **W23** — Milestone: Tier 2 content complete (2,400 cumulative atoms) (All)
-- [ ] **W28** — Content freeze: Tier 3 content complete (4,050 cumulative atoms) (All)
+- [ ] **W17** — Milestone: Tier 1 content complete (~1,000 atoms: Foundations + Backend .NET track) with 100% human review approval (All)
+- [ ] **W23** — Milestone: Tier 2 content complete (~2,200 cumulative atoms: expanding to Frontend and Data Engineering) (All)
+- [ ] **W28** — Content freeze: Tier 3 content complete (~4,050 cumulative atoms: full catalogue across all 6 careers) (All)

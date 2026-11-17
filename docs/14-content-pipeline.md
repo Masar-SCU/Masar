@@ -60,7 +60,7 @@ flowchart LR
   1. **Schema Integrity:** Strict JSON Schema validation against the canonical `Atom` entity specification.
   2. **Zero-Hallucination Link Policy:** All external URLs inside generated markdown text are **strictly rejected**. The CI scanner fails if any `http://` or `https://` string is present in student-facing text unless explicitly matched against a verified team allowlist of official documentation.
   3. **Code Execution Sandbox:** All code snippets contained in exercises are compiled and executed in an isolated CI container (e.g., C# / Python / SQL syntax verification).
-  4. **The Blind-Solve Test:** An independent LLM prompt or programmatic solver attempts to solve each generated exercise *without access to the declared answer key*. If the blind solver's chosen answer disagrees with the declared key, the atom is flagged for human investigation. Automated threshold: $\ge 90\%$ blind-solve agreement required for batch passage.
+  4. **The Blind-Solve Test:** An independent LLM prompt or programmatic solver attempts to solve each generated exercise *without access to the declared answer key*. While an automated threshold of $\ge 90\%$ blind-solve agreement is required for a batch to clear CI, **100% of individual dissenting exercises** where the blind solver disagreed with the declared key are automatically quarantined for mandatory human review and resolution before approval.
   5. **Semantic Deduplication:** New atom summaries are embedded via Sentence-Transformers (`all-MiniLM-L6-v2`) and compared against existing published atoms. Cosine similarity $\ge 0.90$ triggers a duplicate warning.
   6. **Profanity & Neutrality Filter:** Ensures inclusive, academically professional language.
 
@@ -73,6 +73,7 @@ flowchart LR
   - [ ] Is the scope truly atomic (single concept)?
   - [ ] Are the distractors plausible without being misleading trick questions?
   - [ ] Is the explanation encouraging, concise, and helpful?
+  - [ ] Have all blind-solve discrepancies on this atom been manually inspected and resolved?
 - **Dual-Review Rule:** All advanced **Level 4 and Level 5 atoms** require independent sign-off from **two team members** or supervisor spot-checking before approval.
 - **State Transition:** `status` advances from `draft` $\to$ `reviewed` $\to$ `approved`.
 
@@ -107,32 +108,32 @@ gantt
     title Content Authoring Velocity & Release Tiers
     dateFormat  YYYY-MM-DD
     section Milestones
-    Mid-Term Review (W6)       :milestone, m1, 2026-11-01, 0d
-    Tier 1 Freeze (W17)        :milestone, m2, 2027-01-16, 0d
-    Tier 2 Freeze (W23)        :milestone, m3, 2027-02-27, 0d
-    Tier 3 Content Freeze (W28):milestone, m4, 2027-04-03, 0d
-    Feature Freeze (W30)       :milestone, m5, 2027-04-17, 0d
-    Final Defence (W35)        :milestone, m6, 2027-05-20, 0d
+    Tier 1 Freeze (W11)        :milestone, m1, 2027-02-01, 0d
+    Mid-Term Review (W12)      :milestone, m2, 2027-02-08, 0d
+    Tier 2 Freeze (W22)        :milestone, m3, 2027-04-19, 0d
+    Tier 3 Content Freeze (W26):milestone, m4, 2027-05-17, 0d
+    Feature Freeze (W29)       :milestone, m5, 2027-06-07, 0d
+    Final Defence (W32)        :milestone, m6, 2027-06-30, 0d
 
     section Tiers
-    Tier 1 Drafting (1,000 Atoms) :active, t1, 2026-11-29, 2027-01-16
-    Tier 2 Drafting (+1,200 Atoms):t2, 2027-01-17, 2027-02-27
-    Tier 3 Drafting (+1,850 Atoms):t3, 2027-02-28, 2027-04-03
+    Tier 1 Drafting (1,000 Atoms) :active, t1, 2026-12-15, 2027-02-01
+    Tier 2 Drafting (+1,200 Atoms):t2, 2027-02-02, 2027-04-19
+    Tier 3 Drafting (+1,850 Atoms):t3, 2027-04-20, 2027-05-17
 ```
 
 ### Production Tiers
 
 | Tier | Target Date | Cumulative Atoms | Scope & Coverage | Operational Role |
 |---|---|---|---|---|
-| **Tier 1** | **W17** (16 Jan 2027) | **~1,000** | Shared Foundations (Git, OS, DB Basics) + Backend (.NET track full depth). | **Demo-Critical:** Powers end-to-end user testing and supervisor demonstration. |
-| **Tier 2** | **W23** (27 Feb 2027) | **~2,200** | Adds Frontend/Full-Stack and Data Engineering at full depth. | **Evaluation Baseline:** Powers RQ1, RQ3, and initial cohort testing. |
-| **Tier 3** | **W28** (03 Apr 2027) | **~4,050** | Expands AI/ML, DevOps, and Cybersecurity tracks across all bands. | **Full Catalogue:** Final content freeze prior to hardening and defense. |
+| **Tier 1** | **W11** (1 Feb 2027) | **~1,000** | Shared Foundations (Git, OS, DB Basics) + Backend (.NET track full depth). | **Demo-Critical:** Powers end-to-end user testing and supervisor demonstration. |
+| **Tier 2** | **W22** (19 Apr 2027) | **~2,200** | Adds Frontend/Full-Stack and Data Engineering at full depth. | **Evaluation Baseline:** Powers RQ1, RQ3, and initial cohort testing. |
+| **Tier 3** | **W26** (17 May 2027) | **~4,050** | Expands AI/ML, DevOps, and Cybersecurity tracks across all bands. | **Full Catalogue:** Final content freeze prior to hardening and defense. |
 
 ### Throughput Arithmetic
 
-- **Tier 1 (W11–W17 = 6 weeks active):** Requires $\approx 170\text{ atoms/week}$. Across 5 active reviewers, this equates to ~34 atoms/person/week ($\approx 2.3\text{ hours/week}$).
-- **Tier 2 (W18–W23 = 6 weeks):** Requires $\approx 200\text{ atoms/week}$ (~40 atoms/person/week, $\approx 2.7\text{ hours/week}$).
-- **Tier 3 (W24–W28 = 5 weeks):** Requires $\approx 360\text{ atoms/week}$ (~72 atoms/person/week, $\approx 4.8\text{ hours/week}$).
+- **Tier 1 (W4–W11 = 8 weeks active):** Requires $\approx 125\text{ atoms/week}$. Across 5 active reviewers, this equates to ~25 atoms/person/week ($\approx 1.7\text{ hours/week}$).
+- **Tier 2 (W12–W22 = 11 weeks):** Requires $\approx 110\text{ atoms/week}$ (~22 atoms/person/week, $\approx 1.5\text{ hours/week}$).
+- **Tier 3 (W23–W26 = 4 weeks):** Requires $\approx 460\text{ atoms/week}$ (~92 atoms/person/week, $\approx 6.1\text{ hours/week}$).
 
 ### Content Gating and Recommended Fallback
 

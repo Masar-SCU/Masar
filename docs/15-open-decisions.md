@@ -118,7 +118,7 @@ If a decision remains unaddressed past its deadline, the project automatically a
 - **Options Considered:**
   1. *Author Shallow Atoms across all 6 Careers:* Reduces depth to Level 1–2 for all roles.
   2. *Focus Full Depth on 3 Core Careers:* Deliver comprehensive, deep curricula (Levels 1–5, 800+ atoms each) for **Backend, Frontend/Full-Stack, and Data Engineering**; provide curated outline units for AI/ML, DevOps, and Cybersecurity.
-  3. *Extend Deadlines:* Unacceptable; threatens feature freeze (17 Apr 2027) and university defense.
+  3. *Extend Deadlines:* Unacceptable; threatens feature freeze (7 Jun 2027) and university defense.
 - **Default Position:** **Option 2 (Focus on 3 Core Careers).** Academic defense panels evaluate pedagogical and technical depth over superficial breadth.
 - **Owner:** Osama · **Needed By:** W23 (27 Feb 2027).
 

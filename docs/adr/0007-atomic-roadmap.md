@@ -33,16 +33,16 @@ A runtime AI or graph algorithm dynamically assembles a unique atomic path for e
 
 ### C — Authored canonical DAG with deterministic pruning and placement *(chosen)*
 
-Curricula are authored as structured, canonical sequences of Units, Sections, and Atoms (~4,050 atoms across supported careers). Prerequisites are explicitly defined. Onboarding placement assessments and checkpoint test-outs deterministically mark mastered atoms as `assumed_known`, pruning the active learning path while preserving the canonical pedagogical sequence.
+Curricula are authored as structured, canonical sequences of Units, Sections, and Atoms (~4,050 atoms across supported careers). Prerequisites are explicitly defined. Onboarding placement assessments and checkpoint test-outs deterministically mark mastered atoms as `assumed`, pruning the active learning path while preserving the canonical pedagogical sequence.
 
 ## Decision
 
 **Replace phase-based scheduling with an Atomic Roadmap: a deterministic, prerequisite-aware directed acyclic graph (DAG) of micro-lessons and units.**
 
-1. **Hierarchy:** Career $\to$ Stage (Foundations, Core, Specialization) $\to$ Unit (e.g., "Relational Modeling") $\to$ Section $\to$ Atom (micro-lesson, 3–8 minutes).
+1. **Hierarchy:** Career $\to$ Stage (Foundations, Core, Advanced, Job-ready) $\to$ Unit (e.g., "Relational Modeling") $\to$ Section (e.g., "Foreign Keys and Joins") $\to$ Atom (micro-lesson, 3–8 minutes).
 2. **Deterministic Sequencing:** The learning sequence within each unit and across prerequisite chains is canonical and authored. Path generation (`/api/path`) is 100% deterministic:
-   - Atoms marked `assumed_known` or `completed` are skipped.
-   - The first uncompleted atom whose prerequisites are fully satisfied is designated `in_progress`.
+   - Atoms marked `learned` or `assumed` (per database constraint `CHECK (status IN ('learned', 'shaky', 'assumed'))`) are skipped.
+   - The first uncompleted atom whose prerequisites are fully satisfied is designated `in_progress` (or `available`).
    - Remaining downstream atoms are marked `locked`.
 3. **Mastery Derivation:** Skill proficiency levels (0–5, per [ADR-0004](0004-proficiency-scale.md)) are derived mathematically from atom states ($m_b \ge 0.80$), eliminating manual percentage inputs.
 4. **API Evolution:** Supersedes legacy phase endpoints (`/api/roadmap`, FR-16..19); introduces API v2 path endpoints (`/api/path`, `/api/lessons/**`).
@@ -68,6 +68,6 @@ Curricula are authored as structured, canonical sequences of Units, Sections, an
 ## Verification
 
 - [ ] **W10** — Path generator unit tests confirm prerequisite gating and topological ordering across all career DAGs (Osama)
-- [ ] **W12** — Placement assessment algorithm correctly marks band atoms as `assumed_known` without violating dependencies (Osama)
+- [ ] **W12** — Placement assessment algorithm correctly marks band atoms as `assumed` without violating dependencies (Osama)
 - [ ] **W18** — End-to-end path traversal from onboarding to Stage 1 completion validated in staging (Abdelrahman)
 - [ ] **W23** — RQ3 evaluation: external faculty and industry review of atomic roadmap pedagogical validity (Ahmed Yousef)
