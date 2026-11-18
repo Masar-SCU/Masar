@@ -55,7 +55,7 @@ A story is done only when every criterion passes. These become the E2E test name
 - **AC3** **Step 2 (Coursework & Skills):** I select my academic year and completed department courses, which automatically propose foundational skills with course-provenance badges (with manual entry as baseline when mapping data is unavailable), alongside a fast search to add any additional claimed skills on the 0–5 scale in under 3 minutes.
 - **AC4** **Step 3 (Targeted Placement):** For up to 2–3 claimed core technical skills, I am offered an adaptive diagnostic placement probe (≤ 5 min, capped at level 4 verified), with a clear option to skip and verify skills later from the path.
 - **AC5** **Step 4 (Career Fit & Selection):** I view ranked career recommendations showing both interest fit and skill fit, explore tracks, and select my committed target career in under 2 minutes.
-- **AC6** **Step 5 (Daily Goal & Path Reveal):** I select my daily study goal (10, 20, 30, 45, or 60 min, defaulted from my weekly study hours), see my atomic roadmap revealed with projected finish date, and land directly in my first micro-lesson.
+- **AC6** **Step 5 (Weekly Study Goal & Path Reveal):** I select my weekly study commitment in hours per week (1–20 hrs/week; presets: 2, 3, 5, 10 hrs/week; default: 5 hrs/week, with an illustrative daily pacing indicator $\approx 43$ min/day), see my atomic roadmap revealed with projected finish date, and land directly in my first micro-lesson.
 
 ### US-01 — Build a skill profile · *P1, P2* · **M**
 
@@ -103,7 +103,7 @@ A story is done only when every criterion passes. These become the E2E test name
 
 > As a student, I want an ordered path of bite-sized learning units, so I know exactly what to learn next.
 
-- **AC1** I see my roadmap structured as stages and units with estimated minutes and projected completion dates based on my daily goal.
+- **AC1** I see my roadmap structured as stages and units with estimated minutes and projected completion dates based on my weekly study goal.
 - **AC2** No atom or unit is unlocked before its prerequisite skills and hard prerequisite atoms are satisfied.
 - **AC3** Canonical unit order is authored and validated in CI, guaranteeing a stable, sensible curriculum.
 - **AC4** Each unit ends with an 8-exercise Checkpoint, and each stage concludes with a practical Project node.
@@ -114,7 +114,7 @@ A story is done only when every criterion passes. These become the E2E test name
 
 > As a student, I want to complete lessons and watch my readiness score increase smoothly, so my effort feels rewarded.
 
-- **AC1** Completing an atom's lesson with $\ge 60\%$ first-try accuracy marks the atom `learned` and awards XP.
+- **AC1** Completing an atom's lesson with $\ge 80\%$ first-try accuracy marks the atom `learned` (and awards the +5 XP bonus); otherwise it is marked `shaky`.
 - **AC2** Every completed atom immediately increases my continuous readiness score $c(s)$, providing visible fractional progress.
 - **AC3** When band atoms reach the mastery threshold ($\tau = 0.80$), derived integer level $L(s)$ increments, reducing my gap.
 - **AC4** Lesson completion is idempotent via `idempotencyKey` and safely queues offline during network hiccups.
@@ -172,17 +172,17 @@ A story is done only when every criterion passes. These become the E2E test name
 - **AC2** Exercises include concept cards, multiple choice, code bug prediction, fill-in tokens, and pair matching.
 - **AC3** Incorrectly answered exercises are automatically re-queued at the end of the lesson (up to twice).
 - **AC4** The sticky bottom sheet gives instant local feedback with an explanation snippet and a "Report a problem" button.
-- **AC5** Full keyboard support (Enter to check/continue, 1–4 keys to select) and screen-reader live regions are supported.
+- **AC5** Full keyboard support (Enter to check/continue, Tab/Arrow keys to navigate and select options per WCAG 2.1.4) and screen-reader live regions are supported.
 - **AC6** The lesson completion screen displays accuracy, base and bonus XP earned, streak updates, and readiness score gain.
 
-### US-13 — Keep a streak and set a daily goal · *P1, P2* · **M**
+### US-13 — Keep a streak and set a weekly study goal · *P1, P2* · **M**
 
-> As a student, I want to set a daily goal and build a learning streak, so I stay motivated to practice consistently.
+> As a student, I want to set a weekly study goal and build a learning streak, so I stay motivated to practice consistently.
 
-- **AC1** I can select a daily study goal (10, 20, 30, 45, or 60 minutes) defaulted from my weekly study budget.
+- **AC1** I can select or adjust a weekly study goal in hours per week (1–20 hrs/week; presets: 2, 3, 5, 10 hrs/week; default 5 hrs/week, with daily pacing indicator $\approx 43$ min/day) from my profile.
 - **AC2** Completing any XP-earning session increments my daily streak based on my local calendar day (IANA timezone).
 - **AC3** Streak freezes (earned 1 per 7-day streak, maximum 2 held) automatically prevent streak loss for one missed day.
-- **AC4** I can activate an Exam-Week Pause for up to 14 days (twice per academic term) to protect my streak during exams.
+- **AC4** I can activate an Exam-Week Pause for up to 14 consecutive calendar days per semester (max twice per academic year) to protect my streak during exams.
 
 ### US-14 — Review what I learned · *P2* · **S**
 
@@ -236,7 +236,7 @@ A story is done only when every criterion passes. These become the E2E test name
 | FR-00 | Persist onboarding wizard state and progress step, enabling seamless resume and step-gated onboarding completion | M | US-00 |
 | FR-01 | Register with email + password; passwords stored using modern KDF ([NFR-06](#nfr-06--authentication)) | M | US-01 |
 | FR-02 | Log in / log out; sessions via short-lived access token + HttpOnly refresh cookie | M | US-01 |
-| FR-03 | Store academic year, interests, timezone, daily goal, and career goal text | M | US-01, US-13 |
+| FR-03 | Store academic year, interests, timezone, weekly study goal (hours/week), and career goal text | M | US-01, US-13 |
 | FR-04 | Self-rate skills on 0–5 scale as initial seed for assumed atoms | M | US-01 |
 | FR-05 | Record completed courses from seeded department catalogue | M | US-01, US-11 |
 | FR-06 | Compute and display profile completeness as a percentage | M | US-01 |
@@ -252,7 +252,7 @@ A story is done only when every criterion passes. These become the E2E test name
 | FR-14 | Generate a one-sentence rationale per gap based on posting demand and taxonomy | M | US-04 |
 | FR-15 | Preview readiness against a non-committed target career | S | US-08 |
 | FR-16 | *Superseded by FR-38 and FR-39.* (Authored canonical path and per-student atomic filtering replace runtime phase generation) | — | — |
-| FR-17 | *Superseded by FR-39 and FR-45.* (Atomic path with daily goals and unit projected completion dates replaces 40-hour phase packing) | — | — |
+| FR-17 | *Superseded by FR-39 and FR-45.* (Atomic path with weekly study goals and unit projected completion dates replaces 40-hour phase packing) | — | — |
 | FR-18 | *Superseded by FR-38.* (Deterministic canonical path sequence stamped with algorithm_version and input_hash) | — | — |
 | FR-19 | *Superseded by FR-37.* (CI graph validation enforces acyclicity on both skill and atom prerequisite graphs) | — | — |
 | **Content & projects** | | | |
@@ -286,7 +286,7 @@ A story is done only when every criterion passes. These become the E2E test name
 | FR-42 | Mastery derived from atoms: integer level $L(s)$ for gap, continuous level $c(s)$ for readiness | M | US-04, US-06 |
 | FR-43 | Checkpoints and test-out (reopen unverified assumed atoms on checkpoint failure) | S | US-15 |
 | FR-44 | Adaptive placement (wizard Step 3, capped at level 4 verified) | S | US-00, US-02 |
-| FR-45 | XP, streak (timezone-correct), daily goal | M | US-13 |
+| FR-45 | XP, streak (timezone-correct), weekly study goal | M | US-13 |
 | FR-46 | Spaced review queue (Leitner boxes 1..5) | S | US-14 |
 | FR-47 | Exam-week streak pause (up to 14 days) and streak freezes | S | US-13 |
 | FR-48 | Achievements system | C | — |
@@ -373,8 +373,12 @@ Three roles: `Student`, `Advisor`, `Admin`.
 
 - **Minimisation:** Collect no national ID, address, or phone number.
 - **Consent:** Explicit, separate opt-in flags for `consent_advisor_visibility` and `consent_research_use`.
+- **Deletion:** A student can delete their account; personal data rows are hard-deleted within 30 days. Only irreversibly anonymised aggregate metrics may remain.
 - **Mentor free-text scrubbing:** Student mentor questions are capped at 300 characters, scrubbed via regex for emails, phone numbers, and URLs, and preceded by a visible disclosure.
 - **LLM terms disclosure:** Clear student-facing disclosure and consent shown before first mentor interaction explaining external model processing.
+- **Transport:** HTTPS everywhere, HSTS enabled.
+- **At rest:** Zero plaintext credentials, tokens, connection strings, or secrets in database storage or source control.
+- **Logs:** Never log tokens, passwords, or full raw prompt contents. Personal identifiers in server logs are strictly truncated or masked.
 - **Telemetry minimisation:** Telemetry records only exercise timing and correctness; no personal free text is logged.
 
 ### NFR-09 — Abuse and cost control
@@ -389,6 +393,7 @@ Three roles: `Student`, `Advisor`, `Admin`.
 - EF Core parameterisation across all queries; no raw SQL string concatenation.
 - Request payloads strictly validated against schemas.
 - Mentor prompt isolates student text within explicit delimiters and strict system instructions ([§06](06-ai-engines.md#46-prompt-injection-hardening)). Output rendered as plain text.
+- File uploads are out of scope for the MVP, which removes an entire attack surface.
 
 ### NFR-11 — Maintainability
 
@@ -422,6 +427,7 @@ Full stack runs locally via single `docker compose up`. Local PostgreSQL uses `p
 - Every seeded data source records licence and attribution obligations ([§04](04-data-model.md#9-seed-data-sources-and-licences)).
 - Micro-lessons and exercises feature original phrasing authored by team members and reviewed offline; no copyrighted text is copied. External roadmaps are consulted for topic scope only.
 - Curated resource links are links only.
+- The repository carries an explicit licence file.
 
 ### NFR-16 — Content quality
 
@@ -450,7 +456,7 @@ Full stack runs locally via single `docker compose up`. Local PostgreSQL uses `p
 
 ### NFR-20 — Time and timezone handling
 
-- All daily streak, daily goal, and snapshot boundaries use the student's configured IANA timezone (default `Africa/Cairo`, correctly handling Egypt DST transitions).
+- All daily streak, weekly goal tracking, and snapshot boundaries use the student's configured IANA timezone (default `Africa/Cairo`, correctly handling Egypt DST transitions).
 - All domain date/time calculations consume an injected `IClock` abstraction; direct calls to `DateTime.Now` or hardcoded UTC offsets are forbidden.
 
 ### NFR-21 — Data retention
@@ -483,7 +489,7 @@ Full stack runs locally via single `docker compose up`. Local PostgreSQL uses `p
 | # | Constraint | Consequence |
 |---|---|---|
 | C1 | **$0 budget, everything included** | No paid APIs, hosting, or data. Drives ADR-0002 and ADR-0005 |
-| C2 | Fixed final defence, **30 June 2027** | Feature freeze ≈ 3.3 weeks (23 days) earlier (Sun 7 Jun 2027); scope is the only flexible variable |
+| C2 | Fixed final defence, **30 June 2027** | Feature freeze ≈ 3.3 weeks (23 days) earlier (Mon 7 Jun 2027); scope is the only flexible variable |
 | C3 | Team skill mix is fixed (.NET, React, Python) | No stack changes mid-project |
 | C4 | Exam periods reduce capacity | Modelled as low-velocity weeks in [§08](08-plan-and-timeline.md) |
 | C5 | No employer partnerships | Job matching stays out of scope |

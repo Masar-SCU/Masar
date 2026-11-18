@@ -161,14 +161,14 @@ Replaces the previous phase-based roadmap evaluation (F-35, C.11):
 | T5 | Play and complete a micro-lesson | Completes lesson; observes XP and readiness gain |
 | T6 | Ask the mentor a question about your path | Reviews answer and deep links |
 | T7 | Compare target career against an alternative | Reviews what-if comparison |
-| T8 | Set a daily study goal (e.g. 20 min) | Sets goal and reads projected finish |
+| T8 | Set a weekly study goal (e.g. 5 hrs/week) | Sets goal and reads projected finish |
 
 ### Instruments and success criteria
 
 - **Task completion rate:** $\ge 80\%$ across T1–T8.
 - **Time to first lesson:** $\le 10$ minutes (placement skipped), $\le 15$ minutes (with placement) ([NFR-04](02-requirements.md#nfr-04--usability)).
 - **System Usability Scale (SUS):** $\ge 68$ (industry benchmark).
-- **Gamification ethics feedback:** Post-study question: *"Did the streak, XP, and daily goals feel encouraging or pressuring?"* $\ge 80\%$ must report motivating without anxiety (NFR-18).
+- **Gamification ethics feedback:** Post-study question: *"Did the streak, XP, and weekly study goals feel encouraging or pressuring?"* $\ge 80\%$ must report motivating without anxiety (NFR-18).
 
 ---
 

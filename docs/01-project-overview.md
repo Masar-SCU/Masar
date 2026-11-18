@@ -208,7 +208,7 @@ sequenceDiagram
 2. **Coursework & skill identification:** Course mapping pre-fills unverified foundational skills; student claims additional skills ($\le 3$ minutes).
 3. **Targeted adaptive placement probe:** Diagnostic up/down probe for core claimed skills (capped at level 4 verified; skippable).
 4. **Career recommendation & target selection:** Model-first recommendation with inspectable reason badges. Student commits to target career and track ($\le 2$ minutes), followed by a compact Readiness Summary Card preview.
-5. **Weekly goal & path reveal:** Student selects weekly study goal in hours/week (1–60 hrs/week; default 5 hrs/week $\approx$ 20 min/day) and is launched directly into their first lesson ($\le 10$ minutes total without placement, $\le 15$ minutes with placement).
+5. **Weekly goal & path reveal:** Student selects weekly study goal in hours/week (1–20 hrs/week; presets: 2, 3, 5, 10 hrs/week; default: 5 hrs/week, with an illustrative daily pacing indicator $\approx 43$ min/day) and is launched directly into their first lesson ($\le 10$ minutes total without placement, $\le 15$ minutes with placement).
 
 ### 8.2 Phase 2 — Daily micro-learning loop
 

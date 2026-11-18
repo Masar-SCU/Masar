@@ -63,7 +63,7 @@ flowchart LR
 | **3** | Optional diagnostic placement probe for top 2–3 claimed core skills (adaptive probe; can be skipped) | Marks in-scope atoms up to tested band as `assumed` (`verified=true`, capped at level 4); unverified claims remain `verified=false` | $\le 5$ min |
 | **4** | Reviews ranked careers with match scores and fit breakdowns; commits to target career and track | Persists `target_career_id` and `target_track_id`; initializes `student_path_prefs` | $\le 2$ min |
 | **Preview**| Inspects compact Readiness Summary Card | Displays baseline readiness score, gap count, and projected path duration | Instant |
-| **5** | Selects weekly study goal in hours/week (1–60 hrs/week; default 5 hrs/week ≈ 20 min/day) | Reveals personal atomic path (units, atoms, projected finish) and immediately opens the first micro-lesson | Instant |
+| **5** | Selects weekly study goal in hours/week (1–20 hrs/week; presets: 2, 3, 5, 10 hrs/week; default 5 hrs/week ≈ 43 min/day) | Reveals personal atomic path (units, atoms, projected finish) and immediately opens the first micro-lesson | Instant |
 
 ### Usability target (NFR-04)
 
@@ -92,8 +92,7 @@ flowchart LR
 | Interests | multi-select from a fixed list | Yes, $\ge 3$ |
 | Skills | skill + level 0–5 | Yes, $\ge 5$ |
 | Completed courses | multi-select from department catalogue | No |
-| Hours available per week | 1–60 | Yes |
-| Daily goal | 10, 20, 30, 45, 60 minutes | Yes (default derived from hours/week) |
+| Weekly study goal | 1–20 hours/week (presets: 2, 3, 5, 10 hrs/week; default 5 hrs/week ≈ 43 min/day) | Yes |
 | Timezone | IANA timezone string | Yes (default `Africa/Cairo`) |
 | Career goal | free text, $\le 500$ characters | No |
 | Evidence URL per skill | URL | No |

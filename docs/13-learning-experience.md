@@ -42,8 +42,8 @@ graph TD
 
 ### Primary Views
 
-1. **Path (`/path`):** The primary daily home screen. Displays the vertical winding roadmap of learning units, active and locked atoms, stage checkpoints, and milestone projects.
-2. **Practice (`/practice`):** Dedicated spaced-repetition hub. Houses the 3-box Leitner review queue, showing atoms due for review, shaky concepts needing reinforcement, and completed review statistics.
+1. **Path (`/path`):** The primary daily home screen. Displays the vertical winding roadmap of learning units, active and locked atoms, Unit Checkpoints, and Stage Capstone Projects.
+2. **Practice (`/practice`):** Dedicated spaced-repetition hub. Houses the 5-box Leitner review queue (intervals: 1, 3, 7, 14, 30 days), showing atoms due for review, shaky concepts needing reinforcement, and completed review statistics.
 3. **Career (`/career`):** Overview of committed target career, match fit breakdown, track switcher, continuous readiness gauge, "What-If" simulator, and internship checklist. A prominent action link navigates to the dedicated **Gap Analysis (`/gap-analysis`)** view, which hosts the full filterable skill gap table with search, category filters, atom counts, and the explainability "Why?" panel.
 4. **Mentor (`/mentor`):** Retrieval-augmented AI conversational mentor. Grounded exclusively in the student's profile, active gaps, and authored learning atoms with deep-linking back to specific lessons.
 5. **Profile (`/profile`):** Personal dashboard, streak calendar, weekly study goal settings (hours/week), notification preferences, account management, and privacy disclosures.
@@ -94,7 +94,7 @@ The Path screen represents the curriculum as a vertical, winding river of intera
 |                           \                                       |
 |                            (   )  1.5 Normalization 1NF-3NF (Lock)|
 |                             \                                     |
-|                             [🏆]  Stage Checkpoint: SQL Basics    |
+|                             [🏆]  Unit Checkpoint: SQL Basics     |
 |                                                                   |
 +-------------------------------------------------------------------+
 ```
@@ -213,7 +213,7 @@ sequenceDiagram
     UI->>S: Preview Compact Readiness Summary Card
     S->>UI: Advances to Step 5
     UI->>S: Step 5: Weekly Goal (Hours/Week) & Path Reveal
-    S->>UI: Selects Goal (e.g., 5 hrs/week ≈ 20 min/day)
+    S->>UI: Selects Goal (e.g., 5 hrs/week ≈ 43 min/day)
     UI->>API: Initialize Path & Save Goal
     API-->>UI: Path Generated (Units, Atoms, Estimated Hours)
     UI->>S: Reveal Summary & Immediate "Start First Lesson" CTA
@@ -226,7 +226,7 @@ sequenceDiagram
 - **Step 3: Optional Diagnostic Placement ($\le 5\text{ min}$):** Students can choose to prove prior competence across 2–3 claimed skills by answering focused diagnostic questions (pool $\ge 20$ items, capped at level 4 verified). Students who skip start at Level 0 without penalty.
 - **Step 4: Career Match & Target Selection ($\le 2\text{ min}$):** Presents all 6 careers ranked by the AI recommendation service with match breakdown reason badges (`skill_fit`, `interest_fit`, `coverage`). The student commits to their target career and track.
 - **Step 4 $\to$ Step 5 Transition (Readiness Summary Card):** Before proceeding to goal setting, the wizard renders a compact **Readiness Summary Card** displaying the student's initial verified baseline score, primary skill strengths, total identified gap count, and projected learning curve.
-- **Step 5: Weekly Commitment & Path Reveal ($\le 1\text{ min}$):** Student selects their weekly study commitment in **hours per week** (1–60 hrs/week; presets: 2.5, 5, 7.5, 10, or 15 hrs/week; default: 5 hrs/week, with an illustrative daily equivalent $\approx$ 20 min/day). The screen reveals their personalized roadmap:
+- **Step 5: Weekly Commitment & Path Reveal ($\le 1\text{ min}$):** Student selects their weekly study commitment in **hours per week** (1–20 hrs/week; presets: 2, 3, 5, 10, or 15 hrs/week; default: 5 hrs/week, with an illustrative daily pacing indicator $\approx 43$ min/day). The screen reveals their personalized roadmap:
   > *"Your Path to Backend Developer: 7 Units · 412 Lessons · ~48 Hours of Practice. At 5 hours/week, you will reach market readiness by March 2027."*
 - **Immediate First Action:** The summary card features a prominent "Start First Lesson" button. Tapping it drops the student straight into their first 3-minute lesson, satisfying NFR-04:
   - **First lesson started $\le 10\text{ min}$ unaided** (placement skipped).
@@ -253,7 +253,7 @@ XP reflects focused practice time and active cognitive effort. XP has no monetar
 
 ### Weekly Goals, Streaks, and Timezones
 
-1. **Study Goal Setting:** Students commit to a weekly study budget in **hours per week** (1–60 hrs/week; default: 5 hrs/week). The UI displays weekly progress alongside an illustrative daily pacing indicator ($\text{hours/week} / 7 \approx \text{minutes/day}$).
+1. **Study Goal Setting:** Students commit to a weekly study budget in **hours per week** (1–20 hrs/week; default: 5 hrs/week). The UI displays weekly progress alongside an illustrative daily pacing indicator ($\text{hours/week} \times 60 / 7 \approx \text{minutes/day}$, e.g. 5 hrs/week $\approx 43$ min/day).
 2. **Streak Counter:** A streak increments when the student completes **any qualifying learning session** (at least one lesson, spaced review, or checkpoint that earns XP) during that calendar day. Hitting weekly study goal thresholds provides celebratory milestone XP and visual achievements, but daily streak continuity requires only a single completed practice activity.
 3. **Timezone Authority:** All streak boundaries are evaluated against the student's configured IANA timezone (e.g., `Africa/Cairo`). Midnight in the student's local timezone defines the day cutoff, eliminating daylight savings bugs and server-time discrepancies.
 4. **Streak Protections (Freezes):**

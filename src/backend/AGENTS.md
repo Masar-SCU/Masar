@@ -88,7 +88,7 @@ dotnet ef database update \
   * Lesson replay: **2 XP flat** (max 20 XP/day).
 * **Streak & Study Goal Rules**:
   * Streak increments upon completing **any qualifying learning session** (at least one lesson, review, or checkpoint that earns XP) evaluated against student's configured IANA timezone (`Africa/Cairo`).
-  * Study goals are committed in **hours per week** (1–60 hrs/week; default: 5 hrs/week).
+  * Study goals are committed in **hours per week** (1–20 hrs/week; default: 5 hrs/week).
   * Students may pause their daily streak during exam periods for up to 14 consecutive calendar days per semester without losing accumulated streak counts.
 * **Idempotency & Re-Grading**:
   * `sessionId` in route `/api/lessons/{sessionId}/complete` identifies the ephemeral session.

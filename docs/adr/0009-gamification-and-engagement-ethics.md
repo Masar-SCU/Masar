@@ -32,7 +32,7 @@ Incorporate a 5-heart system where mistakes deplete lives, requiring waiting per
 
 ### C — Positive-only, non-punitive engagement mechanics with ethical constraints *(chosen)*
 
-Implement non-punitive mechanics centered on daily consistency (streaks), mastery progression (XP), personalized daily targets (10–60 min), and spaced recall (review queues), strictly excluding lockouts, lives, or manipulative dark patterns.
+Implement non-punitive mechanics centered on daily consistency (streaks), mastery progression (XP), personalized weekly study targets (1–20 hrs/week), and spaced recall (review queues), strictly excluding lockouts, lives, or manipulative dark patterns.
 
 ## Decision
 
@@ -42,7 +42,7 @@ Implement non-punitive mechanics centered on daily consistency (streaks), master
    - XP is awarded for active effort: completing an atom (+15 XP base), acing on first attempt (+5 XP bonus for $\ge 80\%$ accuracy), completing a spaced review (+10 XP flat), passing Unit Checkpoints (+50 XP), and submitting accepted Stage Capstone Projects (+100 XP). Replays award +2 XP flat (max 20 XP/day).
    - **Zero XP Deductions:** Mistakes never deduct XP.
 2. **Weekly Goals & Streaks:**
-   - Students configure a weekly study goal during onboarding (1–60 hours/week; default 5 hours/week $\approx$ 20 min/day).
+   - Students configure a weekly study goal during onboarding (1–20 hours/week; presets: 2, 3, 5, 10 hrs/week; default 5 hours/week $\approx 43$ min/day).
    - A streak increments when the student completes **any qualifying learning session** (at least one lesson, spaced review, or checkpoint that earns XP) within their configured IANA timezone (e.g., `Africa/Cairo`).
    - **Streak Protections:** Students can equip up to 2 streak freezes earned via study milestones. Streaks can be paused for up to 14 days during university exam periods.
 3. **Strict Educational Ethics & Accessibility:**

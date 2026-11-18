@@ -2,8 +2,8 @@
 
 **Document owner:** Abdelrahman Megahed · **Status:** Revised <2026-11-17> (Re-baselined from scratch to 30 June 2027)
 
-**Start:** Tue 17 Nov 2026 · **Mid-term review:** Sun 8 Feb 2027 (Week 12) ·
-**Feature freeze:** Sun 7 Jun 2027 (Week 29) · **Final defence:** Wed 30 Jun 2027 (Week 32) · **32 weeks total**
+**Start:** Tue 17 Nov 2026 · **Mid-term review:** Mon 8 Feb 2027 (Week 12) ·
+**Feature freeze:** Mon 7 Jun 2027 (Week 29) · **Final defence:** Wed 30 Jun 2027 (Week 32) · **32 weeks total**
 
 ---
 
@@ -69,13 +69,13 @@ All vertical slices begin anew from **S0 (Walking Skeleton)**, incorporating the
 | **S2 Gap engine & readiness** | W5–W6 | 15 Dec – 28 Dec 2026 | 6 careers seeded with importance weights; `GapCalculator` and `ReadinessCalculator`; gap UI with severity badges; demo mode with offline fixtures | Scheduled |
 | **S3 Atomic foundation** | W7–W9 | 29 Dec 2026 – 18 Jan 2027 | Atom/Unit/Path schema & migrations; CI validator; `PathBuilder` and `MasteryCalculator`; **API v2 contract frozen at end of W9**; lesson player prototype with 3 exercise types on pilot unit (`sql-fundamentals`, ~150 atoms); content factory v1 | Scheduled |
 | ⏸ **Exam block & Content Review** | W10–W11 | 19 Jan – 1 Feb 2027 | Mid-year university exam window (capacity ~40%); asynchronous human peer review of drafts; **Tier 1 Content Complete (~1,000 atoms: Foundations + Backend .NET)** | Scheduled |
-| 🎯 **Milestone: Mid-Term Review** | W12 | **Sun 8 Feb 2027** | Demonstrate atomic roadmap, gap analysis, and interactive lesson player to supervisor (Dr. Hend) | Scheduled |
+| 🎯 **Milestone: Mid-Term Review** | W12 | **Mon 8 Feb 2027** | Demonstrate atomic roadmap, gap analysis, and interactive lesson player to supervisor (Dr. Hend) | Scheduled |
 | **S4 Learning loop** | W12–W15 | 2 Feb – 1 Mar 2027 | Lesson API (`POST /api/lessons/{sessionId}/complete`) with authoritative server re-grading and idempotency; XP, streak, weekly study goal; smooth continuous readiness; path UI with virtualisation; static bundle publishing | Scheduled |
-| **S5 Placement & onboarding** | W16–W18 | 2 Mar – 22 Mar 2027 | 5-step onboarding wizard complete with adaptive placement and weekly study goal; unit checkpoints (8 questions, $\ge 75\%$ pass boundary, +50 XP); 3-box Leitner review queue (Practice tab) | Scheduled |
+| **S5 Placement & onboarding** | W16–W18 | 2 Mar – 22 Mar 2027 | 5-step onboarding wizard complete with adaptive placement and weekly study goal; unit checkpoints (8 questions, $\ge 75\%$ pass boundary, +50 XP); 5-box Leitner review queue (Practice tab) | Scheduled |
 | **S6 AI engines** | W19–W22 | 23 Mar – 19 Apr 2027 | Job extraction layers 1–4 ([RQ2](09-evaluation.md#rq2)); corpus importance weights; sentence embeddings (`all-MiniLM-L6-v2`); model-first career recommendation + [RQ1](09-evaluation.md#rq1) measurement; **Tier 2 Content Complete (~2,200 atoms)** | Scheduled |
 | **S7 AI mentor** | W23–W24 | 20 Apr – 3 May 2027 | Sanitised Context DTO, RAG with atom retrieval, prompt injection hardening, stored explanations fallback, mentor grounding audit ([RQ4](09-evaluation.md#rq4)) | Scheduled |
 | **S8 Curriculum, projects & advisor** | W25–W26 | 4 May – 17 May 2027 | Suez Canal curriculum-to-atom mapping; Stage Capstone Project nodes (+100 XP); internship checklist; advisor atom analytics ($k \ge 5$ suppression); what-if comparison; **Tier 3 Content Complete (~4,050 atoms)** | Scheduled |
-| **S9 Hardening & Evaluation** | W27–W29 | 18 May – 7 Jun 2027 | **Content Freeze Sun 24 May 2027**; E2E tests per user story; accessibility audit (WCAG 2.1 AA); load test (100 concurrent students); security review; usability studies ([RQ5](09-evaluation.md#rq5), [RQ8](09-evaluation.md#rq8)); **Feature freeze Sun 7 Jun 2027** | Scheduled |
+| **S9 Hardening & Evaluation** | W27–W29 | 18 May – 7 Jun 2027 | **Content Freeze Mon 24 May 2027**; E2E tests per user story; accessibility audit (WCAG 2.1 AA); load test (100 concurrent students); security review; usability studies ([RQ5](09-evaluation.md#rq5), [RQ8](09-evaluation.md#rq8)); **Feature freeze Mon 7 Jun 2027** | Scheduled |
 | **S10 Report & defence** | W30–W32 | 8 Jun – 30 Jun 2027 | <a id="slice-11--report-presentation-defence--w31w35--18-apr--20-may"></a>Comprehensive thesis report draft, evaluation data scripts ([RQ1](09-evaluation.md#rq1)–[RQ8](09-evaluation.md#rq8)), slide deck, full dress rehearsal, **Final Defence on Wed 30 Jun 2027** | Scheduled |
 
 ---

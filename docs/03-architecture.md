@@ -238,10 +238,10 @@ sequenceDiagram
     W->>A: PUT /api/profile/target {careerId, trackId}
     A->>DB: update target and initialize student_path_prefs
 
-    Note over S,AI: Step 5 — Daily Goal & Path Reveal -> First Lesson (< 10 min total)
-    S->>W: Select daily goal (e.g. 20 min/day)
-    W->>A: PUT /api/game/daily-goal {minutes: 20}
-    A->>DB: persist daily goal
+    Note over S,AI: Step 5 — Weekly Goal & Path Reveal -> First Lesson (< 10 min total)
+    S->>W: Select weekly goal (e.g. 5 hrs/week)
+    W->>A: PUT /api/profile/study-goal {hoursPerWeek: 5}
+    A->>DB: persist weekly study goal
     W->>A: GET /api/path
     A->>D: PathBuilder.Build(path, atomStates, prefs)
     A-->>W: 200 path summary (units, total atoms, projected completion date)

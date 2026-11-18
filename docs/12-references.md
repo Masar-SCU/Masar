@@ -152,7 +152,7 @@ The following citations support the pedagogical and algorithmic foundations of t
 — Mathematical foundation of prerequisite structures, surmise relations, and well-graded knowledge states over atomic learning items.
 
 **[34]** S. Leitner, *So lernt man lernen: Der Weg zum Erfolg*, Freiburg: Herder, 1972. *(verify before citing)*
-— The classical Leitner 3-box/5-box physical spaced-repetition card system, serving as the basis for the MVP 3-box review queue.
+— The classical Leitner 3-box/5-box physical spaced-repetition card system, serving as the basis for the 5-box Leitner review queue.
 
 **[35]** P. A. Wozniak, "Optimization of learning," Master's thesis, University of Technology in Poznań, 1990. *(verify before citing)*
 — Description of SuperMemo Algorithm 2 (SM-2) for interval calculation.

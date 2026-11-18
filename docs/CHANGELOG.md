@@ -22,7 +22,7 @@ Following technical peer review from Ziad Ahmed (`ziad-Ahmed401`) on PR #41, twe
 10. **Checkpoint Passing Accuracy ([13 §3](13-learning-experience.md#3-path-screen-specification), [13 §6](13-learning-experience.md#6-gamification-and-engagement-rules)):** Harmonized passing accuracy to $\ge 75\%$ (6 of 8 exercises correct), matching `05-features-mvp.md` §5.2.
 11. **Unit Checkpoint vs. Stage Capstone Distinction ([13 §3](13-learning-experience.md#3-path-screen-specification)):** Distinctly separated Unit Checkpoints (end of 3–5 atom units, 8 questions, +50 XP) from Stage Capstone Projects (end of stage, portfolio build, +100 XP).
 12. **Payload Property Casing ([ADR-0010](adr/0010-lesson-grading-authority-and-content-delivery.md)):** Standardized payload fields to `camelCase` (`atomId`, `sessionId`, `durationSeconds`, `attempts`).
-13. **Master Timeline Re-baseline ([08-plan-and-timeline.md](08-plan-and-timeline.md)):** Re-baselined execution from scratch starting **Tuesday 17 November 2026** through **Wednesday 30 June 2027 (32 weeks / 225 days)**, establishing S0–S10 vertical slices with feature freeze on Sun 7 June 2027.
+13. **Master Timeline Re-baseline ([08-plan-and-timeline.md](08-plan-and-timeline.md)):** Re-baselined execution from scratch starting **Tuesday 17 November 2026** through **Wednesday 30 June 2027 (32 weeks / 225 days)**, establishing S0–S10 vertical slices with feature freeze on Mon 7 June 2027.
 
 ---
 
@@ -99,7 +99,7 @@ On 15 November 2026, the Masar engineering documentation underwent a comprehensi
 
 - **B.1 (Core):** Atomic knowledge graph with unit checkpoints and placement diagnostics ([05 §5.6](05-features-mvp.md#56-atomic-roadmap--core), [13](13-learning-experience.md)).
 - **B.2 (Core):** Derived continuous mastery $c(s) = L(s) + \min(1, m_{L+1}/0.80)$ ensuring every completed atom rewards the learner ([05 §5.7](05-features-mvp.md#57-career-readiness-score)).
-- **B.3 (Should):** Spaced repetition review queue using a 3-box Leitner model in the Practice tab ([05 §5.19](05-features-mvp.md#519-review-and-retention)).
+- **B.3 (Should):** Spaced repetition review queue using a 5-box Leitner model in the Practice tab ([05 §5.19](05-features-mvp.md#519-review-and-retention)).
 - **B.4 (Should):** Course-to-atom curriculum mapping, enabling granular gap analysis against academic coursework ([05 §5.11](05-features-mvp.md#511-university-curriculum-mapping)).
 - **B.5 (Should):** Anonymized advisor cohort analytics identifying high-failure bottleneck atoms ($k \ge 5$) ([05 §5.13](05-features-mvp.md#atom-level-cohort-analytics)).
 - **B.6 (Should):** Retrieval-augmented AI mentor grounded in authored learning atoms with deep links ([06 §4](06-ai-engines.md#4-engine-c--context-aware-ai-mentor-rag)).
