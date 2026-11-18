@@ -35,9 +35,9 @@ All vertical slices begin anew from **S0 (Walking Skeleton)**, incorporating the
 | Career & Skill Database | 🟡 MVP | Mohamed Y. | Seed data | Yes | Hand-curated O\*NET/ESCO |
 | Career Recommendation (AI model) | 🟡 MVP | Ahmed Y. | Profile, FastAPI Svc | Yes | FastAPI deterministic fallback |
 | Deterministic Recommendation Baseline | 🟡 MVP *(eval/fallback)* | Ahmed Y. | RQ1 comparison | No | FastAPI deterministic fallback |
-| Career Assessment (20 items) | 🟡 MVP | Mohamed Y. | — | Yes | — |
+| Career Assessment (22 items) | 🟡 MVP | Mohamed Y. | — | Yes | — |
 | Mastery Derivation & Readiness | 🟡 MVP | Osama | Atom states | **Yes** | None — deterministic view |
-| XP, Streak & Daily Goal | 🟡 MVP | Osama · Mazen | Lessons, Timezone | **Yes** | Local daily counters |
+| XP, Streak & Weekly Goal | 🟡 MVP | Osama · Mazen | Lessons, Timezone | **Yes** | Local daily counters |
 | Content Factory Pipeline | 🟡 MVP *(offline)* | Mohamed Salah · Ahmed Y. | Dev LLM quota | No | Human outlines & reduced careers |
 | Job-Skill Extraction | 🟡 MVP *(offline)* | Ahmed Y. | Job corpus | No | Alias dictionary + taxonomy |
 | Learning Resources (Deep dives) | 🟡 MVP | Mohamed Y. | Curated seed | Yes | — |
@@ -65,13 +65,13 @@ All vertical slices begin anew from **S0 (Walking Skeleton)**, incorporating the
 | Slice | Weeks | Dates | Core Deliverables | Status |
 |---|---|---|---|---|
 | **S0 Walking skeleton** | W1–W2 | 17 Nov – 30 Nov 2026 | Multi-service Docker compose (Postgres + pgvector, .NET 10 API, FastAPI AI, React 19 SPA); CI/CD workflows; base auth (JWT); initial OpenAPI contract frozen | In progress |
-| **S1 Profile & catalogue** | W3–W4 | 1 Dec – 14 Dec 2026 | 60 skills seeded from O\*NET/ESCO with aliases, category hierarchy, prerequisite DAG v1; student profile CRUD, academic history, student consent disclosure; 20-item assessment | Scheduled |
+| **S1 Profile & catalogue** | W3–W4 | 1 Dec – 14 Dec 2026 | 60 skills seeded from O\*NET/ESCO with aliases, category hierarchy, prerequisite DAG v1; student profile CRUD, academic history, student consent disclosure; 22-item assessment | Scheduled |
 | **S2 Gap engine & readiness** | W5–W6 | 15 Dec – 28 Dec 2026 | 6 careers seeded with importance weights; `GapCalculator` and `ReadinessCalculator`; gap UI with severity badges; demo mode with offline fixtures | Scheduled |
 | **S3 Atomic foundation** | W7–W9 | 29 Dec 2026 – 18 Jan 2027 | Atom/Unit/Path schema & migrations; CI validator; `PathBuilder` and `MasteryCalculator`; **API v2 contract frozen at end of W9**; lesson player prototype with 3 exercise types on pilot unit (`sql-fundamentals`, ~150 atoms); content factory v1 | Scheduled |
 | ⏸ **Exam block & Content Review** | W10–W11 | 19 Jan – 1 Feb 2027 | Mid-year university exam window (capacity ~40%); asynchronous human peer review of drafts; **Tier 1 Content Complete (~1,000 atoms: Foundations + Backend .NET)** | Scheduled |
 | 🎯 **Milestone: Mid-Term Review** | W12 | **Sun 8 Feb 2027** | Demonstrate atomic roadmap, gap analysis, and interactive lesson player to supervisor (Dr. Hend) | Scheduled |
-| **S4 Learning loop** | W12–W15 | 2 Feb – 1 Mar 2027 | Lesson API (`POST /api/lessons/{sessionId}/complete`) with authoritative server re-grading and idempotency; XP, streak, daily goal; smooth continuous readiness; path UI with virtualisation; static bundle publishing | Scheduled |
-| **S5 Placement & onboarding** | W16–W18 | 2 Mar – 22 Mar 2027 | 5-step onboarding wizard complete with adaptive placement and daily goal; unit checkpoints (8 questions, $\ge 75\%$ pass boundary, +50 XP); 3-box Leitner review queue (Practice tab) | Scheduled |
+| **S4 Learning loop** | W12–W15 | 2 Feb – 1 Mar 2027 | Lesson API (`POST /api/lessons/{sessionId}/complete`) with authoritative server re-grading and idempotency; XP, streak, weekly study goal; smooth continuous readiness; path UI with virtualisation; static bundle publishing | Scheduled |
+| **S5 Placement & onboarding** | W16–W18 | 2 Mar – 22 Mar 2027 | 5-step onboarding wizard complete with adaptive placement and weekly study goal; unit checkpoints (8 questions, $\ge 75\%$ pass boundary, +50 XP); 3-box Leitner review queue (Practice tab) | Scheduled |
 | **S6 AI engines** | W19–W22 | 23 Mar – 19 Apr 2027 | Job extraction layers 1–4 ([RQ2](09-evaluation.md#rq2)); corpus importance weights; sentence embeddings (`all-MiniLM-L6-v2`); model-first career recommendation + [RQ1](09-evaluation.md#rq1) measurement; **Tier 2 Content Complete (~2,200 atoms)** | Scheduled |
 | **S7 AI mentor** | W23–W24 | 20 Apr – 3 May 2027 | Sanitised Context DTO, RAG with atom retrieval, prompt injection hardening, stored explanations fallback, mentor grounding audit ([RQ4](09-evaluation.md#rq4)) | Scheduled |
 | **S8 Curriculum, projects & advisor** | W25–W26 | 4 May – 17 May 2027 | Suez Canal curriculum-to-atom mapping; Stage Capstone Project nodes (+100 XP); internship checklist; advisor atom analytics ($k \ge 5$ suppression); what-if comparison; **Tier 3 Content Complete (~4,050 atoms)** | Scheduled |
@@ -127,7 +127,7 @@ gantt
 | **API v2 contract freeze** | 18 Jan 2027 | 9 | v2.0.0 OpenAPI spec frozen for atomic roadmap and lesson player |
 | **Tier 1 Content (~1,000 atoms)** | 1 Feb 2027 | 11 | Shared foundations + Backend (.NET) atoms reviewed & published |
 | **Mid-term review** | **8 Feb 2027** | **12** | Demonstrated atomic roadmap and lesson player live to supervisor |
-| **Full learning loop** | 1 Mar 2027 | 15 | Lesson player, re-grading, XP, streak, daily goal, static bundles |
+| **Full learning loop** | 1 Mar 2027 | 15 | Lesson player, re-grading, XP, streak, weekly goal, static bundles |
 | **Tier 2 Content (~2,200 atoms)** | 19 Apr 2027 | 22 | Frontend/Full-Stack and Data Engineering atoms completed |
 | **Intelligence integrated** | 3 May 2027 | 24 | Extraction, embeddings, model-first recommendation, mentor with retrieval |
 | **Tier 3 Content (~4,050 atoms)**| 17 May 2027 | 26 | Full curriculum atoms across all 6 careers completed |

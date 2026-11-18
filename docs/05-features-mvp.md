@@ -58,11 +58,12 @@ flowchart LR
 
 | Step | User Action | System Output | Duration |
 |:-:|---|---|:-:|
-| **1** | Answers 20 Likert items on interests, problem types, and work preferences | Produces normalized `interest_vector` | $\le 4$ min |
+| **1** | Answers 22 Likert items on interests, problem types, and work preferences | Produces normalized `interest_vector` | $\le 4$ min |
 | **2** | Selects academic year and completed Suez Canal courses; adds claimed technical skills (0–5 scale) | Pre-fills unverified skills via curriculum mapping (manual entry is baseline if mapping unavailable); initializes `student_skill` | $\le 3$ min |
 | **3** | Optional diagnostic placement probe for top 2–3 claimed core skills (adaptive probe; can be skipped) | Marks in-scope atoms up to tested band as `assumed` (`verified=true`, capped at level 4); unverified claims remain `verified=false` | $\le 5$ min |
 | **4** | Reviews ranked careers with match scores and fit breakdowns; commits to target career and track | Persists `target_career_id` and `target_track_id`; initializes `student_path_prefs` | $\le 2$ min |
-| **5** | Selects daily study goal (10, 20, 30, 45, or 60 min, defaulted from weekly hours) | Reveals personal atomic path (units, atoms, projected finish) and immediately opens the first micro-lesson | Instant |
+| **Preview**| Inspects compact Readiness Summary Card | Displays baseline readiness score, gap count, and projected path duration | Instant |
+| **5** | Selects weekly study goal in hours/week (1–60 hrs/week; default 5 hrs/week ≈ 20 min/day) | Reveals personal atomic path (units, atoms, projected finish) and immediately opens the first micro-lesson | Instant |
 
 ### Usability target (NFR-04)
 
@@ -154,13 +155,13 @@ US-01 AC1–AC6. Additionally: free text is length-limited and escaped on render
 **Purpose:** capture interests and work preferences, which skills alone do not reveal.
 **Requirements:** FR-08 · **Story:** US-03
 
-Structure — canonical **20 Likert items, completed in $\le 4$ minutes**:
+Structure — canonical **22 Likert items, completed in $\le 4$ minutes**:
 
 | Section | Items | Description |
 |---|:---:|---|
-| Interest areas | 7 | Weighted interest vector across CS domains |
-| Work-style preferences | 4 | Team vs solo, breadth vs depth, product vs research |
-| Problem-type preferences | 6 | Systems, data, visual, security, infrastructure, algorithms |
+| Interest areas | 8 | Weighted interest vector across core CS and technology domains |
+| Work-style preferences | 4 | Team vs solo, breadth vs depth, product vs research, velocity |
+| Problem-type preferences | 7 | Systems, data, visual, security, infrastructure, algorithms, cloud |
 | Career intent | 3 | Employment vs graduate study, regional market, timeline |
 
 Answers are Likert (1–5). The resulting normalized `interest_vector` feeds the recommendation service's interest term ([§5.4](#54-career-recommendation)).
@@ -180,17 +181,16 @@ Career recommendation is a model-first pipeline executed inside the internal Fas
 |---|---|---|---|
 | 1 | Embedding | MiniLM-L6-v2 profile embedding | FastAPI handles inference failure |
 | 2 | Semantic scoring | Score profile embedding against candidate career vectors supplied by .NET | Replaces retrieval over 6 careers (F-23) |
-| 3 | Reranker | Produce primary career relevance/ranking signal | Open Decision OD-1 (learned ranker vs cross-encoder) |
-| 4 | Mandatory constraints | Enforce deterministic business rules | Evaluated in FastAPI |
+| 3 | Reranker | Produce primary career relevance/ranking signal via a Learned Ranker | Primary ranking mechanism; supported by deterministic rules |
+| 4 | Mandatory constraints | Enforce deterministic business rules and availability gating | Evaluated in FastAPI |
 | 5 | Final recommendation | Return ranked careers, inspectable baseline breakdown, and metadata | Returned to .NET |
 
 ### Mandatory recommendation constraints (F-23)
 
-1. **Active status:** Inactive careers and tracks are never returned.
-2. **Content availability threshold:** A career is recommendable only if its atomic path has $\ge 60\%$ of in-scope atoms in `published` status. Otherwise, it is returned with `contentLimited: true` and cannot be ranked above a fully available career whose score is within 5 points.
+1. **Completeness & Availability:** The API response **always returns all 6 canonical careers**. Each career entry includes an `isActive` flag and a `contentLimited` flag.
+2. **Content availability threshold (60%):** A career is fully recommendable and selectable if `isActive = true` and its atomic path has $\ge 60\%$ in-scope atoms in `published` status (`contentLimited: false`). Careers with $< 60\%$ published content are returned with `contentLimited: true`, cannot be ranked above a fully available career whose score is within 5 points, and display a "Coming Soon (In Authoring)" badge prohibiting selection as the primary target until the 60% threshold is met.
 3. **Deterministic ordering:** Every career receives a unique rank and score in 0–100; ties break by score DESC, then `careerId` ASC.
 4. **Zero-skills handling:** A profile with zero rated skills runs in interest-only mode with `lowConfidence: true`.
-5. **Completeness:** The response always returns all 6 careers.
 
 ### Deterministic baseline and explainability
 
@@ -327,11 +327,12 @@ readiness = 100 · Σ_{s ∈ req(c)} importance(s) · min(c(s), required(s))
 ```
 
 Where continuous level $c(s)$ is:
-$$c(s) = L(s) + \min\left(1, \frac{m_{L+1}}{\tau}\right) \quad (\text{with } \tau = 0.80)$$
+$$c(s) = \begin{cases} 5.0, & \text{if } L(s) = 5 \\ L(s) + \min\left(1, \frac{m_{L+1}}{\tau}\right), & \text{if } L(s) < 5 \end{cases} \quad (\text{with } \tau = 0.80)$$
 
 Properties:
 
 - **Smooth feedback:** Every completed atom increases $m_{L+1}$, raising $c(s)$ and immediately lifting the headline readiness score.
+- **Level-5 Boundary Clamping:** Level 5 is the maximum attainable mastery band; when $L(s) = 5$, $c(s)$ clamps to exactly $5.00$ without referencing a non-existent band 6.
 - **Monotone with progress:** Learning progress can only increase readiness. Recalibration via placement can lower it (the UI states this plainly). Spaced repetition decay **never** reduces readiness or $L(s)$ (F-19).
 - **Importance-weighted and bounded in $[0, 100]$.**
 
@@ -356,7 +357,7 @@ The integer gap table continues to display "SQL $3 \to 4$" until band 4 reaches 
 
 - Each Stage ends with a **project node**.
 - Projects provide 3–6 self-attested milestone criteria with optional repository links.
-- Completing a project records a `STUDENT_PORTFOLIO_ITEM`, awards 50 XP, and marks criteria in the Internship Checklist.
+- Completing a project records a `STUDENT_PORTFOLIO_ITEM`, awards **100 XP** (distinguished from 50 XP Unit Checkpoints), and marks criteria in the Internship Checklist.
 - **Capstone Project:** Evaluated against *projected* skill levels at the end of the Job-ready stage; requires covering $\ge 3$ target gap skills.
 
 ---
@@ -370,9 +371,14 @@ The integer gap table continues to display "SQL $3 \to 4$" until band 4 reaches 
 
 1. For each band $b \in \{1..5\}$ of skill $s$:
    $$m_b = \frac{|\{a \in \text{atoms}(s, b) : a.\text{status} \in \{\text{'learned'}, \text{'assumed'}\}\}|}{|\{a \in \text{atoms}(s, b) : a.\text{status} = \text{'published'}\}|}$$
-2. Derived integer level $L(s)$ is the largest integer such that for all $b \le L(s)$, $m_b \ge \tau$ ($\tau = 0.80$).
-3. Continuous level: $c(s) = L(s) + \min(1, m_{L+1} / \tau)$.
-4. If a lesson is completed with first-try accuracy $\ge 60\%$, the atom becomes `learned` (placed in Leitner Box 1); otherwise `shaky`.
+2. **Assumed Atoms & Verification Authority:**
+   - Atoms marked `'assumed'` via diagnostic placement probes or unit test-outs carry `verified = true` and count fully toward $m_b$ and readiness.
+   - Atoms marked `'assumed'` via unverified course mapping or self-claims carry `verified = false`. They provisionally bypass the active roadmap path, but must be confirmed at the unit Checkpoint:
+     - Scoring $\ge 75\%$ on the unit Checkpoint validates all unverified assumed atoms in that unit, promoting them to `verified = true`.
+     - Scoring $< 60\%$ on the Checkpoint reopens those unverified atoms, clearing their assumed status and unlocking them for active study.
+3. Derived integer level $L(s)$ is the largest integer such that for all $b \le L(s)$, $m_b \ge \tau$ ($\tau = 0.80$).
+4. Continuous level: $c(s) = 5.0$ if $L(s) = 5$; otherwise $c(s) = L(s) + \min(1, m_{L+1} / \tau)$.
+5. If a lesson is completed with first-pass accuracy $\ge 80\%$, the atom becomes `learned` (placed in Leitner Box 1); otherwise `shaky`.
 
 ### Transactional completion cascade
 
@@ -468,7 +474,7 @@ Exposes:
 **Requirements:** FR-34…FR-36, FR-50, FR-51
 
 - Automated graph validator: verifies acyclicity, orphan atoms, and minimum atoms per band ($\ge 3$).
-- Content status queue: `draft` $\to$ `reviewed` $\to$ `published`.
+- Content status queue: `draft` $\to$ `reviewed` $\to$ `approved` $\to$ `published`.
 - Issue reports triage queue for student-reported content problems.
 - One-click static bundle publishing (`publish-content`).
 
@@ -482,7 +488,7 @@ Exposes:
 - Full-screen distraction-free player with segmented progress bar.
 - Supported exercise types: `concept_card`, `multiple_choice`, `multi_select`, `true_false_code` (spot the bug), `fill_blank_tokens`, `reorder_tokens`, `match_pairs`, `predict_output`.
 - Instant local evaluation via static unit bundle; wrong answers re-queued at the end of the session.
-- Sticky action sheet with explanation snippet, keyboard shortcuts (Enter / 1–4 keys), and screen-reader announcements.
+- Sticky action sheet with explanation snippet, full keyboard navigation (Enter / Space to select and submit, Up/Down arrows for Spot-the-Defect; character keys `1`–`4` omitted per WCAG 2.1 SC 2.1.4), persistent header Report Problem icon button, and screen-reader announcements.
 
 ---
 
@@ -491,9 +497,9 @@ Exposes:
 **Purpose:** sustain consistent daily study habits through ethical motivation mechanics.
 **Requirements:** FR-45, FR-47, FR-48, FR-49 · **Story:** US-13 · **Status:** New feature
 
-- **XP values:** Lesson base 15 XP; +5 first-pass bonus ($\ge 80\%$); Review 10 XP; Unit Checkpoint 50 XP; Stage Project milestone 100 XP; Replays 2 XP (max 20 XP/day).
-- **Streak calculation:** Evaluated against student's IANA timezone (`Africa/Cairo`) using an injected clock. Streak freezes (max 2) consumed automatically for missed days.
-- **Exam-Week Pause:** Students can pause streaks for up to 14 days during university exam periods (max twice per academic term).
+- **XP values:** Lesson base 15 XP; +5 first-pass bonus (accuracy $\ge 80\%$); Review 10 XP flat (no review accuracy bonus); Unit Checkpoint 50 XP; Stage Capstone Project milestone 100 XP; Replays 2 XP flat (max 20 XP/day).
+- **Streak calculation:** Increments upon completing **any qualifying learning session** (at least one lesson, spaced review, or checkpoint that earns XP) evaluated against student's IANA timezone (`Africa/Cairo`) using an injected clock. Streak freezes (max 2) consumed automatically for missed days.
+- **Exam-Week Pause:** Students can pause streaks for up to 14 consecutive calendar days per semester during university exam periods (max twice per academic year).
 - **Ethics (NFR-18):** No blocking hearts or lives; mistakes cost only an in-session re-queue. No guilt-tripping notifications.
 
 ---
@@ -516,7 +522,7 @@ Exposes:
 
 - Offline LLM-assisted drafting with strict schema checks and automated blind-solve verification.
 - Human review budget ($\approx 4$ min/atom) with double-review on level 4–5 atoms.
-- Release tiers: Tier 1 (1,000 atoms, W17), Tier 2 (2,200 atoms, W23), Tier 3 (4,050 atoms, W28). Detailed in [14 — Content Pipeline](14-content-pipeline.md).
+- Release tiers: Tier 1 (1,000 atoms, W11), Tier 2 (2,200 atoms, W22), Tier 3 (4,050 atoms, W26). Detailed in [14 — Content Pipeline](14-content-pipeline.md).
 
 ---
 

@@ -74,17 +74,27 @@ dotnet ef database update \
 
 ## 4. Domain & Business Rules
 
-* **Mastery States**: Database constraints enforce that atom mastery values must strictly be one of:
-  * `'learned'`: Fully mastered through lessons or verified placement.
-  * `'shaky'`: Failed review, incomplete retention, or low confidence.
-  * `'assumed'`: Bypassed via placement test-out or verified course credit.
+* **Mastery & Content States**:
+  * Atom mastery values strictly conform to `CHECK (status IN ('learned', 'shaky', 'assumed'))`:
+    * `'learned'`: Mastered through lessons with first-pass accuracy $\ge 80\%$ or verified placement.
+    * `'shaky'`: Mastered with first-pass accuracy $< 80\%$ or missed spaced review.
+    * `'assumed'`: Bypassed via placement test-out (`verified = true`) or unverified course/self claim (`verified = false`).
+  * Content authoring lifecycle states conform to `CHECK (status IN ('draft', 'reviewed', 'approved', 'published', 'deprecated'))`.
 * **XP & Gamification Progression**:
-  * Standard lesson completion: 15 XP base (+5 XP bonus for score $\ge 80\%$).
-  * Spaced repetition review: 10 XP base (+5 XP bonus for score $\ge 80\%$).
-  * Unit checkpoint completion: 50 XP.
-  * Stage capstone project: 100 XP.
-  * Lesson replay: 2 XP flat.
-* **Exam Streak Protection**: Students may pause their daily streak during exam periods for up to 14 consecutive calendar days per semester without losing accumulated streak counts.
+  * Standard lesson completion: 15 XP base (+5 XP bonus for first-pass accuracy $\ge 80\%$).
+  * Spaced repetition review: **10 XP flat** (no review accuracy bonus).
+  * Unit checkpoint completion: **50 XP**.
+  * Stage capstone project: **100 XP**.
+  * Lesson replay: **2 XP flat** (max 20 XP/day).
+* **Streak & Study Goal Rules**:
+  * Streak increments upon completing **any qualifying learning session** (at least one lesson, review, or checkpoint that earns XP) evaluated against student's configured IANA timezone (`Africa/Cairo`).
+  * Study goals are committed in **hours per week** (1–60 hrs/week; default: 5 hrs/week).
+  * Students may pause their daily streak during exam periods for up to 14 consecutive calendar days per semester without losing accumulated streak counts.
+* **Idempotency & Re-Grading**:
+  * `sessionId` in route `/api/lessons/{sessionId}/complete` identifies the ephemeral session.
+  * `idempotencyKey` defaults to `sessionId` and enforces uniqueness via `LESSON_SESSION(idempotency_key)`.
+  * Repeated identical submissions return the cached `200 OK` response with original XP, streak, and readiness deltas.
+  * Conflicting submissions with an existing key return HTTP `409 Conflict`. Double-awarding of XP or streaks is strictly prevented.
 
 ---
 

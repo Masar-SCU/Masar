@@ -342,6 +342,8 @@ STUDENT_ATOM_STATE
   next_review_at TIMESTAMP NULL,
   updated_at TIMESTAMP,
   PRIMARY KEY (profile_id, atom_id)
+  -- verified=true for 'placement' / 'test_out'. 'course' / 'self' start verified=false (provisional bypass);
+  -- scoring >= 75% on the unit Checkpoint sets verified=true; scoring < 60% reopens them for active study.
 
 STUDENT_PATH_PREFS
   profile_id PK, mode ('canonical' | 'prioritized') DEFAULT 'canonical',
@@ -385,7 +387,7 @@ Gap analysis, severity classification, prerequisite checks, and path gating read
 ```text
 ASSESSMENT_QUESTION
   id, code, category, prompt, min_label, max_label, sequence, is_active
-  -- Canonical: exactly 20 Likert items (7 interest, 4 work-style, 6 problem-type, 3 career-intent)
+  -- Canonical: exactly 22 Likert items (8 interest, 4 work-style, 7 problem-type, 3 career-intent)
 
 ASSESSMENT_ATTEMPT
   id, profile_id, started_at, completed_at NULL, status
@@ -445,7 +447,7 @@ ATOM
   content_md text,               -- <= 150 words micro-lesson
   estimated_minutes smallint,     -- 3..8 minutes
   track_tags text[],
-  status ('draft' | 'reviewed' | 'published' | 'deprecated'),
+  status ('draft' | 'reviewed' | 'approved' | 'published' | 'deprecated'),
   version int DEFAULT 1,
   replaced_by uuid NULL REFERENCES ATOM(id),
   authored_by ('human' | 'llm_draft') DEFAULT 'human',
@@ -459,7 +461,7 @@ EXERCISE
         'match_pairs' | 'predict_output'),
   payload_json jsonb, answer_json jsonb, explanation text,
   difficulty smallint (1..3), is_placement_probe BOOL DEFAULT false,
-  status ('draft' | 'published'), version int DEFAULT 1
+  status ('draft' | 'reviewed' | 'approved' | 'published'), version int DEFAULT 1
 
 ATOM_PREREQUISITE
   atom_id, prerequisite_atom_id, strength ('hard' | 'soft'),
@@ -493,7 +495,7 @@ PROJECT_SKILL
 ```
 
 - Each stage ends with a **project node**. Projects have 3–6 self-attested milestone checkboxes with optional repository URLs.
-- Completing a project records a `STUDENT_PORTFOLIO_ITEM`, awards 50 XP, and updates the internship checklist.
+- Completing a project records a `STUDENT_PORTFOLIO_ITEM`, awards **100 XP** (distinguished from 50 XP Unit Checkpoints), and updates the internship checklist.
 - The Capstone is the Job-ready stage project, covering $\ge 3$ target gap skills.
 
 ### 7.5 Paths and lesson sessions
@@ -640,7 +642,7 @@ Volume recomputed for atomic roadmap, exercises, and learner attempts (F-41):
 | `resource` & `atom_resource` | ≈ 250 | < 300 KB | Curated deep dives |
 | `project` | 40–60 | < 200 KB | Stage project nodes |
 | `course` & `course_atom` | 40–60 courses / ≈ 1,500 maps | < 500 KB | Suez Canal curriculum bridge |
-| `assessment_question` | **20** | < 20 KB | Likert questionnaire items |
+| `assessment_question` | **22** | < 20 KB | Likert questionnaire items |
 | `job_posting` | 500–800 | ≈ 5–10 MB | Frozen snapshot with track metadata |
 | `job_posting_skill` | 4,000–8,000 | ≈ 1 MB | Extracted skill linkages |
 | `student_profile` | $\le 500$ | < 500 KB | Scale target (NFR-02) |

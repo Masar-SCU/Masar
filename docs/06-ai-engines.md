@@ -72,9 +72,12 @@ To prevent testing on the training set, extraction thresholds (fuzzy $\ge 0.90$,
 
 ---
 
-## 3. Engine B — Model-First Career Recommendation
+## 3. Engine B — Model-First Career Recommendation & Candidate Ranking
 
 **Owner:** Ahmed Yousef · **Runs:** seed-time vector precomputation plus per-request inference
+
+> [!IMPORTANT]
+> **Architectural Boundary:** Engine B generates primary career relevance scores, candidate rankings, and match explanations. The .NET backend domain is the **sole authority** for deterministic domain rules: skill-gap classification, severity tagging, readiness scores, prerequisite graph resolution, and atomic roadmap generation. The AI microservice never performs official skill-gap arithmetic.
 
 ### Pipeline
 
@@ -82,20 +85,19 @@ To prevent testing on the training set, extraction thresholds (fuzzy $\ge 0.90$,
 flowchart LR
     P["Student profile<br/>+ candidate vectors"] --> E["Profile Embedder"]
     E --> C["Semantic Scoring"]
-    C --> R["Reranker"]
+    C --> R["Learned Ranker"]
     R --> K["Mandatory Constraints"]
     K --> F["Final Recommendation"]
 ```
 
 1. **Profile Embedder:** Embeds the student's claimed skills and preferences into a 384-dimensional vector using `all-MiniLM-L6-v2`.
-2. **Semantic Scoring:** Evaluates cosine similarity against the candidate career vectors supplied by .NET. (Replaces retrieval over 6 careers, F-23).
-3. **Reranker (Open Decision OD-1):** Scores candidates using either (A) a learned ranker (logistic regression or gradient-boosted trees over `[embedding_cosine, skill_fit, interest_fit, coverage, per_category_coverage]`) trained with cross-validation on synthetic profiles (recommended), or (B) a zero-shot cross-encoder.
-4. <a id="32-candidate-filtering-and-mandatory-constraints"></a>**Mandatory Constraints (F-23):**
-   - Inactive careers and tracks are strictly filtered out.
-   - **Content availability check:** A career is recommendable only if its atomic path has $\ge 60\%$ published atoms; otherwise flagged `contentLimited: true` and cannot rank above a fully available career whose score is within 5 points.
+2. **Semantic Scoring:** Evaluates cosine similarity against candidate career vectors supplied by .NET. (Replaces retrieval over 6 careers, F-23).
+3. **Learned Ranker:** Operates as the **primary reranking mechanism** for Career Recommendation (logistic regression or gradient-boosted trees over `[embedding_cosine, skill_fit, interest_fit, coverage, per_category_coverage]`), trained with cross-validation on synthetic profiles.
+4. <a id="32-candidate-filtering-and-mandatory-constraints"></a>**Mandatory Constraints (F-23):** Supporting deterministic rules enforce essential business invariants:
+   - **Completeness & Availability:** The recommendation response **always returns all 6 canonical careers**. Each career includes an `isActive` flag and a `contentLimited` flag.
+   - **Content availability check (60%):** A career is fully recommendable and selectable if `isActive = true` and its atomic path has $\ge 60\%$ published atoms (`contentLimited: false`). Otherwise, it is flagged `contentLimited: true`, cannot rank above a fully available career whose score is within 5 points, and displays a "Coming Soon" indicator prohibiting selection as primary target.
    - Deterministic tie-breaking: score DESC, then `careerId` ASC.
    - Zero rated skills: returns interest-only ranking flagged `lowConfidence: true`.
-   - Always returns all 6 careers.
 5. **Final Output:** Returns ranked careers with score 0–100, mode (`"model-first"` or `"fallback"`), and inspectable baseline breakdown.
 
 ### Explainability
@@ -116,16 +118,33 @@ Evaluated against the deterministic baseline on **NDCG@3** with bootstrap 95% co
 
 Answer student questions with grounding in their actual learning state and relevant curriculum atoms.
 
-### 4.1 What is retrieved (atom retrieval and grounding)
+### 4.1 Dedicated Vector Database & Atom Retrieval
 
 Unlike generic chat, the mentor retrieves relevant micro-lessons from Masar's authored atom corpus:
 
-1. When a student asks a question, FastAPI embeds the question using `all-MiniLM-L6-v2`.
-2. Vector similarity retrieves the top 2–3 authored atoms for the student's target career.
-3. The prompt includes retrieved atom titles and micro-lesson text as trusted domain knowledge.
-4. The generated response includes clickable deep links to relevant atoms ("Open atom: SQL Indexing").
+1. **FastAPI Vector Store Ownership:** The FastAPI AI microservice maintains and manages its own dedicated Vector Database containing Atomic Roadmap content and embeddings. It generates query embeddings and performs semantic retrieval over Atom metadata (Atom ID, Unit ID, Section ID, Career Path). FastAPI does **not** connect directly to the application PostgreSQL database.
+2. When content is published or updated by the pipeline, the vector store index is synchronized.
+3. When a student asks a question, FastAPI embeds the question using `all-MiniLM-L6-v2` and retrieves the top 2–3 authored atoms for the student's target career.
+4. The prompt includes retrieved atom titles and micro-lesson text as trusted domain knowledge.
+5. Generated responses include clickable deep links to relevant atoms ("Open atom: SQL Indexing").
 
-### 4.2 Prompt structure
+### 4.2 Standardized Context DTO
+
+The AI Mentor Context DTO is standardized across the .NET API contract, FastAPI Pydantic schema, and the LLM prompt. The .NET backend is the authoritative source of truth for student progress; the LLM never invents or calculates official mastery:
+
+| Field | Requirement | Description |
+|---|:-:|---|
+| `targetCareer` | **Required** | Student's target career path and track (e.g., Backend Development - .NET) |
+| `currentStage` | **Required** | Student's active curriculum stage (e.g., Foundations) |
+| `currentUnit` | **Required** | Active learning unit slug and title |
+| `recentAtoms` | **Required** | Array of recently completed or studied atom titles |
+| `mastery` | **Required** | Current skill mastery summary |
+| `skillGaps` | **Required** | Prioritized skill gaps relevant to the target career |
+| `readiness` | **Conditional** | Backend-calculated readiness score (0–100), when available |
+| `streak` | Optional | Current active streak count for personalized encouragement |
+| `weeklyGoalHours` | Optional | Configured weekly study commitment |
+
+### 4.3 Prompt structure
 
 ```text
 SYSTEM:
@@ -137,9 +156,13 @@ SYSTEM:
 
 <student_data>
   target_career: Backend Development (.NET)
-  readiness: 65
+  current_stage: Foundations
   current_unit: "sql-fundamentals"
+  mastery: "SQL: Level 3 (Learned 14/18 atoms)"
+  skill_gaps: ["Docker (Gap: 3, Critical)", "Auth (Gap: 2, Moderate)"]
+  readiness: 65
   streak: 5 days
+  weekly_goal_hours: 5
 </student_data>
 
 <retrieved_atoms>
@@ -151,20 +174,20 @@ SYSTEM:
 </question>
 ```
 
-### 4.3 Stored explanations vs LLM calls
+### 4.4 Stored explanations vs LLM calls
 
 To conserve quota and provide instant feedback, "Explain my answer" taps in the lesson player consume the **stored per-exercise explanation** from the unit bundle (zero LLM calls). External LLM calls are invoked only on explicit "Ask the mentor" interactions.
 
-### 4.4 Privacy in the mentor prompt
+### 4.5 Privacy in the mentor prompt
 
 [NFR-08](02-requirements.md#nfr-08--privacy-and-data-protection) is enforced structurally by defense in depth:
 
-1. **.NET builds the Sanitised Context DTO** from an explicit allow-list: target career, current unit, recent atoms, streak, daily goal. Zero personal identifiers (name, email, student ID) are included.
+1. **.NET builds the Sanitised Context DTO** from an explicit allow-list: target career, stage, current unit, recent atoms, mastery, gaps, streak, weekly goal. Zero personal identifiers (name, email, student ID) are included.
 2. **Student question scrubbing:** Capped at 300 characters; regex scrubs emails, phone numbers, and URLs before transmission.
 3. **FastAPI re-validates** the DTO against its strict Pydantic allow-list schema before constructing the LLM prompt.
 4. **Consent & Disclosure:** A clear student disclosure is shown before first use explaining external AI processing.
 
-### 4.5 Prompt injection hardening
+### 4.6 Prompt injection hardening
 
 A student can type anything into the mentor, and free text is untrusted input ([NFR-10](02-requirements.md#nfr-10--input-handling-and-injection-resistance)).
 
@@ -177,7 +200,7 @@ A student can type anything into the mentor, and free text is untrusted input ([
 | Plain-text rendering | The client renders the answer as text, never as HTML |
 | Rate limiting | 10/hour/user, 200/day system-wide, enforced in .NET *before* any external call |
 
-### 4.6 Fallback — templated explanations
+### 4.7 Fallback — templated explanations
 
 When the LLM provider is rate-limited, unreachable, or times out (> 12 s), the mentor returns structured templates matching keyword intents (e.g. "Why should I learn X?", "What should I do next?"). The mentor never crashes or shows a raw error.
 
@@ -241,7 +264,10 @@ Two properties are stated explicitly:
 
 ## 9. Engine D — Offline Content Drafting Pipeline
 
-**Owner:** Ahmed Yousef (prompts & checks) · Mohamed Salah (factory CLI) · **Tier:** MVP (Offline)
+**Overall Technical Lead:** Ahmed Yousef (AI Generation, Prompt Strategy & Quality Checks)
+**Infrastructure & Tooling Lead:** Mohamed Salah (Content Factory CLI & CI Validation)
+**Educational Review Lead:** Osama Mohammed (Curriculum Alignment & Human Approval)
+**Tier:** MVP (Offline)
 
 ### Purpose
 
@@ -251,16 +277,34 @@ Facilitate high-volume drafting of $\approx 4,050$ micro-lessons and $\approx 16
 flowchart LR
     O["1. Human Outline<br/>skill objectives by band"] --> D["2. LLM Draft<br/>strict JSON schema<br/>dev-only quota"]
     D --> C["3. Automated CI Checks<br/>length · blind-solve ·<br/>no external URLs"]
-    C --> H["4. Human Domain Review<br/>accuracy · distractors<br/>status: published"]
-    H --> B["5. Export Static Bundles<br/>/content/v{n}/unit-{id}.json"]
+    C --> H["4. Human Domain Review<br/>accuracy · distractors<br/>status: approved"]
+    H --> B["5. Export Static Bundles<br/>status: published<br/>/content/v{n}/unit-{id}.json"]
 ```
+
+### Responsibility and Ownership Structure
+
+To maintain clean technical authority and avoid overlapping mandates, Engine D divides ownership across three clear workstreams:
+
+1. **AI Generation (Lead: Ahmed Yousef):**
+   - Owns prompt templates, prompt engineering, generation strategy, and LLM behavior.
+   - Operates offline batch generation CLI scripts.
+   - Defines automated blind-solve testing harness and AI-specific content quality gates.
+   - Holds final ownership over AI-related technical decisions and workstream integration.
+2. **Infrastructure & Tooling (Lead: Mohamed Salah):**
+   - Develops and maintains `tools/content-cli` command-line tooling.
+   - Implements automated CI schema validation runners (`.github/workflows/content-ci.yml`).
+   - Manages pipeline orchestration, release packaging, and static bundle compilation.
+3. **Educational Review (Lead: Osama Mohammed):**
+   - Evaluates curriculum alignment, pedagogical sequencing, and exercise correctness.
+   - Coordinates human peer reviewers across sub-teams.
+   - Grants final educational approval (`status: "approved"`) prior to CDN bundle publishing.
 
 ### Quality gates (NFR-16)
 
 - Strict JSON schema validation: micro-lesson $\le 150$ words, single-sentence objective without "and", 3–6 exercises.
-- **Blind-solve check:** A second model pass solves the exercise without the answer key; disagreements are flagged for human review.
+- **Blind-solve check:** A second model pass solves the exercise without the answer key; 100% of individual disagreements are quarantined for mandatory human review.
 - **No generated URLs:** LLM output containing `http://` or `https://` is automatically rejected.
-- All atoms require human domain review before moving to `published` status; level 4–5 atoms require double human review.
+- All atoms require human domain review before moving to `approved` status; level 4–5 atoms require double human review before compiling to `published`.
 
 ---
 

@@ -119,10 +119,10 @@ Public cacheable reference data (`Cache-Control: public, max-age=3600`).
 
 | Method | Path | Notes |
 |---|---|---|
-| POST | `/api/assessments` | Start assessment attempt $\to$ `{ attemptId, questions[] }` (20 items, F-01) |
+| POST | `/api/assessments` | Start assessment attempt $\to$ `{ attemptId, questions[] }` (22 Likert items) |
 | PUT | `/api/assessments/{id}/answers` | Save Likert answers incrementally |
-| POST | `/api/assessments/{id}/submit` | Score and return ranked careers with baseline reason badges |
-| GET | `/api/recommendations` | Latest ranked careers for current profile |
+| POST | `/api/assessments/{id}/submit` | Score and return all 6 ranked careers with baseline reason badges |
+| GET | `/api/recommendations` | Latest ranked careers for current profile (always returns all 6 careers) |
 | PUT | `/api/profile/target` | `{ careerId, trackId }` — commits committed target |
 | POST | `/api/placement` | `{ skillId }` $\to$ starts adaptive diagnostic placement session |
 | POST | `/api/placement/{sessionId}/answer` | `{ answerIndex }` $\to$ adaptive step returns next probe or final verified level |
@@ -137,6 +137,10 @@ Public cacheable reference data (`Cache-Control: public, max-age=3600`).
       "careerId": 2,
       "name": "Frontend / Full-Stack",
       "matchScore": 74,
+      "isActive": true,
+      "contentAvailability": 0.92,
+      "contentLimited": false,
+      "isSelectable": true,
       "breakdown": {
         "constraintStatus": "passed",
         "modelScore": 74,
@@ -252,6 +256,12 @@ Public cacheable reference data (`Cache-Control: public, max-age=3600`).
 
 ### Example — `POST /api/lessons/{sessionId}/complete`
 
+**Idempotency & Session Semantics:**
+
+- `sessionId` (path) identifies the ephemeral lesson attempt session created via `POST /api/lessons`.
+- `idempotencyKey` (body) defaults to `sessionId` if omitted. It enforces database-level uniqueness per student profile.
+- Re-submitting an identical trace with the same key returns the cached `200 OK` response with original XP, streak, and readiness deltas, applying zero duplicate state changes. Submitting a conflicting trace with an existing key returns `409 Conflict`.
+
 ```json
 {
   "idempotencyKey": "9f8e7d6c-5b4a-3210-fedc-ba9876543210",
@@ -266,9 +276,9 @@ Public cacheable reference data (`Cache-Control: public, max-age=3600`).
 {
   "accuracy": 1.00,
   "xp": {
-    "base": 10,
+    "base": 15,
     "bonus": 5,
-    "totalAwarded": 15
+    "totalAwarded": 20
   },
   "atomState": "learned",
   "streak": {

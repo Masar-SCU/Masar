@@ -62,7 +62,7 @@ in *Proc. NeurIPS*, 2020.
 
 **[10]** OWASP Foundation, *OWASP Top 10 for Large Language Model Applications*.
 Available: <https://owasp.org/www-project-top-10-for-large-language-model-applications/>
-— The basis for the controls in [§06 4.5](06-ai-engines.md#45-prompt-injection-hardening). LLM01
+— The basis for the controls in [§06 4.6](06-ai-engines.md#46-prompt-injection-hardening). LLM01
 (Prompt Injection) and LLM06 (Sensitive Information Disclosure) are the directly relevant items.
 
 ---
@@ -180,7 +180,7 @@ Sources needed but not yet gathered, with an owner and a target week so they do 
 | Curriculum-to-competency mapping papers | Directly supports contribution #2 — the strongest novelty claim | Ahmed Yousef | W17 |
 | Egypt / MENA IT labour-market reports | Justifies the regional weighting contribution | Abdelrahman | W20 |
 | Learning-path sequencing and prerequisite-graph literature | Grounds the atomic sequence in prior work (beyond Doignon & Falmagne) | Osama | W20 |
-| Self-assessment bias in student skill estimation | Motivates the 20-item placement assessment and validity discussion | Yousef Khaled | W20 |
+| Self-assessment bias in student skill estimation | Motivates the 22-item placement assessment and validity discussion | Yousef Khaled | W20 |
 | Verification of references [30]–[38] | Confirm page numbers, DOIs, and citation accuracy before report draft | Ahmed Yousef | W17 |
 | Faculty citation-style requirement | Formatting the bibliography correctly the first time | Abdelrahman | W10 |
 

@@ -66,7 +66,7 @@ flowchart LR
 
 ### Stage 4: Human Peer Review & Sign-Off
 
-- **Actor:** Team Reviewers (Abdelrahman, Mohamed Yasser, Osama, Ziad, Mazen, Ahmed Yousef).
+- **Actor:** Dedicated Review Panel: 5 primary active reviewers (Osama Mohammed, Mohamed Yasser, Mazen Oraby, Yousef Khaled, Ziad Ahmed), supported by Abdelrahman Megahed and Ahmed Yousef for floating secondary sign-offs.
 - **Review Budget:** ~4 minutes per atom (reviewing code, checking distractor plausibility, verifying explanations).
 - **Review Checklist:**
   - [ ] Is the content technically accurate and current?
@@ -131,9 +131,10 @@ gantt
 
 ### Throughput Arithmetic
 
+- **Reviewer Allocation:** The review workload is distributed across **5 primary active reviewers** (Osama, Mohamed Yasser, Mazen, Yousef Khaled, and Ziad). Mohamed Salah is excluded as he operates Content Factory CLI and CI infrastructure; Ahmed Yousef operates AI generation and prompts; Abdelrahman provides floating integration capacity and dual-reviews Level 4–5 atoms.
 - **Tier 1 (W4–W11 = 8 weeks active):** Requires $\approx 125\text{ atoms/week}$. Across 5 active reviewers, this equates to ~25 atoms/person/week ($\approx 1.7\text{ hours/week}$).
 - **Tier 2 (W12–W22 = 11 weeks):** Requires $\approx 110\text{ atoms/week}$ (~22 atoms/person/week, $\approx 1.5\text{ hours/week}$).
-- **Tier 3 (W23–W26 = 4 weeks):** Requires $\approx 460\text{ atoms/week}$ (~92 atoms/person/week, $\approx 6.1\text{ hours/week}$).
+- **Tier 3 (W23–W26 = 4 weeks):** Requires $\approx 460\text{ atoms/week}$ (~92 atoms/person/week, $\approx 6.1\text{ hours/week}$). All 7 team members participate during this final 4-week push to reduce per-person load to ~65 atoms/person/week ($\approx 4.3\text{ hours/week}$).
 
 ### Content Gating and Recommended Fallback
 
@@ -152,15 +153,15 @@ To accommodate content pipeline operations alongside core software engineering, 
 |---|---|---|
 | **Mohamed Salah** | DevOps, Hosting, Database Backups, Uptime | **Content Factory Lead:** Owns `tools/content-cli`, CI validator runner, static bundle publishing pipeline. |
 | **Mohamed Yasser** | Backend Data Layer, EF Core, Schemas | **Schema & Taxonomy Lead:** Unit/Atom schemas, database migrations, curriculum-to-atom mapping loaders. |
-| **Osama** | Domain Engines (Path, Mastery, Streak, Review) | **Curriculum Architect:** Backend (.NET) domain outlines, path traversal algorithms, lesson submission endpoints. |
+| **Osama** | Domain Engines (Path, Mastery, Streak, Review) | **Curriculum Architect & Educational Review Lead:** Backend (.NET) domain outlines, path traversal algorithms, lesson submission endpoints, final educational review. |
 | **Ziad** | Frontend Architecture, SPA Shell | **Lesson Experience Lead:** Lesson Player UI, Parsons problem component, bundle cache service. |
 | **Mazen** | Frontend State, API Integration | **Reviewer & UI Contributor:** Onboarding flow, result sheets, Frontend track atom review. |
 | **Yousef Khaled** | Design System, Accessibility (WCAG), Assets | **UX & Assets Lead:** Token library, bespoke mascot illustrations, accessible visual states. |
-| **Ahmed Yousef** | AI Engines (FastAPI, MiniLM, RAG Mentor) | **Prompt & Retrieval Lead:** LLM drafting prompt engineering, blind-solve test harness, mentor atom retrieval. |
+| **Ahmed Yousef** | AI Engines (FastAPI, MiniLM, RAG Mentor) | **AI Generation Lead:** LLM drafting prompt engineering, blind-solve test harness, mentor atom retrieval. |
 
-### Exam Period Protocol (W15–W17)
+### Exam Period Protocol (W10–W11)
 
-During the university mid-term examination period (estimated 40% team engineering capacity), all heavy architectural coding is paused. Team members focus exclusively on asynchronous human peer review of pre-drafted batches, which can be performed in short, interruptible 20-minute sessions.
+During the university mid-year examination period from **W10–W11 (19 Jan – 1 Feb 2027)** (estimated 40% team engineering capacity), all heavy architectural coding is paused. Team members focus exclusively on asynchronous human peer review of pre-drafted batches, which can be performed in short, interruptible 20-minute sessions.
 
 ---
 

@@ -200,11 +200,11 @@ sequenceDiagram
     participant DB as PostgreSQL
     participant AI as AI Service
 
-    Note over S,AI: Step 1 — Personality & Work Preferences (20 Likert items, <= 4 min)
+    Note over S,AI: Step 1 — Personality & Work Preferences (22 Likert items, <= 4 min)
     S->>W: Start onboarding
     W->>A: POST /api/assessments
     A->>DB: create assessment attempt
-    A-->>W: 201 questions (20 items)
+    A-->>W: 201 questions (22 items)
     S->>W: Answer items
     W->>A: PUT /api/assessments/{id}/answers
     A->>DB: persist answers

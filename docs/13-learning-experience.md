@@ -44,18 +44,25 @@ graph TD
 
 1. **Path (`/path`):** The primary daily home screen. Displays the vertical winding roadmap of learning units, active and locked atoms, stage checkpoints, and milestone projects.
 2. **Practice (`/practice`):** Dedicated spaced-repetition hub. Houses the 3-box Leitner review queue, showing atoms due for review, shaky concepts needing reinforcement, and completed review statistics.
-3. **Career (`/career`):** Comprehensive career analytics. Contains the detailed skill gap table, continuous readiness percentage trend, "What-If" career explorer, and internship readiness checklist.
+3. **Career (`/career`):** Overview of committed target career, match fit breakdown, track switcher, continuous readiness gauge, "What-If" simulator, and internship checklist. A prominent action link navigates to the dedicated **Gap Analysis (`/gap-analysis`)** view, which hosts the full filterable skill gap table with search, category filters, atom counts, and the explainability "Why?" panel.
 4. **Mentor (`/mentor`):** Retrieval-augmented AI conversational mentor. Grounded exclusively in the student's profile, active gaps, and authored learning atoms with deep-linking back to specific lessons.
-5. **Profile (`/profile`):** Personal dashboard, streak calendar, daily study goal settings, notification preferences, account management, and privacy disclosures.
+5. **Profile (`/profile`):** Personal dashboard, streak calendar, weekly study goal settings (hours/week), notification preferences, account management, and privacy disclosures.
 
-### Desktop Responsive Adaptations
+### Desktop Responsive Adaptations & Breakpoints
 
-On desktop viewports ($\ge 1024\text{ px}$), the screen expands into a high-productivity three-column layout:
+To ensure fluid scaling across viewports without crushing the primary center column, Masar specifies four explicit layout tiers:
 
-- **Left Column (240 px):** Persistent brand header, navigation menu, and quick profile switcher.
+| Breakpoint Tier | Viewport Width | Layout Architecture | Center Column Behavior |
+|---|---|---|---|
+| **Mobile** | $< 768\text{ px}$ | Single-column stacked stream, fixed bottom navigation bar, floating action sheet | Fluid (100% width, 16px side padding) |
+| **Tablet** | $768\text{ px} - 1023\text{ px}$ | Two-column layout: left icon/nav rail (80px) + fluid center path | Fluid ($688\text{ px} - 943\text{ px}$) |
+| **Desktop** | $1024\text{ px} - 1279\text{ px}$ | Three-column layout: left nav (240px) + fluid center path + companion stats rail (280px) | Fluid ($504\text{ px} - 759\text{ px}$) |
+| **Wide Desktop** | $\ge 1280\text{ px}$ | Three-column layout: left nav (240px) + centered fixed path (720px) + companion stats rail (320px) | Fixed maximum (720px centered) |
+
+- **Left Column (240 px at $\ge 1024\text{ px}$):** Persistent brand header, navigation menu, and quick profile switcher.
 - **Center Column (Fluid, max 720 px):** The primary view content (Path, Practice, Career, or Mentor).
-- **Right Companion Panel (320 px):** Always-visible daily summary card containing:
-  - Daily goal ring (e.g., 14/20 minutes completed today).
+- **Right Companion Panel (280–320 px at $\ge 1024\text{ px}$):** Always-visible daily summary card containing:
+  - Weekly goal ring (e.g., 3.5 / 5.0 hours completed this week, with daily equivalent progress).
   - Current streak counter with freeze shields and freeze status.
   - Overall career readiness mini-gauge and delta over the last 7 days.
   - Reviews due today badge (with instant "Review Now" trigger).
@@ -143,36 +150,40 @@ The Lesson Player is an immersive, distraction-free environment that maximizes f
 
 ### Exercise Types Supported
 
-1. **Multiple Choice (Single & Multi-Select):** Clear question stem, code formatting blocks where applicable, 3–4 distinct options with keyboard shortcuts (`1`, `2`, `3`, `4`).
-2. **Code Blank Fill-In:** Short snippet with an inline `<input>` field or token drop target (e.g., `SELECT * FROM users ___ age > 21;` with choice chip `WHERE`).
-3. **Parsons Problems (Code Reordering):** 4–6 lines of jumbled code that the student reorders into syntactically and logically correct sequence. Fully operable via drag-and-drop as well as accessible "Move Up" / "Move Down" arrow buttons.
-4. **Code Syntax Debugger / Spot the Defect:** A 4–8 line code snippet where the student clicks on the specific line containing a syntax or logical defect.
+1. **Multiple Choice (Single & Multi-Select):** Clear question stem, code formatting blocks where applicable, 3–4 distinct options navigated via Tab and selected via Enter or Space. (Direct character key shortcuts `1`–`4` are explicitly omitted to comply with WCAG 2.1 SC 2.1.4 Character Key Shortcuts).
+2. **Code Blank Fill-In:** Short snippet with an inline `<input>` field or token drop target (e.g., `SELECT * FROM users ___ age > 21;` with choice chip `WHERE`). Fully operable via keyboard navigation and focus management.
+3. **Parsons Problems (Code Reordering):** 4–6 lines of jumbled code that the student reorders into syntactically and logically correct sequence. Fully operable via drag-and-drop as well as accessible "Move Up" / "Move Down" buttons or Alt + ArrowUp / ArrowDown shortcuts.
+4. **Code Syntax Debugger / Spot the Defect:** A 4–8 line code snippet where the student identifies the line containing a syntax or logical defect. Full keyboard alternative is provided per WCAG 2.1 SC 2.1.1: navigate through lines using Up/Down arrow keys, and select/mark the target line with Enter or Space.
 
 ### Interaction Flow & Result Sheets
 
-1. **Focus Mode:** Navigation bars and distraction elements are completely hidden. Tapping `✕ Exit` opens a non-punitive confirmation dialog ("Leave lesson? Your progress on this atom will not be saved").
+1. **Focus Mode:** Navigation bars and distraction elements are completely hidden. The persistent top header hosts the exercise progress bar, a fixed **Report Problem** icon flag button (accessible at all times, independent of answer state), and `✕ Exit` which opens a non-punitive confirmation dialog ("Leave lesson? Your progress on this atom will not be saved").
 2. **Immediate Local Grading:** Upon clicking `Check Answer` (or pressing `Enter`), the browser evaluates the response in memory against the pre-loaded unit bundle in < 50 ms.
-3. **Sliding Result Sheet:** A bottom sheet animates into view:
-   - **Correct:** Vibrant green accent card with checkmark icon, bold "Excellent!" or "Spot on!", short explanatory snippet explaining *why* it is correct, and a primary `Continue` button.
-   - **Incorrect:** Soft terracotta/crimson accent card with alert icon, honest "Not quite" heading, detailed explanation identifying the misconception, and a "Report Problem" flag button.
-4. **Mistake Re-Queue Loop:** Incorrectly answered exercises are **never failed permanently**. The failed item is returned to the bottom of the active session queue. The lesson cannot conclude until every exercise is correctly solved.
+3. **Sliding Result Sheet:** A bottom sheet animates into view using locked Design System tokens:
+   - **Correct:** Tokenized success card (design token `success` / `#15803D`) with checkmark icon, bold "Excellent!" or "Spot on!", short explanatory snippet explaining *why* it is correct, and a primary `Continue` button.
+   - **Incorrect:** Tokenized error card (design token `error-700` / `#B91C1C`) with alert icon, honest "Not quite" heading, detailed explanation identifying the misconception, and a primary `Try Again` / `Continue` button.
+4. **Mistake Re-Queue & Resolution Loop:**
+   - Incorrectly answered exercises are **never failed permanently**. The item is returned to the end of the active session queue.
+   - Up to 2 retries are permitted per exercise (maximum 3 attempts total).
+   - If an exercise is missed on attempt 3, the worked step-by-step solution is displayed, and the item is marked `unresolved` for targeted follow-up.
+   - The lesson concludes once all exercises are resolved or have reached the 3-attempt cap.
 5. **Live Region Announcements:** Result states are coupled to an `aria-live="assertive"` container so screen readers immediately announce evaluation outcomes ("Correct. Next exercise ready" or "Incorrect. Explanation: ...").
 
 ### Lesson Completion Screen
 
 Upon finishing the final exercise, the player transitions to a celebration summary:
 
-- **XP Earned Card:** Base XP (+15 XP) plus First-Try Accuracy Bonus (+5 XP if $\ge 80\%$ correct on first pass).
-- **Streak Status:** Flame counter incrementing with animated celebration ring.
+- **XP Earned Card:** Base XP (+15 XP) plus First-Try Accuracy Bonus (+5 XP if first-pass accuracy $\ge 80\%$).
+- **Streak Status:** Flame counter incrementing with celebration animation, triggered by completing any qualifying XP-earning session today.
 - **Readiness Impact:** Real-time continuous readiness update: *"Backend Readiness: 64.2% $\to$ 64.6% (+0.4%)"*.
-- **Review Schedule:** Next scheduled review appearance displayed: *"Added to Spaced Review: Due in 3 days"*.
+- **Review Schedule:** Next scheduled review appearance displayed: *"Added to Spaced Review: Due in 1 day"*.
 - **Primary CTA:** "Continue Path" button navigating back to the updated roadmap with the next atom highlighted.
 
 ---
 
 ## 5. Reworked Onboarding Flow
 
-The onboarding sequence guides new students from initial registration to their very first micro-lesson within a single cohesive, encouraging flow. It preserves the established 5-step model (FR-00) while integrating optional placement and daily habit commitments.
+The onboarding sequence guides new students from initial registration to their very first micro-lesson within a single cohesive, encouraging flow. It preserves the established 5-step model (FR-00) while integrating optional placement, readiness preview, and weekly study habit commitments.
 
 ```mermaid
 sequenceDiagram
@@ -183,24 +194,26 @@ sequenceDiagram
     participant AI as FastAPI Recommendation
     
     S->>UI: Register Account
-    UI->>S: Step 1: Career Interests (20 Likert Items, ≤ 4 min)
+    UI->>S: Step 1: Career Interests (22 Likert Items, ≤ 4 min)
     S->>UI: Submits Preferences
     UI->>S: Step 2: Academic Profile (Year, Courses, Skill Levels, ≤ 3 min)
     S->>UI: Submits Academic History
     UI->>S: Step 3: Optional Placement Assessment (≤ 5 min)
     alt Student Takes Placement
-        S->>UI: Answers ~10 Diagnostic Exercises
+        S->>UI: Answers Diagnostic Exercises (up to 8 items)
         UI->>API: Post Placement Responses
         API->>UI: Returns Calibrated Skill Bands
     else Student Skips Placement
         S->>UI: Clicks "Skip for Now"
     end
     UI->>AI: Fetch Career Matches
-    AI-->>UI: Ranked Careers (Model-First)
+    AI-->>UI: Ranked Careers (Learned Ranker + Constraints)
     UI->>S: Step 4: Career Fit & Target Selection (≤ 2 min)
     S->>UI: Selects Target Career (e.g., Backend Developer)
-    UI->>S: Step 5: Daily Goal & Path Reveal
-    S->>UI: Selects Daily Goal (20 min/day)
+    UI->>S: Preview Compact Readiness Summary Card
+    S->>UI: Advances to Step 5
+    UI->>S: Step 5: Weekly Goal (Hours/Week) & Path Reveal
+    S->>UI: Selects Goal (e.g., 5 hrs/week ≈ 20 min/day)
     UI->>API: Initialize Path & Save Goal
     API-->>UI: Path Generated (Units, Atoms, Estimated Hours)
     UI->>S: Reveal Summary & Immediate "Start First Lesson" CTA
@@ -208,12 +221,13 @@ sequenceDiagram
 
 ### Onboarding Steps Detail
 
-- **Step 1: Technical Interests & Preferences ($\le 4\text{ min}$):** 20 Likert-scale statements probing work style, problem domains, and technical interests.
-- **Step 2: Academic Background & Self-Placement ($\le 3\text{ min}$):** University year, completed SCU CS curriculum courses (pre-filling known foundational skills), and initial 0–5 ratings for core technologies.
-- **Step 3: Optional Diagnostic Placement ($\le 5\text{ min}$):** Students can choose to prove prior competence across 2–3 claimed skills by answering 6–10 diagnostic questions drawn directly from authored atom probe pools. Students who skip start at Level 0 without penalty.
-- **Step 4: Career Match & Target Selection ($\le 2\text{ min}$):** Presents the top recommended career matches generated by the model-first pipeline. The student reviews match scores and selects their target career.
-- **Step 5: Daily Commitment & Path Reveal ($\le 1\text{ min}$):** Student selects their daily practice commitment (10, 20, 30, 45, or 60 min; default: 20 min). The screen reveals their personalized roadmap:
-  > *"Your Path to Backend Developer: 7 Units · 412 Lessons · ~48 Hours of Practice. At 20 minutes/day, you will reach market readiness by March 2027."*
+- **Step 1: Technical Interests & Preferences ($\le 4\text{ min}$):** 22 Likert-scale statements (8 interest, 4 work-style, 7 problem-type, 3 career-intent) evaluating cognitive preferences and technology affinities.
+- **Step 2: Academic Background & Self-Placement ($\le 3\text{ min}$):** University year, completed SCU CS curriculum courses (pre-filling known foundational skills with course-provenance badges), and initial 0–5 ratings for core technologies.
+- **Step 3: Optional Diagnostic Placement ($\le 5\text{ min}$):** Students can choose to prove prior competence across 2–3 claimed skills by answering focused diagnostic questions (pool $\ge 20$ items, capped at level 4 verified). Students who skip start at Level 0 without penalty.
+- **Step 4: Career Match & Target Selection ($\le 2\text{ min}$):** Presents all 6 careers ranked by the AI recommendation service with match breakdown reason badges (`skill_fit`, `interest_fit`, `coverage`). The student commits to their target career and track.
+- **Step 4 $\to$ Step 5 Transition (Readiness Summary Card):** Before proceeding to goal setting, the wizard renders a compact **Readiness Summary Card** displaying the student's initial verified baseline score, primary skill strengths, total identified gap count, and projected learning curve.
+- **Step 5: Weekly Commitment & Path Reveal ($\le 1\text{ min}$):** Student selects their weekly study commitment in **hours per week** (1–60 hrs/week; presets: 2.5, 5, 7.5, 10, or 15 hrs/week; default: 5 hrs/week, with an illustrative daily equivalent $\approx$ 20 min/day). The screen reveals their personalized roadmap:
+  > *"Your Path to Backend Developer: 7 Units · 412 Lessons · ~48 Hours of Practice. At 5 hours/week, you will reach market readiness by March 2027."*
 - **Immediate First Action:** The summary card features a prominent "Start First Lesson" button. Tapping it drops the student straight into their first 3-minute lesson, satisfying NFR-04:
   - **First lesson started $\le 10\text{ min}$ unaided** (placement skipped).
   - **First lesson started $\le 15\text{ min}$** (placement completed).
@@ -230,22 +244,23 @@ XP reflects focused practice time and active cognitive effort. XP has no monetar
 
 | Action | XP Awarded | Criteria / Rules |
 |---|---|---|
-| **Atom Lesson Completed** | +15 XP | Standard reward upon finishing all exercises in an atom. |
-| **First-Pass Bonus** | +5 XP | Awarded if all exercises in the lesson were answered correctly on first attempt. |
-| **Spaced Review Completed** | +10 XP | Awarded for completing a scheduled review card session in the Practice tab. |
-| **Unit Checkpoint Passed** | +50 XP | Awarded for scoring $\ge 75\%$ (6/8 exercises) on an authoritative unit checkpoint. |
-| **Milestone Project Submitted**| +100 XP | Awarded upon submitting an accepted portfolio milestone project. |
+| **Atom Lesson Completed (Base)** | +15 XP | Standard reward upon finishing all exercises in an atom. |
+| **First-Pass Accuracy Bonus** | +5 XP | Awarded if lesson first-pass accuracy $\ge 80\%$ (all exercises solved on first try or with minimal re-queues). |
+| **Spaced Review Completed** | +10 XP | Flat reward for completing a scheduled review card session in the Practice tab (no review accuracy bonus). |
+| **Unit Checkpoint Passed** | +50 XP | Awarded for scoring $\ge 75\%$ (6/8 exercises) on an authoritative server-evaluated unit checkpoint. |
+| **Stage Capstone Project Submitted** | +100 XP | Awarded upon submitting an accepted portfolio stage capstone project deliverable. |
+| **Lesson Replay** | +2 XP | Flat practice reward for replaying already learned atoms (capped at 20 XP/day). |
 
-### Daily Goals, Streaks, and Timezones
+### Weekly Goals, Streaks, and Timezones
 
-1. **Daily Goal Threshold:** Students select a daily study target: 10 min (15 XP), 20 min (30 XP, default), 30 min (45 XP), 45 min (60 XP), or 60 min (80 XP).
-2. **Streak Counter:** A streak represents consecutive calendar days where the daily XP threshold was satisfied.
+1. **Study Goal Setting:** Students commit to a weekly study budget in **hours per week** (1–60 hrs/week; default: 5 hrs/week). The UI displays weekly progress alongside an illustrative daily pacing indicator ($\text{hours/week} / 7 \approx \text{minutes/day}$).
+2. **Streak Counter:** A streak increments when the student completes **any qualifying learning session** (at least one lesson, spaced review, or checkpoint that earns XP) during that calendar day. Hitting weekly study goal thresholds provides celebratory milestone XP and visual achievements, but daily streak continuity requires only a single completed practice activity.
 3. **Timezone Authority:** All streak boundaries are evaluated against the student's configured IANA timezone (e.g., `Africa/Cairo`). Midnight in the student's local timezone defines the day cutoff, eliminating daylight savings bugs and server-time discrepancies.
 4. **Streak Protections (Freezes):**
    - Students can equip up to **2 Streak Freezes** simultaneously.
    - Streak Freezes are earned naturally through 7-day streak milestones (never purchased with real money).
    - If a student misses a day, a Streak Freeze is consumed automatically, preserving the streak counter and notifying the student gently.
-5. **Exam-Week Pause Flow:** Students can pause their streak for up to 14 consecutive days during official university examination periods (per FR-47). Pausing locks the streak without penalty and halts automated reminder emails.
+5. **Exam-Week Pause Flow:** Students can pause their streak for up to 14 consecutive calendar days per semester during official university examination periods (per FR-47). Pausing locks the streak without penalty and halts automated reminder emails.
 
 ### Copy Tone and Voice Guide
 
@@ -277,7 +292,7 @@ Masar's playful aesthetic is engineered strictly within the bounds of W3C Web Co
 
 ### Keyboard and Screen Reader Support
 
-- **Keyboard Traversal:** The entire Lesson Player is 100% keyboard-navigable. Number keys (`1`–`4`) select multiple-choice items, `Space` toggles checkboxes, `ArrowUp`/`ArrowDown` reorder Parsons lines, and `Enter` triggers Check/Continue.
+- **Keyboard Traversal:** The entire Lesson Player is 100% keyboard-navigable without requiring a pointing device. Navigation between options and buttons is handled via `Tab` and `Shift+Tab`; selection and submission use `Enter` or `Space` (character keys `1`–`4` are omitted per WCAG 2.1 SC 2.1.4); `ArrowUp`/`ArrowDown` reorder Parsons puzzle lines and navigate Spot-the-Defect code lines.
 - **Bilingual & RTL Support:** Masar's layout supports bidirectional rendering. In Arabic mode, navigation and prose flow Right-to-Left (RTL), while code blocks, SQL queries, and terminal commands remain isolated Left-to-Right (LTR) islands.
 - **Accessible Chart Equivalents:** All graphical career gap charts and readiness progress wheels provide direct tabular or textual equivalents for screen reader users.
 
@@ -321,18 +336,19 @@ To support empirical evaluation of Masar's educational effectiveness ([RQ7 & RQ8
 To support frontend implementation in Slice 3 and Slice 4, the following design assets and specifications are assigned to lead designer Yousef Khaled:
 
 1. **Token System (Tailwind CSS):**
-   - Palette: Primary Brand (Navy/Teal), Accent (Amber/Gold), Surface neutrals, and WCAG-compliant semantic states (Success Forest, Error Crimson, Warning Ochre).
-   - Typography: Clean sans-serif hierarchy optimized for bilingual Latin/Arabic legibility (e.g., Inter + Cairo or IBM Plex Sans Arabic). Monospace pairing for code snippets (JetBrains Mono or Fira Code).
+   - **Palette (Locked):** Primary Brand **Teal** (`#0D9488` / `teal-600`), Accent **Blue** (`#2563EB` / `blue-600` for charts, info indicators, and data visualizations), Surface neutrals (Slate `#0F172A` to `#F8FAFC`), and WCAG-compliant semantic state tokens (Success Forest `#15803D`, Error Crimson `#B91C1C` / `error-700`, Warning Amber `#D97706`). *Navy and Gold brand accents are explicitly retired per the locked Design System.*
+   - **Typography (Locked):** **Thmanyah Sans** as the sole primary typeface for all Arabic and English body copy, navigation labels, and headings, ensuring visual and brand unity across both languages. Monospace pairing for code blocks and terminal outputs (JetBrains Mono or Fira Code).
 2. **Component Library:**
-   - `PathNode`: Vector component rendering all 6 state variations with accessible icons.
-   - `UnitBanner`: Responsive unit milestone card with guidebook trigger.
-   - `ExerciseContainer`: Polymorphic container hosting Multiple Choice, Parsons, and Blank-Fill inputs.
-   - `ResultSheet`: Animated, accessible bottom sheet with sound-effect hooks.
-   - `StreakFlameWidget`: Animated streak counter with freeze indicators.
+   - `PathNode`: Vector component rendering all 6 state variations with accessible icons and non-color indicators.
+   - `UnitBanner`: Responsive unit milestone card with guidebook trigger and test-out CTA.
+   - `ExerciseContainer`: Polymorphic container hosting Multiple Choice, Parsons reordering, Blank-Fill, and Spot-the-Defect inputs.
+   - `ResultSheet`: Animated, accessible bottom sheet using `success` and `error-700` design tokens.
+   - `StreakFlameWidget`: Animated streak counter with freeze shield indicators.
    - `ReadinessRing`: Circular SVG progress indicator displaying continuous readiness $c(s)$.
 3. **Bespoke Mascot & Illustrations Plan:**
    - 4 emotional states for Masar's original mascot: Welcoming (Onboarding), Encouraging (Practice), Celebrating (Milestone/Checkpoints), and Thinking (Mentor).
    - Vector SVG format, fully optimized for lightweight CDN loading (< 30 KB per asset).
+   - *Status Note:* Final mascot scope and delivery timeline are pending formal confirmation upon review of [OD-3](15-open-decisions.md#od-3).
 
 ---
 

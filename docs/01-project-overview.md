@@ -178,14 +178,15 @@ sequenceDiagram
     participant Player as Lesson Player & Loop
 
     Note over Student,Wizard: Phase 1 — First-Time Onboarding (<= 10 min)
-    Student->>Wizard: 1. Complete 20-item personality & work assessment (<= 4 min)
+    Student->>Wizard: 1. Complete 22-item personality & work assessment (<= 4 min)
     Student->>Wizard: 2. Select completed courses & claim skills (<= 3 min)
     Wizard-->>Student: Propose unverified skills mapped from courses
     Student->>Wizard: 3. Optional adaptive placement probe (<= 5 min, skippable)
     Wizard->>Engine: Run model-first recommendation
     Engine-->>Student: 4. Reveal ranked careers with reason badges (<= 2 min)
     Student->>Wizard: Select target career & track (e.g. Backend .NET)
-    Student->>Wizard: 5. Select daily goal (e.g. 20 min/day)
+    Wizard-->>Student: Preview compact Readiness Summary Card
+    Student->>Wizard: 5. Select weekly goal (e.g. 5 hrs/week)
     Wizard->>Path: Initialize atomic path
     Path-->>Student: Reveal unit path and automatically focus Lesson 1
 
@@ -203,11 +204,11 @@ sequenceDiagram
 
 ### 8.1 Phase 1 — Onboarding and path reveal
 
-1. **Personality & preference assessment:** 20 Likert items ($\le 4$ minutes) establishing initial interest and work-style vectors.
+1. **Personality & preference assessment:** 22 Likert items ($\le 4$ minutes) establishing initial interest and work-style vectors.
 2. **Coursework & skill identification:** Course mapping pre-fills unverified foundational skills; student claims additional skills ($\le 3$ minutes).
 3. **Targeted adaptive placement probe:** Diagnostic up/down probe for core claimed skills (capped at level 4 verified; skippable).
-4. **Career recommendation & target selection:** Model-first recommendation with inspectable reason badges. Student commits to target career and track ($\le 2$ minutes).
-5. **Daily goal & path reveal:** Student selects daily study target (10, 20, 30, 45, or 60 min) and is launched directly into their first lesson ($\le 10$ minutes total without placement, $\le 15$ minutes with placement).
+4. **Career recommendation & target selection:** Model-first recommendation with inspectable reason badges. Student commits to target career and track ($\le 2$ minutes), followed by a compact Readiness Summary Card preview.
+5. **Weekly goal & path reveal:** Student selects weekly study goal in hours/week (1–60 hrs/week; default 5 hrs/week $\approx$ 20 min/day) and is launched directly into their first lesson ($\le 10$ minutes total without placement, $\le 15$ minutes with placement).
 
 ### 8.2 Phase 2 — Daily micro-learning loop
 

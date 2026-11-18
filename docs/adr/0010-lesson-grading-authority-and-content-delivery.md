@@ -43,14 +43,23 @@ Static content bundles are distributed via CDN. The browser evaluates exercises 
 1. **Static Content Delivery:**
    - Unit content bundles (`/content/bundles/{unit_slug}.json`) are compiled ahead-of-time and hosted on a high-speed global static CDN (e.g., GitHub Pages, Cloudflare Pages, or Vercel).
    - Bundles are cacheable in the browser and Service Worker, providing instant loading and enabling future offline PWA support.
-2. **Instant Local Feedback:**
-   - The React Lesson Player evaluates student answers locally in memory against the bundle's exercise metadata.
-   - Mistakes trigger immediate explanatory feedback and automatically re-queue the question at the end of the lesson session until mastered.
-3. **Authoritative Server Re-Grading:**
-   - Upon session completion, the client posts an attempt payload to `/api/lessons/{sessionId}/complete` containing: `atomId`, `sessionId`, `durationSeconds`, and array of exercise `attempts` with timing telemetry (per `docs/07-api-contract.md` §6).
+2. **Instant Local Feedback & In-Session Retry State Machine:**
+   - The React Lesson Player evaluates student answers locally in memory against the bundle's exercise metadata (< 50 ms).
+   - Mistakes trigger immediate explanatory feedback and automatically re-queue the exercise at the end of the session queue.
+   - Up to 2 retries are allowed per exercise (maximum 3 attempts total).
+   - If an exercise is missed 3 times, the player reveals the worked step-by-step solution and flags the exercise as `unresolved`. The lesson concludes once all exercises have been answered or exhausted their 3 attempts.
+3. **Authoritative Server Re-Grading & Idempotency:**
+   - Upon session completion, the client posts an attempt payload to `/api/lessons/{sessionId}/complete` containing: `atomId`, `sessionId`, `idempotencyKey` (optional, defaults to `sessionId`), `durationSeconds`, and the array of exercise `attempts` with timing telemetry (per `docs/07-api-contract.md` §6).
    - The .NET backend independently validates the submitted answers against the authoritative database record for that atom.
    - **Anti-Cheat Sanity Checks:** The server verifies reasonable timing thresholds (e.g., flagging attempts completing 5 exercises in under 15 seconds).
-   - **Idempotent State Update:** Upon successful re-grade, the server updates `student_atom_state` (setting `status` to `'learned'` or `'shaky'`, conforming to `CHECK (status IN ('learned', 'shaky', 'assumed'))`, and increments revision counts), logs `exercise_attempt` records, awards XP, updates daily streak, and derives updated skill mastery. Repeated submissions with the same `sessionId` are idempotent.
+   - **Canonical Idempotency Semantics:**
+     - `sessionId` identifies the ephemeral session record in `LESSON_SESSION`.
+     - `idempotencyKey` enforces deduplication at the database level via a `UNIQUE` constraint scoped to the student's `profile_id`.
+     - If a request is received for an already completed `sessionId` or matching `idempotencyKey`:
+       - If the submitted attempt hash matches: Returns HTTP `200 OK` with the cached original result (exact XP awarded, streak status, and readiness delta), performing zero database mutations and awarding zero duplicate XP.
+       - If a conflicting payload is submitted with an existing key: Returns HTTP `409 Conflict` (ProblemDetails).
+     - Guarantees that network retries, page refreshes, or duplicate client clicks can never double-award XP or streak progress.
+   - **Mastery State Update:** If first-pass accuracy is $\ge 80\%$ (and all items resolved), the atom status transitions to `'learned'` (+15 XP base + 5 XP bonus); if first-pass accuracy $< 80\%$ or items remain unresolved, status becomes `'shaky'` (+15 XP base, 0 bonus) and is queued for priority review. Both status values strictly satisfy `CHECK (status IN ('learned', 'shaky', 'assumed'))`.
 
 ## Consequences
 

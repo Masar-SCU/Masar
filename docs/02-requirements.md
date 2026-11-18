@@ -51,7 +51,7 @@ A story is done only when every criterion passes. These become the E2E test name
 > As a first-time student, I want a structured onboarding wizard (personality test → coursework & skills → targeted placement → career fit & path reveal), so that I am guided step-by-step to an actionable plan without being overwhelmed.
 
 - **AC1** Upon first login, I am automatically routed to the Onboarding Wizard, with step state persisted so I can leave and resume without data loss.
-- **AC2** **Step 1 (Personality & Preferences):** I complete a 20-item Likert assessment (7 interest, 4 work-style, 6 problem-type, 3 career-intent) evaluating my preferences in under 4 minutes.
+- **AC2** **Step 1 (Personality & Preferences):** I complete a 22-item Likert assessment (8 interest, 4 work-style, 7 problem-type, 3 career-intent) evaluating my preferences in under 4 minutes.
 - **AC3** **Step 2 (Coursework & Skills):** I select my academic year and completed department courses, which automatically propose foundational skills with course-provenance badges (with manual entry as baseline when mapping data is unavailable), alongside a fast search to add any additional claimed skills on the 0–5 scale in under 3 minutes.
 - **AC4** **Step 3 (Targeted Placement):** For up to 2–3 claimed core technical skills, I am offered an adaptive diagnostic placement probe (≤ 5 min, capped at level 4 verified), with a clear option to skip and verify skills later from the path.
 - **AC5** **Step 4 (Career Fit & Selection):** I view ranked career recommendations showing both interest fit and skill fit, explore tracks, and select my committed target career in under 2 minutes.
@@ -242,7 +242,7 @@ A story is done only when every criterion passes. These become the E2E test name
 | FR-06 | Compute and display profile completeness as a percentage | M | US-01 |
 | FR-07 | Attach portfolio evidence (repository URL) to a project or skill | S | US-09 |
 | **Assessment & recommendations** | | | |
-| FR-08 | Deliver 20-item Likert interest and preference questionnaire in $\le 4$ minutes | M | US-00 |
+| FR-08 | Deliver 22-item Likert interest and preference questionnaire in $\le 4$ minutes | M | US-00 |
 | FR-09 | Diagnostic skill assessment | M | US-00, US-02 |
 | FR-10 | Rank all 6 careers using AI recommendation service with match score and inspectable reason badges | M | US-03 |
 | FR-11 | Let the student select and change committed target career and track | M | US-03 |
@@ -388,7 +388,7 @@ Three roles: `Student`, `Advisor`, `Admin`.
 
 - EF Core parameterisation across all queries; no raw SQL string concatenation.
 - Request payloads strictly validated against schemas.
-- Mentor prompt isolates student text within explicit delimiters and strict system instructions ([§06](06-ai-engines.md#45-prompt-injection-hardening)). Output rendered as plain text.
+- Mentor prompt isolates student text within explicit delimiters and strict system instructions ([§06](06-ai-engines.md#46-prompt-injection-hardening)). Output rendered as plain text.
 
 ### NFR-11 — Maintainability
 

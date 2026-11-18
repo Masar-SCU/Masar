@@ -54,7 +54,7 @@ python3 scripts/check-links.py .
 | Subproject | Build Command | Lint / Format Command | Test Command |
 | :--- | :--- | :--- | :--- |
 | **Backend** (`src/backend`) | `dotnet build src/backend/Masar.sln --configuration Release` | `dotnet format src/backend/Masar.sln --verify-no-changes` | `dotnet test src/backend/Masar.sln --configuration Release --verbosity normal` |
-| **Frontend** (`src/frontend`) | `npm run build --prefix src/frontend` | `npm run lint --prefix src/frontend`<br/>`npx --prefix src/frontend tsc --noEmit` | `npm test --prefix src/frontend` (when configured) |
+| **Frontend** (`src/frontend`) | `npm run build --prefix src/frontend` | `npm run lint --prefix src/frontend`<br/>`npx --prefix src/frontend tsc -b src/frontend` | `npm test --prefix src/frontend` (when configured) |
 | **AI Service** (`src/ai`) | `docker build -t masar-ai:latest ./src/ai` | `ruff check src/ai` | `pytest src/ai` |
 
 ---
@@ -116,7 +116,7 @@ Format: `<type>(<optional scope>): <description>`
 * **Target Size**: Aim for small, reviewable vertical slices ($\le 400$ lines modified).
 * **Self-Verification Checklist**:
   * [ ] Backend builds and unit tests pass (`dotnet test`).
-  * [ ] Frontend lints cleanly (`oxlint`) and passes TypeScript checks (`tsc --noEmit`).
+  * [ ] Frontend lints cleanly (`oxlint`) and passes TypeScript checks (`tsc -b src/frontend`).
   * [ ] AI service lints cleanly (`ruff check`) and passes pytest (`pytest`).
   * [ ] Markdown documents conform to markdownlint, link checker, and Mermaid validation.
   * [ ] No secrets or sensitive configuration values are staged.

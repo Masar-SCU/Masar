@@ -33,7 +33,7 @@ latency. This would consume weeks of Ahmed's time for a should-have feature.
 ### C — No LLM; templates only
 
 The **fallback**, already fully specified in
-[§06 4.6](../06-ai-engines.md#46-fallback--templated-explanations). Not the primary choice, because
+[§06 4.7](../06-ai-engines.md#47-fallback--templated-explanations). Not the primary choice, because
 grounded natural-language explanation is genuinely useful and is a legitimate part of objective O7.
 
 ### D — Paid API
@@ -97,7 +97,7 @@ rather than something that can happen accidentally. Groq's free tier is the inte
 ## Privacy constraint — non-negotiable
 
 Regardless of provider, the prompt carries **only** the allow-listed context DTO from
-[§06 4.4](../06-ai-engines.md#44-privacy-in-the-mentor-prompt): skill names, levels, career names and
+[§06 4.5](../06-ai-engines.md#45-privacy-in-the-mentor-prompt): skill names, levels, career names and
 computed numbers. Never a name, email, student ID, or free text the student wrote about themselves.
 This is enforced by the DTO's shape, not by review discipline.
 

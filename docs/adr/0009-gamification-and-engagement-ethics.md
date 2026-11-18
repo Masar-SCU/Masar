@@ -39,12 +39,12 @@ Implement non-punitive mechanics centered on daily consistency (streaks), master
 **Implement an ethical, positive-only engagement architecture built on three pillars:**
 
 1. **Experience Points (XP) & Positive Reinforcement:**
-   - XP is awarded for active effort: completing an atom (+15 XP), acing on first attempt (+5 XP bonus), completing daily reviews (+10 XP), and passing stage checkpoints (+50 XP).
+   - XP is awarded for active effort: completing an atom (+15 XP base), acing on first attempt (+5 XP bonus for $\ge 80\%$ accuracy), completing a spaced review (+10 XP flat), passing Unit Checkpoints (+50 XP), and submitting accepted Stage Capstone Projects (+100 XP). Replays award +2 XP flat (max 20 XP/day).
    - **Zero XP Deductions:** Mistakes never deduct XP.
-2. **Daily Goals & Streaks:**
-   - Students configure a daily goal during onboarding (10, 20, 30, 45, or 60 minutes; default 20 minutes).
-   - A streak increments when the student meets their daily XP/time threshold within their configured IANA timezone (e.g., `Africa/Cairo`).
-   - **Streak Protections:** Students can equip up to 2 streak freezes earned via study milestones. Streaks can be paused during exam periods.
+2. **Weekly Goals & Streaks:**
+   - Students configure a weekly study goal during onboarding (1–60 hours/week; default 5 hours/week $\approx$ 20 min/day).
+   - A streak increments when the student completes **any qualifying learning session** (at least one lesson, spaced review, or checkpoint that earns XP) within their configured IANA timezone (e.g., `Africa/Cairo`).
+   - **Streak Protections:** Students can equip up to 2 streak freezes earned via study milestones. Streaks can be paused for up to 14 days during university exam periods.
 3. **Strict Educational Ethics & Accessibility:**
    - **No Lives or Hearts:** Students can retry failed exercises immediately with explanatory feedback. A student is never locked out of learning.
    - **Opt-In Notifications Only:** Progress reminders and weekly digests are strictly opt-in, with user-configured delivery hours and zero guilt-inducing copy.
