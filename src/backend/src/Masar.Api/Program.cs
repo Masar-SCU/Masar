@@ -5,12 +5,14 @@ using Masar.Api.Middleware;
 using Masar.Application;
 using Masar.Application.Common.Exceptions; // for ErrorDetail
 using Masar.Infrastructure;
+using Masar.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc; // for BadRequestObjectResult
 using Masar.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -180,6 +182,16 @@ builder.Services.AddRateLimiter(options =>
 });
 
 var app = builder.Build();
+
+// Dev-only convenience (docs/03-architecture.md §8): staging/production apply
+// migrations as an explicit deployment step, never on startup.
+if (app.Environment.IsDevelopment()
+    && app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<MasarDbContext>();
+    await db.Database.MigrateAsync();
+}
 
 if (app.Environment.IsDevelopment())
 {
