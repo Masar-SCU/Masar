@@ -10,13 +10,15 @@ import {
   Menu,
   X,
 } from 'lucide-react';
+import { AUTH_TOKEN_KEY, LEGACY_AUTH_TOKEN_KEY } from '../../lib/constants.ts';
 
 export const AppLayout: React.FC = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem('masar_token');
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+    localStorage.removeItem(LEGACY_AUTH_TOKEN_KEY);
     navigate('/login');
   };
 

@@ -41,7 +41,7 @@ Static content bundles are distributed via CDN. The browser evaluates exercises 
 ```
 
 1. **Static Content Delivery:**
-   - Unit content bundles (`/content/bundles/{unit_slug}.json`) are compiled ahead-of-time and hosted on a high-speed global static CDN (e.g., GitHub Pages, Cloudflare Pages, or Vercel).
+   - Unit content bundles (`/content/v{contentVersion}/units/{unitSlug}.{hash}.json`) are compiled ahead-of-time and hosted on a high-speed global static CDN (always read via `bundleUrl` returned by `/api/path` and `/api/lessons`).
    - Bundles are cacheable in the browser and Service Worker, providing instant loading and enabling future offline PWA support.
 2. **Instant Local Feedback & In-Session Retry State Machine:**
    - The React Lesson Player evaluates student answers locally in memory against the bundle's exercise metadata (< 50 ms).
@@ -51,7 +51,7 @@ Static content bundles are distributed via CDN. The browser evaluates exercises 
 3. **Authoritative Server Re-Grading & Idempotency:**
    - Upon session completion, the client posts an attempt payload to `/api/lessons/{sessionId}/complete` containing: `atomId`, `sessionId`, `idempotencyKey` (optional, defaults to `sessionId`), `durationSeconds`, and the array of exercise `attempts` with timing telemetry (per `docs/07-api-contract.md` §6).
    - The .NET backend independently validates the submitted answers against the authoritative database record for that atom.
-   - **Anti-Cheat Sanity Checks:** The server verifies reasonable timing thresholds (e.g., flagging attempts completing 5 exercises in under 15 seconds).
+   - **Anti-Cheat Sanity Checks:** The server verifies reasonable timing thresholds (e.g., recording `telemetryFlags: ["RAPID_COMPLETION"]` when $\ge 5$ exercises are completed in $< 15$ seconds, without deducting XP per [ADR-0009](0009-gamification-and-engagement-ethics.md)).
    - **Canonical Idempotency Semantics:**
      - `sessionId` identifies the ephemeral session record in `LESSON_SESSION`.
      - `idempotencyKey` enforces deduplication at the database level via a `UNIQUE` constraint scoped to the student's `profile_id`.

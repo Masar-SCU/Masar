@@ -1,0 +1,65 @@
+{
+  "pathVersion": 1,
+  "careerName": "Backend Development",
+  "trackName": ".NET",
+  "mode": "canonical",
+  "totals": {
+    "atomsTotal": 612,
+    "atomsDone": 142,
+    "remainingMinutes": 2350,
+    "projectedCompletion": "2027-03-12"
+  },
+  "stages": [
+    {
+      "stageId": 1,
+      "name": "Foundations",
+      "units": [
+        {
+          "unitId": "u1111111-0000-0000-0000-000000000001",
+          "slug": "sql-fundamentals",
+          "title": "SQL Fundamentals",
+          "state": "available",
+          "displayState": "available",
+          "bundleUrl": "/content/v1/units/sql-fundamentals.a1b2c3d4.json",
+          "canTestOut": true,
+          "atomsTotal": 16,
+          "atomsDone": 6,
+          "minutesRemaining": 50,
+          "checkpointState": "locked"
+        },
+        {
+          "unitId": "u1111111-0000-0000-0000-000000000002",
+          "slug": "csharp-basics",
+          "title": "C# Language Basics",
+          "state": "completed",
+          "displayState": "learned",
+          "bundleUrl": "/content/v1/units/csharp-basics.e5f60718.json",
+          "canTestOut": false,
+          "atomsTotal": 20,
+          "atomsDone": 20,
+          "minutesRemaining": 0,
+          "checkpointState": "passed"
+        }
+      ]
+    },
+    {
+      "stageId": 2,
+      "name": "Web APIs & Microservices",
+      "units": [
+        {
+          "unitId": "u1111111-0000-0000-0000-000000000003",
+          "slug": "aspnet-core-webapi",
+          "title": "ASP.NET Core Web API",
+          "state": "available",
+          "displayState": "locked",
+          "bundleUrl": "/content/v1/units/aspnet-core-webapi.9a0b1c2d.json",
+          "canTestOut": false,
+          "atomsTotal": 24,
+          "atomsDone": 8,
+          "minutesRemaining": 80,
+          "checkpointState": "locked"
+        }
+      ]
+    }
+  ]
+}

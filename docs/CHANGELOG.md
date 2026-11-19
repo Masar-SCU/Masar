@@ -2,11 +2,26 @@
 
 **Revision Date:** 2026-11-17 · **Baseline Specification Version:** 2.0.0 · **Lead Architect:** Abdelrahman Megahed
 
-This document provides a comprehensive audit trail of all defect corrections (Part A: F-01 to F-41), architectural improvements (Part B: B.1 to B.14), the major pedagogical overhaul to an Atomic Roadmap (Part C), and the alignment fixes addressing PR #41 peer reviews.
+This document provides a comprehensive audit trail of all defect corrections (Part A: F-01 to F-41), architectural improvements (Part B: B.1 to B.14), the major pedagogical overhaul to an Atomic Roadmap (Part C), the alignment fixes addressing PR #41 peer reviews, and the API Contract v2.1.0 reconciliation.
 
 ---
 
-## 0. Peer Review Alignment & Timeline Re-baseline (2026-11-17)
+## 0. API Contract v2.1.0 Upgrade & Companion Doc Sync (2026-11-19)
+
+Upgraded the API Contract (`docs/07-api-contract.md`) to **Version 2.1.0** ahead of the pre-W9 freeze target (<2027-01-18>), reconciling cross-document specifications and updating frontend client types, API client, mock fixtures, and contract tests:
+
+1. **RFC 9457 ProblemDetails (§2):** Standardized all error responses on `application/problem+json` (`type`, `title`, `status`, `code`, `detail`, `details[]`, `correlationId`), matching [ADR-0010](adr/0010-lesson-grading-authority-and-content-delivery.md) and ASP.NET Core 10 error conventions.
+2. **Canonical Static Bundle URLs (§9, [ADR-0010](adr/0010-lesson-grading-authority-and-content-delivery.md), [14 §2](14-content-pipeline.md#2-five-stage-pipeline-architecture), [03 §7](03-architecture.md#72-path-and-lesson-flow--static-content-with-authoritative-re-grading)):** Harmonized static content bundle paths to `/content/v{contentVersion}/units/{unitSlug}.{hash}.json`, read dynamically via `bundleUrl` returned by `/api/path` and `/api/lessons`.
+3. **Weekly Goal Authority (§5, §8.4, [ADR-0009](adr/0009-gamification-and-engagement-ethics.md)):** Established `hoursPerWeek` (`1..20`, presets `2, 3, 5, 10`, default `5`) as the authoritative user goal, with `dailyGoalMinutes = round(hoursPerWeek * 60 / 7)` as a read-only derived value. Replaced `PUT /api/game/daily-goal` with `PUT /api/game/weekly-goal`.
+4. **Keyless Checkpoints & Placement Probes (§7, §8.2, [ADR-0010](adr/0010-lesson-grading-authority-and-content-delivery.md)):** High-stakes diagnostic placement (`/api/placement`) and Unit Checkpoints/Test-Outs (`POST /api/lessons` with kind `checkpoint`/`test_out`) return keyless exercise definitions evaluated strictly server-side.
+5. **The 8 Canonical Exercise Types (§9, [04 §7](04-data-model.md#7-content-stages-units-atoms-exercises-paths), [13 §4](13-learning-experience.md#exercise-types-supported)):** Standardized exercise type identifiers to snake_case (`multiple_choice`, `fill_blank_tokens`, `true_false_code`, `reorder_tokens`, `match_pairs`, `predict_output`, `spot_defect`, `multi_select`) with typed `ExerciseAnswer` discriminated union for attempt traces.
+6. **State Model Separation (§8.1, §8.2, [13 §3](13-learning-experience.md#3-path-screen-specification)):** Distinctly decoupled the 6 derived UI display states (`displayState`: `learned`, `assumed`, `current`, `available`, `shaky`, `locked`) on path queries from the 3 persisted database mastery states (`persistedState`: `learned`, `shaky`, `assumed`).
+7. **Missing MVP Endpoints (§3, §4, §5, §8.3, §10, §11):** Added Stage Capstone Projects (`/api/profile/projects`), `STUDENT_PATH_PREFS` (`/api/path/preferences`), opt-in notifications (`/api/profile/notifications`), early exam-pause cancellation (`DELETE /api/game/exam-pause`), password recovery/resend verification endpoints, `.NET` `/api/health` & `/api/ready` + `demoMode`, cursor-paginated AI Mentor, explicit Advisor $k < 5$ suppression objects, and `202 Accepted` async content publishing.
+8. **CSRF & Caching Hardening (§1):** Added `X-Masar-Client: web` header and `Origin` allow-list enforcement on cookie-authenticated routes (`/api/auth/refresh`, `/api/auth/logout`), `ETag`/`304` on student reads, and `immutable` caching on static bundles.
+
+---
+
+## 1. Peer Review Alignment & Timeline Re-baseline (2026-11-17)
 
 Following technical peer review from Ziad Ahmed (`ziad-Ahmed401`) on PR #41, twelve specification alignments and a master timeline re-baseline were executed:
 

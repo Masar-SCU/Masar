@@ -80,7 +80,7 @@ flowchart LR
 ### Stage 5: Bundle Compilation & Publication
 
 - **Actor:** Automated Release Workflow.
-- **Activity:** Approved atoms (`status: "approved"`) are compiled into immutable, hash-versioned static unit bundles (`{unit_slug}.{hash}.json`), published to the static CDN, and synced to production PostgreSQL.
+- **Activity:** Approved atoms (`status: "approved"`) are compiled into immutable, hash-versioned static unit bundles (`/content/v{contentVersion}/units/{unitSlug}.{hash}.json`), published to the static CDN, and synced to production PostgreSQL.
 - **State Transition:** `status` is set to `published`. Only `published` atoms are visible to students.
 
 ---
