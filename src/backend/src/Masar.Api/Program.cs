@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc; // for BadRequestObjectResult
 using Masar.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
@@ -181,6 +182,9 @@ builder.Services.AddRateLimiter(options =>
     );
 });
 
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<MasarDbContext>("database", tags: new[] { "ready" });
+
 var app = builder.Build();
 
 // Dev-only convenience (docs/03-architecture.md §8): staging/production apply
@@ -213,6 +217,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Liveness: runs no checks, so it's 200 whenever the process is serving requests.
+app.MapHealthChecks("/health", new HealthCheckOptions { Predicate = _ => false });
+
+// Readiness: runs only checks tagged "ready" (the DB connection).
+app.MapHealthChecks("/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready")
+});
 
 app.Run();
 
