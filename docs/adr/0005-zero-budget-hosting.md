@@ -28,7 +28,7 @@ Free tiers have real, documented limitations that must be designed around rather
 1. **No credit card required**, so an accidental charge is structurally impossible.
 2. **No database expiry clause.** A database that deletes itself after 30 days is disqualifying for a 35-week project.
 3. **pgvector available** ([A7](../10-risks-and-assumptions.md#3-assumptions-register)).
-4. Private networking, or at least an internal-only service option, for the AI service ([R-08](../10-risks-and-assumptions.md#r-08--the-ai-service-is-publicly-reachable-on-the-chosen-host--p2--i4--8)).
+4. Private networking, or at least an internal-only service option, for the AI service ([R-08](../10-risks-and-assumptions.md#r-08)).
 5. Docker image deployment, so the local and deployed environments match.
 6. GitHub integration for automatic deploys from `main`.
 
@@ -60,7 +60,7 @@ exactly how a project loses eight months of data in April.
 
 Separate databases per environment. Staging is reset freely; production is never pointed at a reset
 script — the endpoint is blocked outright in production
-([§07 9](../07-api-contract.md#9-advisor-and-admin)).
+([§07 11](../07-api-contract.md#11-advisor-and-admin-endpoints)).
 
 ## Consequences
 
@@ -76,7 +76,7 @@ script — the endpoint is blocked outright in production
 - Cold starts make the first request slow. Mitigated by warm-ups and honest UI, and stated in
   [NFR-03](../02-requirements.md#nfr-03--availability).
 - No managed backups, so backup discipline is entirely on us.
-- Providers may change terms mid-project. Tracked as [R-04](../10-risks-and-assumptions.md#r-04--free-hosting-tiers-change-expire-or-throttle--p3--i4--12).
+- Providers may change terms mid-project. Tracked as [R-04](../10-risks-and-assumptions.md#r-04).
 
 **Neutral**
 
@@ -90,3 +90,13 @@ script — the endpoint is blocked outright in production
 - [ ] **W2** — first `pg_dump` taken and stored
 - [ ] **W6** — warm-up procedure documented and rehearsed before the mid-term review
 - [ ] **W28** — **restore rehearsal**: destroy a staging database and rebuild it from a dump plus seed scripts
+
+---
+
+## Addendum 2026-11-15 (Static Content CDN, Keep-Alive Pings, and Open Decisions)
+
+1. **Static Content CDN Delivery:** Learning unit bundles (`/content/bundles/{unit_slug}.json`) and client SPA assets are served directly from free static CDN hosting (e.g., GitHub Pages, Cloudflare Pages, or Vercel; evaluated in OD-5). This offloads heavy static GET traffic from the .NET backend and guarantees that student lesson transitions are instantaneous (< 100 ms) regardless of backend container cold starts.
+2. **Keep-Alive Pings:** Scheduled uptime checks / health pings (`/health`) run every 10–14 minutes during review and testing windows to prevent free-tier container sleep.
+3. **Open Decisions Registered:**
+   - **OD-5:** Evaluation of static hosting provider for atomic content bundles.
+   - **OD-9:** Evaluation of zero-budget transactional email sender service (e.g., Resend, Brevo, or SendGrid free tier) for account email verification and weekly progress digests.

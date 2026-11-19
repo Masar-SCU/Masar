@@ -26,6 +26,7 @@ import unicodedata
 
 LINK = re.compile(r"\[([^\]]*)\]\(([^)\s]+)\)")
 HEADING = re.compile(r"^#{1,6}\s+(.*)$")
+HTML_ANCHOR = re.compile(r"""<a\s+[^>]*(?:id|name)=["']([^"']+)["']""", re.IGNORECASE)
 SKIP_SCHEMES = ("http://", "https://", "mailto:", "tel:")
 
 
@@ -52,7 +53,7 @@ def github_slug(text: str) -> str:
 def markdown_files(root: str) -> list[str]:
     found = []
     for dirpath, dirnames, filenames in os.walk(root):
-        dirnames[:] = [d for d in dirnames if d not in (".git", "node_modules")]
+        dirnames[:] = [d for d in dirnames if not d.startswith(".") and d != "node_modules"]
         for name in filenames:
             if name.endswith(".md"):
                 found.append(os.path.normpath(os.path.join(dirpath, name)))
@@ -72,6 +73,8 @@ def anchors_of(path: str) -> set[str]:
             match = HEADING.match(line)
             if match:
                 anchors.add(github_slug(match.group(1)))
+            for am in HTML_ANCHOR.finditer(line):
+                anchors.add(am.group(1))
     return anchors
 
 

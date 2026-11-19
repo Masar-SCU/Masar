@@ -14,6 +14,10 @@ quietly re-litigates it.
 | [0004](0004-proficiency-scale.md) | 0–5 integer scale, not percentages | Accepted | Removes false precision and makes gap arithmetic meaningful |
 | [0005](0005-zero-budget-hosting.md) | Free-tier hosting with mandatory backups | Accepted | Free tiers sleep, expire and lack backups; design for it |
 | [0006](0006-model-based-recommendation.md) | Model-first career recommendation through FastAPI; deterministic logic limited to mandatory constraints and documented fallback | Accepted | Resolves the AI-role contradiction while keeping hard constraints, reliability, and reproducibility under deterministic control |
+| [0007](0007-atomic-roadmap.md) | Atomic Roadmap replaces phase-based scheduling | Accepted | Replaces coarse, unpaced time blocks with granular units and micro-lessons (~4,050 atoms) anchored to prerequisite DAG |
+| [0008](0008-content-authoring-pipeline.md) | Content authoring pipeline: LLM-assisted drafts, CI validation, human review | Accepted | Solves content authoring cost while guaranteeing accuracy, schema validity, and verified non-hallucinated resources |
+| [0009](0009-gamification-and-engagement-ethics.md) | Gamification and engagement ethics | Accepted | Introduces XP, streaks, daily goals, and Leitner reviews while prohibiting predatory/stressful dark patterns (no blocking hearts/lives) |
+| [0010](0010-lesson-grading-authority-and-content-delivery.md) | Lesson grading authority and static content delivery | Accepted | Instant client-side exercise feedback with authoritative backend re-grading, anti-cheat validation, and CDN bundle distribution |
 
 ## When to write one
 

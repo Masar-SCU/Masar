@@ -14,8 +14,8 @@ Two properties of the situation shape the decision:
 
 1. **Free tiers change.** Quotas, model names and availability all move on a timescale shorter than a
    35-week project. Binding the codebase to one provider's SDK is a scheduled outage.
-2. **Only one feature needs an LLM.** Embeddings run locally
-   ([§06 5](../06-ai-engines.md#5-cost-and-quota-budget)), so the mentor is the entire exposure.
+2. **Only one runtime feature needs an LLM.** Embeddings run locally
+   ([§06 5](../06-ai-engines.md#5-cost-and-quota-budget)), so the AI Mentor (Engine C) is the sole user-facing runtime LLM consumer. Offline content drafting (Engine D, [ADR-0008](0008-content-authoring-pipeline.md)) is strictly a developer-time tool operating on separate developer API quotas.
 
 ## Options considered
 
@@ -33,7 +33,7 @@ latency. This would consume weeks of Ahmed's time for a should-have feature.
 ### C — No LLM; templates only
 
 The **fallback**, already fully specified in
-[§06 4.6](../06-ai-engines.md#46-fallback--templated-explanations). Not the primary choice, because
+[§06 4.7](../06-ai-engines.md#47-fallback--templated-explanations). Not the primary choice, because
 grounded natural-language explanation is genuinely useful and is a legitimate part of objective O7.
 
 ### D — Paid API
@@ -97,7 +97,7 @@ rather than something that can happen accidentally. Groq's free tier is the inte
 ## Privacy constraint — non-negotiable
 
 Regardless of provider, the prompt carries **only** the allow-listed context DTO from
-[§06 4.4](../06-ai-engines.md#44-privacy-in-the-mentor-prompt): skill names, levels, career names and
+[§06 4.5](../06-ai-engines.md#45-privacy-in-the-mentor-prompt): skill names, levels, career names and
 computed numbers. Never a name, email, student ID, or free text the student wrote about themselves.
 This is enforced by the DTO's shape, not by review discipline.
 
@@ -108,3 +108,11 @@ This is enforced by the DTO's shape, not by review discipline.
 - [ ] **W22** — `TemplateProvider` covers every question intent
 - [ ] **W22** — test asserts the context DTO contains no identifier fields
 - [ ] **W23** — [RQ4](../09-evaluation.md#rq4--is-the-mentor-grounded) audit run against the selected provider
+
+---
+
+## Addendum 2026-11-15 (F-28: Data-Use Terms, Student Consent, and Offline Authoring Quota)
+
+1. **Provider Data-Use and Model Training Terms:** The provider selection criteria are updated to require review of API data-use terms. Many consumer free tiers permit provider model training on inputs by default. Masar requires choosing enterprise/developer API tiers where inputs are not used for training, or providing clear student disclosure and explicit opt-in consent before mentor queries are transmitted.
+2. **Offline Content Authoring Quota Separation:** With the addition of Engine D (offline atom drafting; C.10 / ADR-0008), LLM calls for generating unit and lesson content run entirely offline in development using a dedicated developer API key and independent rate limits. This authoring quota is completely isolated from the runtime student mentor quota, ensuring student mentor availability is never impacted by batch drafting runs.
+3. **Prompt Hardening and Injection Safeguards:** In addition to strict context DTO whitelisting, mentor prompt templates enforce explicit delimiters and strip code block directives or meta-prompts from student input before API invocation.

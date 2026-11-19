@@ -1,10 +1,12 @@
 # 01 — Project Overview
 
-**Document owner:** Abdelrahman Megahed · **Status:**  Under Review
+**Document owner:** Abdelrahman Megahed · **Status:** Revised <2026-11-17> (atomic roadmap & timeline re-baseline)
 
 ---
 
 ## 1. Project information
+
+*(Atomic roadmap revision: 15 November 2026 · Timeline re-baselined: 17 November 2026)*
 
 | Field | Details |
 |---|---|
@@ -14,8 +16,24 @@
 | **Department** | Computer Science |
 | **Supervisor** | Dr. Hend Shabaan |
 | **Team size** | 8 |
-| **Timeline** | 20 Sep 2026 → 20 May 2027 |
+| **Timeline** | 17 Nov 2026 → 30 Jun 2027 (32 weeks / 225 days) |
 | **Type** | Graduation Project |
+
+### 1.1 Key Milestones & Timeline Summary
+
+The project follows a 32-calendar-week (225-day) schedule starting from scratch on **17 November 2026** and concluding with the university graduation defence on **30 June 2027**. Development is structured into 11 vertical slices (S0–S10) with a dedicated pre-defence stabilization buffer:
+
+| Milestone | Date / Week | Focus & Major Deliverables |
+|---|---|---|
+| **Project Kickoff (S0)** | 17 Nov 2026 (W1) | Clean architecture skeleton, Docker environments, CI/CD pipeline, and development baselines. |
+| **Mid-Term Review (S3)** | 8 Feb 2027 (W12) | Core deterministic gap engine, onboarding wizard, and Tier 1 seed atom corpus (~1,000 atoms). |
+| **AI Integration (S6)** | 12 Apr 2027 (W21) | Model-first career recommendation, offline blind-solve validation, and RAG-based AI mentor. |
+| **Content Freeze** | 24 May 2027 (W27) | Curriculum authoring locked; final Tier 3 corpus (~4,050 micro-lessons) complete. |
+| **Feature Freeze (S9)** | 7 Jun 2027 (W29) | Complete codebase freeze across backend, frontend, and AI microservice; zero new features. |
+| **Stabilization Buffer (S10)** | 7 Jun → 30 Jun 2027 | 23 calendar days ($\approx 3.3$ weeks) for E2E testing, evaluation experiments (RQ1–RQ8), and defence rehearsal. |
+| **Final Project Defence** | 30 Jun 2027 (W32) | Graduation project presentation and faculty evaluation at Suez Canal University. |
+
+*Comprehensive sprint schedules, dependency graphs, Gantt charts, and contingency plans are detailed in [08 — Plan & Timeline](08-plan-and-timeline.md).*
 
 ---
 
@@ -27,64 +45,62 @@ existing tools solve none of them well.
 
 | # | Problem | Why existing options fail |
 |---|---|---|
-| P1 | **Choosing a specialization.** Backend, AI, data, security, cloud, mobile — a student cannot evaluate a path they have never worked in. | Career quizzes ask about personality, not demonstrated technical ability, and return a label with no next step. |
-| P2 | **Knowing which skills the market actually wants.** Job posts are inconsistent, and requirements drift faster than any curriculum. | Static "roadmaps" are hand-written, undated, and identical for every student regardless of what they already know. |
-| P3 | **Connecting university coursework to industry requirements.** A student who passed a databases course does not know that this already covers most of a "SQL" requirement. | No tool knows what the student's own department actually taught them. |
-| P4 | **Turning a gap into a plan.** Knowing you are weak at Docker does not tell you what to study first, for how long, or in what order. | Course platforms recommend more courses; they do not sequence prerequisites or produce portfolio evidence. |
+| P1 | **Choosing a specialization.** Backend, AI, data, security, cloud, frontend — a student cannot evaluate a path they have never worked in. | Career quizzes ask about personality, not technical skills, returning a label with no next step. |
+| P2 | **Knowing which skills the market actually wants.** Job posts are inconsistent, and requirements drift faster than any curriculum. | Hand-written static roadmaps are undated, generic, and identical for every student regardless of what they know. The snapshot is dated; refreshing it is a documented procedure, not a runtime feature. |
+| P3 | **Connecting university coursework to industry requirements.** A student who passed a databases course does not know that this already covers foundational SQL requirements. | No tool knows what the student's own department curriculum actually taught them. |
+| P4 | **Turning a gap into a daily, atomic, trackable path.** Knowing you lack Docker does not tell you what to study first, how long it takes, or how to fit practice into 10 minutes a day. | Traditional platforms recommend 40-hour video courses; they do not break concepts into atomic micro-lessons with instant feedback, spaced review, and streak incentives. |
 
 **The specific gap Masar addresses:** there is no system that takes a student's *actual*
 skill state, compares it against *current* market requirements for a *specific* role, and
-returns a *prerequisite-ordered, time-boxed* plan that updates as the student progresses.
+returns a *prerequisite-ordered, atomic learning path* of bite-sized lessons that adapts as the student learns.
 
 ---
 
 ## 3. Objectives and how each is delivered
 
-Every objective maps to at least one feature and at least one requirement. An objective with
-no feature is not an objective — it is a wish. This traceability is what makes the project defensible.
+Every objective maps to at least one feature and at least one requirement.
 
 | # | Objective | Delivered by | Verified by |
 |---|---|---|---|
-| **O1** | Assess technical skills, interests and preferences | [Student Profile](05-features-mvp.md#51-student-profile), [Calibration Quiz](05-features-mvp.md#52-skill-calibration-quiz) | FR-01…FR-06 |
-| **O2** | Recommend suitable career paths | [Career Recommendation](05-features-mvp.md#54-career-recommendation) | FR-10, [RQ1](09-evaluation.md#rq1-does-the-model-first-recommendation-pipeline-outperform-the-deterministic-baseline) |
-| **O3** | Analyse job requirements to identify demanded skills | [Job-Skill Extraction](06-ai-engines.md#2-engine-a--job-skill-extraction), [Curriculum Mapping](05-features-mvp.md#511-university-curriculum-mapping) | [RQ2](09-evaluation.md#rq2--how-accurate-is-skill-extraction) |
+| **O1** | Assess technical skills, interests and preferences | [Student Profile](05-features-mvp.md#51-student-profile), [Placement](05-features-mvp.md#52-placement-and-checkpoints) | FR-01…FR-06, FR-44 |
+| **O2** | Recommend suitable career paths | [Career Recommendation](05-features-mvp.md#54-career-recommendation) | FR-10, [RQ1](09-evaluation.md#rq1) |
+| **O3** | Analyse job requirements to identify demanded skills | [Job-Skill Extraction](06-ai-engines.md#2-engine-a--job-skill-extraction), [Curriculum Mapping](05-features-mvp.md#511-university-curriculum-mapping) | [RQ2](09-evaluation.md#rq2) |
 | **O4** | Identify gaps against a target career | [Skill-Gap Analysis](05-features-mvp.md#55-skill-gap-analysis--core) | FR-12…FR-15 |
-| **O5** | Generate learning paths and project recommendations | [Roadmap](05-features-mvp.md#56-personalized-roadmap--core), [Projects](05-features-mvp.md#58-project-recommendations) | FR-16…FR-22 |
-| **O6** | Track progress and update recommendations | [Progress Tracking](05-features-mvp.md#59-progress-tracking), [Readiness Score](05-features-mvp.md#57-career-readiness-score) | FR-23…FR-26 |
-| **O7** | Provide an AI-assisted mentor | [AI Mentor](06-ai-engines.md#4-engine-c--context-aware-ai-mentor-rag) | FR-27…FR-29, [RQ4](09-evaluation.md#rq4--is-the-mentor-grounded) |
-| **O8** | Help students prepare for internships and entry-level roles | [Internship Readiness](05-features-mvp.md#512-internship-readiness-checklist) | FR-30 |
-| **O9** | Give faculty visibility into cohort-level skill gaps | [Advisor Dashboard](05-features-mvp.md#513-advisor-dashboard) | FR-31…FR-33 |
-
-> **O9 is new.** It costs little once gap analysis exists, adds a second user role, and turns
-> Masar from a student toy into something the Faculty could actually adopt. It is also the
-> easiest way to answer "who would use this at scale?" in the defence.
+| **O5** | Generate personal atomic paths and project recommendations | [Atomic Roadmap](05-features-mvp.md#56-atomic-roadmap--core), [Projects](05-features-mvp.md#58-project-recommendations) | FR-37…FR-39, FR-21, [RQ3](09-evaluation.md#rq3) |
+| **O6** | Track micro-lesson progress, derive mastery, and update readiness | [Lessons & Mastery](05-features-mvp.md#59-lessons-mastery-and-progress), [Readiness Score](05-features-mvp.md#57-career-readiness-score) | FR-40…FR-42, FR-26 |
+| **O7** | Provide an AI-assisted mentor with atom retrieval | [AI Mentor](06-ai-engines.md#4-engine-c--context-aware-ai-mentor-rag) | FR-27…FR-29, FR-52, [RQ4](09-evaluation.md#rq4) |
+| **O8** | Help students prepare for internships and entry-level roles | [Internship Readiness](05-features-mvp.md#512-internship-readiness-checklist) | FR-30, FR-53 |
+| **O9** | Give faculty visibility into cohort-level skill and atom gaps | [Advisor Dashboard](05-features-mvp.md#513-advisor-dashboard) | FR-31…FR-33, FR-54 |
+| **O10**| Keep learners practising daily (atomic lessons, streaks, review) | [Lesson Player](05-features-mvp.md#517-lesson-player), [Gamification](05-features-mvp.md#518-gamification), [Review](05-features-mvp.md#519-review-and-retention) | FR-40, FR-45, FR-46, [RQ5](09-evaluation.md#rq5), [RQ8](09-evaluation.md#rq8) |
 
 ---
 
 ## 4. Scope
 
-Writing this down prevents the most common graduation-project failure: quietly growing the
-scope until nothing is finished.
-
 ### In scope (MVP)
 
-- Career guidance for **6 technology career paths** (see [§04](04-data-model.md#52-seed-careers))
-- **Computer Science students** at Suez Canal University as the primary audience
-- **English** UI, with Arabic-ready infrastructure ([NFR-13](02-requirements.md#nfr-13--internationalisation-readiness))
-- A **web application** — responsive, usable on a phone browser
-- A **frozen, documented snapshot** of job-posting data, not live scraping ([ADR-0003](adr/0003-job-data-sourcing.md))
+- Career guidance for **6 technology career paths** ([§04 5.2](04-data-model.md#52-seed-careers)).
+- **Computer Science students** at Suez Canal University as primary audience.
+- **Atomic Roadmap of $\approx 4,050$ micro-lessons** (3–8 minutes each) grouped into structured units across four stages.
+- **Interactive Lesson Player** with instant feedback and authoritative re-grading.
+- **Gamification mechanics:** XP, daily goals, IANA timezone streaks, streak freezes, and exam pauses.
+- **Spaced repetition practice queue** (Leitner 5-box system).
+- **Static content delivery:** Pre-rendered versioned JSON bundles (`/content/v{n}/*.json`) served via CDN.
+- **English UI**, with i18n-ready structure for future Arabic micro-lessons ([NFR-13](02-requirements.md#nfr-13--internationalisation-readiness)).
+- **Responsive web application (PWA)** optimized for mobile and desktop browsers.
+- **Frozen, documented snapshot** of 500–800 job postings ([ADR-0003](adr/0003-job-data-sourcing.md)).
 
 ### Explicitly out of scope
 
 | Not doing | Why |
 |---|---|
-| Live job scraping at scale | Legal grey area, unstable, and would sit on the critical path. [ADR-0003](adr/0003-job-data-sourcing.md) |
-| Real job matching / applications | Requires employer relationships we do not have |
-| Non-technology careers | The skill taxonomy would not transfer |
-| Native mobile apps | A responsive web app covers the need at a fraction of the cost |
-| Payments, subscriptions, monetisation | No budget, no legal entity |
-| Video content or an authored course library | We link to existing free resources instead |
-| Multi-university tenancy | One faculty's curriculum is enough to prove the idea |
+| In-browser code execution sandbox | High security/sandbox complexity, zero budget. Exercises use structured tokens, ordering, and bug identification. |
+| Live scraping at scale | Legal and stability risks on free hosting. Uses a frozen snapshot. |
+| Real job matching / vacancies | Out of scope; we match careers, not live vacancies. |
+| Native mobile apps (iOS/Android) | Responsive PWA covers student devices at zero additional maintenance cost. |
+| Payments, subscriptions, monetisation | $0 budget academic graduation project. No hearts/lives or paywalls. |
+| Authored long-form video courses | Curates external deep-dive links (`ATOM_RESOURCE`) instead. |
+| Multi-tenant university federation | Focuses strictly on Suez Canal University CS department. |
 
 ---
 
@@ -95,129 +111,62 @@ Masar connects three things that are normally disconnected: **what a student can
 
 Four contributions are genuinely defensible in a thesis:
 
-1. **A model-first career recommendation method** — an AI recommendation pipeline in which
-   embeddings, candidate retrieval and a reranker provide the primary career ranking signal,
-   followed by deterministic mandatory constraints. The existing deterministic baseline is
-   retained for evaluation and as a documented fallback ([RQ1](09-evaluation.md#rq1-does-the-model-first-recommendation-pipeline-outperform-the-deterministic-baseline)).
-2. **Curriculum-to-skill mapping.** Mapping an actual department's course catalogue onto a
-   market skill taxonomy, so a transcript becomes a starting skill profile. We are not aware
-   of a commercial product that does this, and it directly addresses P3.
-3. **Prerequisite-aware, time-budgeted roadmap generation.** A deterministic scheduler over a
-   skill DAG that turns an hours-per-week budget into a dated weekly plan — not an unordered
-   list of topics.
-4. **Regional market weighting.** Skill importance computed from Egypt/MENA postings alongside
-   global postings, exposing where local demand diverges. Cheap once the corpus exists, and it
-   makes the recommendations meaningfully local.
+1. **A model-first career recommendation method.** An AI recommendation pipeline combining profile embeddings, semantic scoring, and reranking, followed by deterministic mandatory constraints ([RQ1](09-evaluation.md#rq1)).
+2. **Curriculum-to-atom mapping.** Mapping department course syllabi directly to learning atoms, pre-filling verified starting paths. We are not aware of a comparable academic or commercial system doing this at an atomic granularity; a formal literature check is scheduled ([12 §7](12-references.md#7-literature-check-schedule)).
+3. **Atomic, prerequisite-aware roadmap.** A deterministic graph decomposed into $\approx 4,050$ atoms with an authored, validated canonical order, gap-driven unit prioritisation, and continuous derived mastery.
+4. **Regional market weighting.** Skill importance computed from Egypt/MENA postings alongside global postings, highlighting local technology variances.
 
 ### Where AI sits, precisely
 
-The original specification contradicted itself, calling AI both "the core intelligence engine"
-and "an enabling component, not the product itself." The resolved position:
-
-> **AI provides the primary intelligence for career prediction and semantic matching.
-> Deterministic logic enforces mandatory recommendation constraints and preserves correctness
-> where a model cannot be allowed to violate a hard requirement.**
+> **AI provides intelligence for career prediction, job-posting extraction, offline lesson drafting, and student mentoring. Deterministic logic strictly governs all core learning loops (gap analysis, atomic roadmap generation, mastery derivation, and streak tracking).**
 
 | Concern | Owned by | Rationale |
 |---|---|---|
-| Skill extraction from free text | **AI** (NLP) | Unstructured input; no rule set generalises |
-| Career prediction / ranking | **AI recommendation model** | The model is the primary ranking signal |
-| Mandatory career constraints | **Deterministic logic inside the AI service** | Hard constraints must never be violated |
-| Gap classification | **Deterministic** | Must be reproducible and explainable to the student |
-| Roadmap ordering | **Deterministic** (topological sort) | An LLM cannot be trusted to respect prerequisites |
-| Resource selection | **Curated database** | An LLM will confidently generate dead URLs |
-| Explanation and mentoring | **AI** (RAG) | Natural language over data the system already computed |
+| Job skill extraction from free text | **AI** (NLP, offline) | Unstructured text requires NLP and context disambiguation |
+| Offline micro-lesson drafting | **AI** (Offline LLM, human review) | High volume requires AI drafting with automated CI checks |
+| Career prediction / ranking | **AI recommendation service** | Semantic scoring and reranker provide primary match signal |
+| Mandatory career constraints | **Deterministic logic** | Hard business rules must never be violated |
+| Gap classification & priority | **Deterministic** | Monotone arithmetic provable by unit tests |
+| Atomic path derivation & mastery | **Deterministic** | Pure functions over graph and student atom states |
+| Explanation and mentoring | **AI** (RAG + Atom retrieval) | Natural language over allow-listed context and trusted atoms |
 
-Every AI component has a documented non-AI fallback
-([§06 Fallbacks](06-ai-engines.md#7-fallbacks-and-graceful-degradation)).
-The demo cannot fail because a rate limit was hit.
+Every AI component has a documented non-AI fallback ([§06 7](06-ai-engines.md#7-fallbacks-and-graceful-degradation)).
 
 ---
 
 ## 6. Related work
 
-The report needs this section, and knowing it prevents rebuilding something that already exists.
 Full citations in [§12](12-references.md).
 
 | System | What it does | What it does not do |
 |---|---|---|
-| **roadmap.sh** | Excellent hand-curated role roadmaps | Identical for everyone; no assessment, no gap analysis, no progress-aware re-planning |
-| **LinkedIn Skills / Learning** | Skill tags and course suggestions from a huge graph | Optimises for engagement; no prerequisite sequencing; not tied to a student's transcript |
-| **Coursera / Udemy recommenders** | Recommend courses | Recommend *their own* catalogue; no career gap model; commercial incentive |
-| **Interest/personality career quizzes** | Interest profiling | No technical skill assessment; output is a label, not a plan |
-| **O\*NET / ESCO** | Authoritative occupation↔skill taxonomies, public and free | Reference data, not a product; occupation-level and slow-moving; not student-facing |
-| **ATS / résumé scanners** | Keyword-match a CV against a posting | Post-hoc; tells you that you failed, not what to learn |
-
-**Masar's position:** the only system combining *measured* student skills, *the student's own
-curriculum*, and *current market demand* into a *sequenced, adaptive* plan.
+| **roadmap.sh** | Excellent hand-curated role roadmaps | Identical for everyone; no assessment, no gap analysis, no atomic lessons or progress tracking |
+| **Duolingo / Codecademy / boot.dev** | Gamified bite-sized learning paths with streaks | Generic curricula; not tied to university courses, market demand, or personalized gap analysis |
+| **Khan Academy / ALEKS** | Knowledge tracing and adaptive practice | Academic school topics; no tech career alignment or job-posting demand weighting |
+| **LinkedIn Skills / Learning** | Course suggestions from user skill graphs | Optimises for engagement; no prerequisite sequencing; commercial incentive |
+| **Coursera / Udemy** | Video course libraries | Coarse 40-hour courses; no atomic daily micro-lessons; no cohort analytics |
+| **O\*NET / ESCO** | Public occupation-skill taxonomies | Reference data, not a consumer product; slow-moving; no student learning path |
 
 ---
 
 ## 7. Team & responsibilities
 
-Every MVP-critical component has a **primary** and a **secondary** owner. Single-owner
-components are how graduation projects die when one person hits an exam week.
-
 | Member | Role | Primary responsibilities | Backs up |
 |---|---|---|---|
-| **Abdelrahman Megahed** | Team Lead · Full-Stack | Architecture, [API contract](07-api-contract.md), integration, releases, project tracking | Floating capacity |
-| **Mohamed Yasser** | .NET Backend | Data model, EF Core layer, Profile + Assessment + Career services | Osama |
-| **Osama Mohammed** | .NET Backend | **Gap engine**, **roadmap scheduler**, progress service | Mohamed Y. |
-| **Ahmed Yousef** | AI / ML | Skill extraction, embeddings, FastAPI recommendation service, recommendation baseline/fallback, **AI Mentor backend intelligence, LLM integration/provider abstraction, prompt security and output validation**, [evaluation](09-evaluation.md) | Ziad |
-| **Ziad Ahmed** | Frontend · Integration | Mentor UI, gap + roadmap UI, explainability UI, **AI service client integration support** | Ahmed Y., Mazen |
-| **Mazen Oraby** | Frontend | Profile, assessment, dashboard, resource and project views | Ziad |
-| **Yousef Khaled** | UI/UX | Design system, wireframes, prototypes, **usability testing**, accessibility | Mazen |
-| **Mohamed Salah** | DevOps | CI/CD, containers, staging + production deploys, seed-data pipeline, backups | Abdelrahman |
+| **Abdelrahman Megahed** | Team Lead · Full-Stack | Architecture, [API contract](07-api-contract.md), integration, security review, defence coordination | Floating capacity |
+| **Mohamed Yasser** | .NET Backend | Data model & migrations, seed loaders, curriculum-to-atom mapping, profile services | Osama |
+| **Osama Mohammed** | .NET Backend | **Path engine**, **mastery derivation**, **game state (XP/streak)**, lesson API | Mohamed Y. |
+| **Ahmed Yousef** | AI / ML | Prompt templates for drafting, blind-solve checks, recommendation pipeline, mentor retrieval, [evaluation](09-evaluation.md) | Ziad |
+| **Ziad Ahmed** | Frontend · Integration | Lesson player, path UI, result sheet, AI service client integration support | Mazen |
+| **Mazen Oraby** | Frontend | Profile, onboarding, review player, dashboard views | Ziad |
+| **Yousef Khaled** | UI/UX | Design tokens, accessible UI components, animations, usability testing | Mazen |
+| **Mohamed Salah** | DevOps | Content factory CLI, CI validator, static bundle publishing, uptime ping, deployments | Abdelrahman |
 
-### Ownership map
-
-```mermaid
-flowchart TB
-    LEAD["Abdelrahman Megahed<br/><i>Lead · Architecture · Integration</i>"]
-
-    subgraph BE["Backend · .NET"]
-        BE1["Mohamed Yasser<br/>data · profile · careers"]
-        BE2["Osama Mohammed<br/>gap engine · scheduler"]
-    end
-
-    subgraph FE["Frontend · React"]
-        FE1["Ziad Ahmed<br/>gap · roadmap · mentor UI"]
-        FE2["Mazen Oraby<br/>profile · dashboard"]
-        FE3["Yousef Khaled<br/>design system · UX testing"]
-    end
-
-    subgraph AI["AI Service · Python"]
-        AI1["Ahmed Yousef<br/>extraction · embeddings · recommendation · AI Mentor"]
-    end
-
-    subgraph OPS["Platform"]
-        OPS1["Mohamed Salah<br/>CI/CD · deploy · seed data"]
-    end
-
-    LEAD --> BE
-    LEAD --> FE
-    LEAD --> AI
-    LEAD --> OPS
-    AI1 <-.-> FE1
-```
-
-### Cross-cutting workstreams
-
-These were unowned in the original plan, and they are exactly the work that gets dropped.
-
-| Workstream | Owner | Support |
-|---|---|---|
-| **Data curation** — careers, skills, resources, projects | Mohamed Yasser | Mazen, Yousef K. |
-| **Prerequisite DAG authoring** + cycle detection | Osama | Ahmed Y. |
-| **QA & test strategy** | Ziad | Mohamed Salah |
-| **Evaluation & user study** | Ahmed Yousef | Yousef K. |
-| **Report & presentation** | Abdelrahman | All |
-
-Full task-level assignment with dates is in [§08](08-plan-and-timeline.md).
+---
 
 ## 8. The end-to-end user workflow
 
-Masar operates on a two-phase user journey that resolves the cold-start problem for undecided students while driving long-term skill acquisition:
+Masar operates on a two-phase user journey that resolves onboarding drop-off while driving daily micro-learning:
 
 ```mermaid
 sequenceDiagram
@@ -225,51 +174,54 @@ sequenceDiagram
     actor Student
     participant Wizard as Onboarding Wizard
     participant Engine as Recommender & Gap Engine
-    participant Scheduler as Roadmap Scheduler
-    participant Prog as Adaptive Progress Loop
+    participant Path as Atomic Path Builder
+    participant Player as Lesson Player & Loop
 
-    Note over Student,Wizard: Phase 1 — First-Time Onboarding & Plan Creation
-    Student->>Wizard: 1. Complete personality & work-preference assessment
-    Student->>Wizard: 2. Select completed coursework & self-rate claimed skills
-    Wizard-->>Student: Auto-propose course-derived skills + flag unverified claims
-    Student->>Wizard: 3. Take targeted calibration quizzes (top claimed core skills)
-    Wizard->>Engine: Run model-first career recommendation
-    Engine-->>Student: 4. Reveal ranked careers with transparent fit breakdown
-    Student->>Engine: Confirm target career & track (e.g. Backend -> .NET)
-    Engine->>Scheduler: Compute gaps & schedule against weekly hours budget
-    Scheduler-->>Student: 5. Generate dated, prerequisite-ordered roadmap & capstone
+    Note over Student,Wizard: Phase 1 — First-Time Onboarding (<= 10 min)
+    Student->>Wizard: 1. Complete 22-item personality & work assessment (<= 4 min)
+    Student->>Wizard: 2. Select completed courses & claim skills (<= 3 min)
+    Wizard-->>Student: Propose unverified skills mapped from courses
+    Student->>Wizard: 3. Optional adaptive placement probe (<= 5 min, skippable)
+    Wizard->>Engine: Run model-first recommendation
+    Engine-->>Student: 4. Reveal ranked careers with reason badges (<= 2 min)
+    Student->>Wizard: Select target career & track (e.g. Backend .NET)
+    Wizard-->>Student: Preview compact Readiness Summary Card
+    Student->>Wizard: 5. Select weekly goal (e.g. 5 hrs/week)
+    Wizard->>Path: Initialize atomic path
+    Path-->>Student: Reveal unit path and automatically focus Lesson 1
 
-    Note over Student,Prog: Phase 2 — Adaptive Learning & Progress Loop
-    loop Every learning cycle
-        Student->>Prog: Complete roadmap item / submit evidence
-        Prog->>Prog: Increment skill level & update readiness score
-        Prog->>Scheduler: Recalculate gaps and unblock next phase
-        Student->>Prog: Consult AI Mentor for grounded milestone guidance
+    Note over Student,Player: Phase 2 — Daily Micro-Learning Loop (5–10 min/day)
+    loop Daily Practice Cycle
+        Student->>Player: Open next micro-lesson (3–8 min)
+        Player-->>Student: Instant local feedback and re-queue missed exercises
+        Student->>Player: Complete lesson
+        Player->>Player: Server authoritative re-grading, award XP & increment streak
+        Player->>Player: Update continuous readiness score smoothly
+        Student->>Player: Complete due spaced-repetition reviews (Practice tab)
+        Student->>Player: Consult AI Mentor with atom retrieval deep links
     end
 ```
 
-### 8.1 Phase 1 — Onboarding and plan creation
+### 8.1 Phase 1 — Onboarding and path reveal
 
-1. **Personality & work-preference assessment:** Rather than confronting students with a blank skill list, Masar starts with a quick Likert-scale assessment probing problem-solving inclinations (analytical vs visual), work environments (team vs solo), and interests.
-2. **Skill identification & coursework pre-fill:** Students select their academic year and completed Suez Canal University courses. The curriculum mapping pre-fills foundational skills with confidence ratings, and students self-rate any additional claimed skills on the 0–5 proficiency scale.
-3. **Targeted skill calibration:** To combat self-assessment bias without inducing questionnaire fatigue, the system generates focused diagnostic quizzes (5–8 questions) for the student's top 2–3 core technical claimed skills with active question banks. Students can complete these immediately or calibrate remaining skills later from the dashboard.
-4. **Career recommendation & target selection:** The model-first recommendation service ranks careers using the AI recommendation pipeline and applies mandatory constraints before returning the final ranking with inspectable reasoning. The student confirms their chosen career and track.
-5. **Personalized roadmap generation:** The deterministic scheduler runs a topological sort over the induced prerequisite DAG, packaging gaps into weekly phases matching the student's hours-per-week budget, attaching free curated resources and a multi-skill capstone project.
+1. **Personality & preference assessment:** 22 Likert items ($\le 4$ minutes) establishing initial interest and work-style vectors.
+2. **Coursework & skill identification:** Course mapping pre-fills unverified foundational skills; student claims additional skills ($\le 3$ minutes).
+3. **Targeted adaptive placement probe:** Diagnostic up/down probe for core claimed skills (capped at level 4 verified; skippable).
+4. **Career recommendation & target selection:** Model-first recommendation with inspectable reason badges. Student commits to target career and track ($\le 2$ minutes), followed by a compact Readiness Summary Card preview.
+5. **Weekly goal & path reveal:** Student selects weekly study goal in hours/week (1–20 hrs/week; presets: 2, 3, 5, 10 hrs/week; default: 5 hrs/week, with an illustrative daily pacing indicator $\approx 43$ min/day) and is launched directly into their first lesson ($\le 10$ minutes total without placement, $\le 15$ minutes with placement).
 
-### 8.2 Phase 2 — Continuous growth and the adaptive loop
+### 8.2 Phase 2 — Daily micro-learning loop
 
-- **Progressive verification:** Marking learning milestones or capstone deliverables complete increments the student's effective skill level.
-- **Dynamic recalculation:** Every completion instantly recalculates the career readiness score, logs a historical trend point, and recalculates subsequent unblocked dependencies.
-- **Contextual mentoring:** Students consult the AI mentor, who answers questions grounded strictly in the student's verified skills, roadmap items, and local market statistics.
+- **Micro-lessons (3–8 minutes):** Focus mode, structured exercises, instant local feedback.
+- **Authoritative mastery:** Server re-grades attempts, derives band mastery $m_b$, updates integer level $L(s)$, and smoothly advances continuous readiness $c(s)$.
+- **Gamified motivation:** XP rewards, daily streaks (IANA timezone bounded), streak freezes, and exam-week pauses keep students practising daily without coercive life-depletion mechanics.
+- **Spaced repetition:** 5-box Leitner review queue scheduled at 1, 3, 7, 14, 30 days.
 
 ---
 
 ## 9. One-sentence definition
 
-> **Masar** measures a Computer Science student's current skills, recommends technology career
-> paths that fit them, quantifies exactly which skills they lack for a chosen path, and
-> generates a prerequisite-ordered, time-budgeted learning and project plan that re-adapts
-> every time they complete something.
+> **Masar** measures a Computer Science student's skills, recommends matching career paths, quantifies precise skill gaps against live market requirements, and guides the student along an **atomic, prerequisite-aware roadmap of 3–8 minute micro-lessons** with instant feedback, streaks, and continuous readiness tracking that adapts dynamically as they learn.
 
 ---
 

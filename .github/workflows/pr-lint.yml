@@ -34,10 +34,10 @@ jobs:
         run: |
           echo "Checking branch name: '$HEAD_BRANCH'"
           # Working agreement branch naming: feat/*, fix/*, docs/*, chore/*, refactor/*, test/*
-          REGEX="^(feat|fix|docs|chore|refactor|test)\/[a-zA-Z0-9._-]+$"
+          REGEX="^(feat|fix|docs|chore|refactor|test)[/-][a-zA-Z0-9._-]+$"
           if [[ ! "$HEAD_BRANCH" =~ $REGEX ]]; then
             echo "::error::Branch name '$HEAD_BRANCH' does not follow working agreement convention."
-            echo "Branch must start with feat/, fix/, docs/, chore/, refactor/, or test/."
+            echo "Branch must start with feat/, fix/, docs/, chore/, refactor/, or test/ (or hyphen-separated equivalent)."
             echo "Example: feat/s0-docker-compose or fix/gap-rounding"
             exit 1
           fi

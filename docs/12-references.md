@@ -1,6 +1,6 @@
 # 12 — References
 
-**Document owner:** Ahmed Yousef · **Status:** Living document
+**Document owner:** Ahmed Yousef · **Status: Revised <2026-11-15> (atomic roadmap + defect fixes)**
 
 Add every source as it is used. Reconstructing a bibliography in week 34 from memory is miserable and
 produces gaps a reviewer will notice.
@@ -58,12 +58,11 @@ using Hierarchical Navigable Small World graphs," *IEEE TPAMI*, 2020.
 
 **[9]** P. Lewis et al., "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks,"
 in *Proc. NeurIPS*, 2020.
-— The RAG formulation behind Engine C. Note in the report that Masar retrieves from **structured
-student data** rather than a document corpus, which is a simplification worth stating explicitly.
+— The RAG formulation behind Engine C. Engine C retrieves from authored atomic learning content (`atom` title, summary, key concepts, question) to answer student queries with deep links, ensuring grounded and verified answers.
 
 **[10]** OWASP Foundation, *OWASP Top 10 for Large Language Model Applications*.
 Available: <https://owasp.org/www-project-top-10-for-large-language-model-applications/>
-— The basis for the controls in [§06 4.5](06-ai-engines.md#45-prompt-injection-hardening). LLM01
+— The basis for the controls in [§06 4.6](06-ai-engines.md#46-prompt-injection-hardening). LLM01
 (Prompt Injection) and LLM06 (Sensitive Information Disclosure) are the directly relevant items.
 
 ---
@@ -72,11 +71,11 @@ Available: <https://owasp.org/www-project-top-10-for-large-language-model-applic
 
 **[11]** K. Järvelin and J. Kekäläinen, "Cumulated gain-based evaluation of IR techniques,"
 *ACM Trans. Inf. Syst.*, vol. 20, no. 4, 2002.
-— The definition of NDCG used in [RQ1](09-evaluation.md#rq1-does-the-model-first-recommendation-pipeline-outperform-the-deterministic-baseline).
+— The definition of NDCG used in [RQ1](09-evaluation.md#rq1).
 
 **[12]** J. Brooke, "SUS: A 'quick and dirty' usability scale," in *Usability Evaluation in Industry*,
 Taylor & Francis, 1996.
-— The System Usability Scale used in [RQ5](09-evaluation.md#5-usability-study).
+— The System Usability Scale used in [RQ5](09-evaluation.md#rq5).
 
 **[13]** A. Bangor, P. Kortum and J. Miller, "Determining what individual SUS scores mean: adding an
 adjective rating scale," *J. Usability Studies*, vol. 4, no. 3, 2009.
@@ -91,11 +90,11 @@ Available: <https://www.nngroup.com/articles/why-you-only-need-to-test-with-5-us
 
 ---
 
-## 5. Standards
+## 5. Standards and guidelines
 
 **[16]** W3C, *Web Content Accessibility Guidelines (WCAG) 2.1*, W3C Recommendation, 2018.
 Available: <https://www.w3.org/TR/WCAG21/>
-— The target for [NFR-05](02-requirements.md#nfr-05--accessibility).
+— The target for [NFR-05](02-requirements.md#nfr-05--accessibility). Specifically incorporates Success Criterion 2.3.1 (Three Flashes or Below Threshold) and Success Criterion 2.3.3 (Animation from Interactions) for gamification animations and celebratory UI.
 
 **[17]** Internet Engineering Task Force, *RFC 7519 — JSON Web Token (JWT)*, 2015.
 
@@ -120,9 +119,58 @@ Available: <https://www.linkedin.com/help/linkedin/answer/a507663>
 
 **[22]** Coursera, *Coursera Career Academy / Skills Graph*. Available: <https://www.coursera.org>
 
+**[23]** Duolingo, *Duolingo: Language Learning*. Available: <https://www.duolingo.com>
+
+**[24]** Khan Academy, *Khan Academy: Mastery Learning Platform*. Available: <https://www.khanacademy.org>
+
+**[25]** Codecademy, *Codecademy: Interactive Coding Tutorials*. Available: <https://www.codecademy.com>
+
+**[26]** freeCodeCamp, *freeCodeCamp: Learn to Code for Free*. Available: <https://www.freecodecamp.org>
+
+**[27]** boot.dev, *boot.dev: Learn Backend Development*. Available: <https://www.boot.dev>
+
+**[28]** DataCamp, *DataCamp: Learn Data Science and AI Online*. Available: <https://www.datacamp.com>
+
+**[29]** McGraw Hill, *ALEKS: Assessment and Learning in Knowledge Spaces*. Available: <https://www.aleks.com>
+
 ---
 
-## 7. To be added
+## 7. Knowledge tracing, spaced repetition, and gamification literature
+
+The following citations support the pedagogical and algorithmic foundations of the atomic roadmap, spaced repetition, and engagement mechanics. *(Verify before citing in final report draft)*.
+
+**[30]** B. Settles and B. Meeder, "A Trainable Spaced Repetition Model for Language Learning," in *Proc. 54th Annual Meeting of the Association for Computational Linguistics (ACL)*, 2016, pp. 1848–1858. *(verify before citing)*
+— Half-life regression model powering Duolingo's spaced repetition system.
+
+**[31]** A. T. Corbett and J. R. Anderson, "Knowledge tracing: Modeling the acquisition of procedural knowledge," *User Modeling and User-Adapted Interaction*, vol. 4, no. 4, pp. 253–278, 1995. *(verify before citing)*
+— Classical Bayesian Knowledge Tracing (BKT) formulation establishing mastery thresholds across skill components.
+
+**[32]** C. Piech, J. Bassen, J. Huang, S. Ganguli, M. Sahami, L. J. Guibas, and J. Sohl-Dickstein, "Deep Knowledge Tracing," in *Advances in Neural Information Processing Systems (NeurIPS)*, vol. 28, 2015. *(verify before citing)*
+— Recurrent neural network formulation of student knowledge state tracking.
+
+**[33]** J.-P. Doignon and J.-C. Falmagne, *Knowledge Spaces*, Berlin: Springer-Verlag, 1999. *(verify before citing)*
+— Mathematical foundation of prerequisite structures, surmise relations, and well-graded knowledge states over atomic learning items.
+
+**[34]** S. Leitner, *So lernt man lernen: Der Weg zum Erfolg*, Freiburg: Herder, 1972. *(verify before citing)*
+— The classical Leitner 3-box/5-box physical spaced-repetition card system, serving as the basis for the 5-box Leitner review queue.
+
+**[35]** P. A. Wozniak, "Optimization of learning," Master's thesis, University of Technology in Poznań, 1990. *(verify before citing)*
+— Description of SuperMemo Algorithm 2 (SM-2) for interval calculation.
+
+**[36]** J. Ye et al., *Free Spaced Repetition Scheduler (FSRS)*, Open Spaced Repetition Project, 2023. Available: <https://github.com/open-spaced-repetition/fsrs4anki> *(verify before citing)*
+— Modern memory-state spaced repetition algorithm based on stability, retrievability, and difficulty; documented as post-MVP review scheduler upgrade.
+
+**[37]** D. Dicheva, C. Dichev, G. Agre, and G. Angelova, "Gamification in Education: A Systematic Mapping Study," *Educational Technology & Society*, vol. 18, no. 3, pp. 75–88, 2015. *(verify before citing)*
+— Peer-reviewed systematic mapping of gamification elements (points, badges, leaderboards, progression) and empirical outcomes in educational settings.
+
+**[38]** J. Hamari, J. Koivisto, and H. Sarsa, "Does Gamification Work? — A Literature Review of Empirical Studies on Gamification," in *Proc. 47th Hawaii International Conference on System Sciences (HICSS)*, 2014, pp. 3025–3034. *(verify before citing)*
+— Peer-reviewed review of empirical evidence for motivational affordances and behavioral engagement.
+
+---
+
+<a id="7-literature-check-schedule"></a>
+
+## 8. To be added
 
 Sources needed but not yet gathered, with an owner and a target week so they do not quietly disappear.
 
@@ -131,8 +179,9 @@ Sources needed but not yet gathered, with an owner and a target week so they do 
 | Academic work on skill-gap analysis in education | Positions the core contribution in the literature | Ahmed Yousef | W17 |
 | Curriculum-to-competency mapping papers | Directly supports contribution #2 — the strongest novelty claim | Ahmed Yousef | W17 |
 | Egypt / MENA IT labour-market reports | Justifies the regional weighting contribution | Abdelrahman | W20 |
-| Learning-path sequencing and prerequisite-graph literature | Grounds the scheduler in prior work | Osama | W20 |
-| Self-assessment bias in student skill estimation | Motivates the calibration quiz and the validity discussion | Yousef Khaled | W20 |
+| Learning-path sequencing and prerequisite-graph literature | Grounds the atomic sequence in prior work (beyond Doignon & Falmagne) | Osama | W20 |
+| Self-assessment bias in student skill estimation | Motivates the 22-item placement assessment and validity discussion | Yousef Khaled | W20 |
+| Verification of references [30]–[38] | Confirm page numbers, DOIs, and citation accuracy before report draft | Ahmed Yousef | W17 |
 | Faculty citation-style requirement | Formatting the bibliography correctly the first time | Abdelrahman | W10 |
 
 > The second row matters most. Curriculum-to-competency mapping is the project's clearest original
@@ -142,7 +191,7 @@ Sources needed but not yet gathered, with an owner and a target week so they do 
 
 ---
 
-## 8. How to maintain this file
+## 9. How to maintain this file
 
 1. Add a source **when you use it**, not later.
 2. Record the access date for anything web-based.
@@ -152,4 +201,4 @@ Sources needed but not yet gathered, with an owner and a target week so they do 
 
 ---
 
-*End of the documentation set.*
+**Next:** [13 — Learning Experience](13-learning-experience.md)
