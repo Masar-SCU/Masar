@@ -1,0 +1,94 @@
+services:
+  # =========================================================================
+  # 1. Database: PostgreSQL 16 with pgvector extension pre-installed
+  # =========================================================================
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: masar-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-masar}
+      POSTGRES_USER: ${POSTGRES_USER:-masar_dev}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-masar_dev_password}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-masar_dev} -d ${POSTGRES_DB:-masar}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - masar-network
+
+  # =========================================================================
+  # 2. Backend: ASP.NET Core 10 Web API
+  # =========================================================================
+  api:
+    build:
+      context: ./src/backend
+      dockerfile: Dockerfile
+    container_name: masar-api
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-5080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ai:
+        condition: service_started
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__MasarDb=Host=postgres;Port=5432;Database=${POSTGRES_DB:-masar};Username=${POSTGRES_USER:-masar_dev};Password=${POSTGRES_PASSWORD:-masar_dev_password}
+      - Jwt__Secret=${JWT_SECRET:-masar_dev_jwt_secret_key_minimum_32_characters_for_local_dev!}
+      - AiService__BaseUrl=http://ai:8000
+      - AiService__Key=${AI_SERVICE_KEY:-masar_local_secret_key_123}
+    networks:
+      - masar-network
+
+  # =========================================================================
+  # 3. AI Service: Python FastAPI (Internal only - NOT published to internet)
+  # =========================================================================
+  ai:
+    build:
+      context: ./src/ai
+      dockerfile: Dockerfile
+    container_name: masar-ai
+    restart: unless-stopped
+    expose:
+      - "8000"
+    environment:
+      - AI_SERVICE_KEY=${AI_SERVICE_KEY:-masar_local_secret_key_123}
+    networks:
+      - masar-network
+
+  # =========================================================================
+  # 4. Frontend: React 19 + TypeScript + Vite
+  # =========================================================================
+  web:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile
+    container_name: masar-web
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    depends_on:
+      api:
+        condition: service_started
+    environment:
+      - VITE_API_URL=http://localhost:${BACKEND_PORT:-5080}
+    networks:
+      - masar-network
+
+# =============================================================================
+# Volumes and Networks
+# =============================================================================
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  masar-network:
+    driver: bridge
