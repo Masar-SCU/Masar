@@ -1,6 +1,7 @@
 import axios, { type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
 import type { ApiErrorDetail, ApiErrorEnvelope } from '../types/api.ts';
 import { mocks } from '../mocks/index.ts';
+import { AUTH_TOKEN_KEY, LEGACY_AUTH_TOKEN_KEY } from './constants.ts';
 
 /**
  * Standard RFC-compliant API error thrown by Masar client.
@@ -50,32 +51,55 @@ export const apiClient = axios.create({
 function resolveMockResponse(config: InternalAxiosRequestConfig): unknown | null {
   const url = config.url || '';
   const method = (config.method || 'get').toLowerCase();
+  const pathname = new URL(url, 'http://localhost').pathname;
 
   if (method === 'get') {
-    if (url.includes('/api/profile/completeness')) return mocks.completeness;
-    if (url.includes('/api/profile/skills')) return mocks.skills;
-    if (url.includes('/api/profile')) return mocks.profile;
-    if (url.includes('/api/skills')) return mocks.catalogue;
-    if (url.includes('/api/careers')) return mocks.careers;
-    if (url.includes('/api/recommendations')) return mocks.recommendations;
-    if (url.includes('/api/gap-analysis')) return mocks.gapAnalysis;
+    if (pathname === '/api/meta') return mocks.meta;
+    if (pathname === '/api/profile/completeness') return mocks.completeness;
+    if (pathname === '/api/profile/skills') return mocks.skills;
+    if (pathname === '/api/profile') return mocks.profile;
+    if (pathname === '/api/skills') return mocks.catalogue;
+    if (pathname === '/api/careers') return mocks.careers;
+    if (pathname === '/api/recommendations') return mocks.recommendations;
+    if (pathname === '/api/gap-analysis') return mocks.gapAnalysis;
+    if (pathname === '/api/path') return mocks.path;
+    if (pathname === '/api/game/summary') return mocks.gameSummary;
+    if (pathname === '/api/reviews/due') return mocks.reviewsDue;
+    if (pathname.startsWith('/api/path/units/')) return mocks.unitDetail;
   }
 
   if (method === 'post') {
-    if (url.includes('/api/auth/login') || url.includes('/api/auth/register')) {
+    if (pathname === '/api/auth/login' || pathname === '/api/auth/register') {
       return mocks.auth;
     }
-    if (url.includes('/api/assessments/') && url.includes('/submit')) {
+    if (pathname.startsWith('/api/assessments/') && pathname.endsWith('/submit')) {
       return mocks.recommendations;
+    }
+    if (pathname === '/api/lessons') {
+      return { sessionId: 's-mock-session-001', contentVersion: 1 };
+    }
+    if (pathname.startsWith('/api/lessons/') && pathname.endsWith('/complete')) {
+      return {
+        accuracy: 1.0,
+        xp: { base: 15, bonus: 5, totalAwarded: 20 },
+        atomState: 'learned',
+        streak: { current: 7, extendedToday: true },
+        readiness: { before: 65.0, after: 66.5, delta: 1.5 },
+        newlyUnlockedAtoms: [],
+        achievements: [],
+      };
     }
   }
 
   if (method === 'put') {
-    if (url.includes('/api/profile/skills')) {
+    if (pathname === '/api/profile/skills') {
       return { updated: mocks.skills.length, skills: mocks.skills };
     }
-    if (url.includes('/api/profile')) {
+    if (pathname === '/api/profile') {
       return mocks.profile;
+    }
+    if (pathname === '/api/game/daily-goal') {
+      return { dailyGoalMinutes: 30 };
     }
   }
 
@@ -89,7 +113,7 @@ apiClient.interceptors.request.use((config) => {
     if (mockData !== null) {
       config.adapter = async () => {
         return {
-          data: mockData,
+          data: structuredClone(mockData),
           status: 200,
           statusText: 'OK (Mock)',
           headers: {},
@@ -100,7 +124,8 @@ apiClient.interceptors.request.use((config) => {
     }
   }
 
-  const token = localStorage.getItem('masar_access_token');
+  const token =
+    localStorage.getItem(AUTH_TOKEN_KEY) || localStorage.getItem(LEGACY_AUTH_TOKEN_KEY);
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }

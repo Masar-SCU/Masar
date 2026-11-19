@@ -1,0 +1,9 @@
+{
+  "totalXp": 480,
+  "currentStreak": 6,
+  "longestStreak": 14,
+  "streakFreezes": 2,
+  "freezeActiveToday": false,
+  "dailyGoalMinutes": 30,
+  "dailyGoalMetToday": true
+}

@@ -1,0 +1,17 @@
+{
+  "dueCount": 3,
+  "nextReviewBatch": [
+    {
+      "atomId": "a1b2c3d4-0000-0000-0000-000000000001",
+      "title": "Filtering Rows with WHERE",
+      "box": 2,
+      "dueAt": "2026-11-19T00:00:00Z"
+    },
+    {
+      "atomId": "a1b2c3d4-0000-0000-0000-000000000004",
+      "title": "C# Value vs Reference Types",
+      "box": 1,
+      "dueAt": "2026-11-19T00:00:00Z"
+    }
+  ]
+}

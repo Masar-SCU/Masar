@@ -3,8 +3,12 @@
   "email": "student@ci.suez.edu.eg",
   "academicYear": 3,
   "hoursPerWeek": 12,
+  "dailyGoalMinutes": 30,
+  "timezone": "Africa/Cairo",
   "careerGoalText": "Junior Full-Stack Web Developer with focus on .NET and React",
   "interests": ["Web Development", "Cloud Architecture", "Database Systems"],
+  "targetCareerId": 1,
+  "targetTrackId": 1,
   "advisorVisibility": true,
   "researchUse": false
 }

@@ -1,0 +1,33 @@
+{
+  "unitId": "u1111111-0000-0000-0000-000000000001",
+  "slug": "sql-fundamentals",
+  "title": "SQL Fundamentals",
+  "state": "available",
+  "checkpointState": "locked",
+  "atoms": [
+    {
+      "atomId": "a1b2c3d4-0000-0000-0000-000000000001",
+      "slug": "sql-select-where",
+      "title": "Filtering Rows with WHERE",
+      "estimatedMinutes": 5,
+      "state": "learned",
+      "prerequisites": []
+    },
+    {
+      "atomId": "a1b2c3d4-0000-0000-0000-000000000002",
+      "slug": "sql-joins-inner",
+      "title": "Inner Joins",
+      "estimatedMinutes": 5,
+      "state": "available",
+      "prerequisites": ["a1b2c3d4-0000-0000-0000-000000000001"]
+    },
+    {
+      "atomId": "a1b2c3d4-0000-0000-0000-000000000003",
+      "slug": "sql-aggregations",
+      "title": "Aggregations with GROUP BY",
+      "estimatedMinutes": 5,
+      "state": "locked",
+      "prerequisites": ["a1b2c3d4-0000-0000-0000-000000000002"]
+    }
+  ]
+}

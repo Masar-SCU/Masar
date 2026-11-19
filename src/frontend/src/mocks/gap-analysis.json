@@ -3,7 +3,7 @@
   "careerName": "Backend Development",
   "trackName": ".NET",
   "readinessScore": 65,
-  "computedAt": "2026-10-30T12:00:00Z",
+  "computedAt": "2026-11-15T09:12:00Z",
   "summary": {
     "critical": 1,
     "moderate": 2,
@@ -24,6 +24,10 @@
       "severityLabel": "Critical",
       "rationale": "Required in 68% of junior .NET postings and a hard prerequisite for multi-service deployment.",
       "verified": false,
+      "atomsRemaining": 18,
+      "minutesRemaining": 90,
+      "nextAtomId": "a1b2c3d4-0000-0000-0000-000000000001",
+      "progressToNextLevel": 0.00,
       "postingFrequency": 0.68
     },
     {
@@ -38,6 +42,10 @@
       "severityLabel": "Moderate",
       "rationale": "Appears in 54% of junior developer roles for automated verification.",
       "verified": false,
+      "atomsRemaining": 12,
+      "minutesRemaining": 60,
+      "nextAtomId": "a1b2c3d4-0000-0000-0000-000000000005",
+      "progressToNextLevel": 0.00,
       "postingFrequency": 0.54
     },
     {
@@ -48,11 +56,33 @@
       "gap": 1,
       "importance": 0.75,
       "priority": 0.75,
+      "severity": "moderate",
+      "severityLabel": "Moderate",
+      "rationale": "Solid foundation established; indexing and query performance tuning needed.",
+      "verified": true,
+      "atomsRemaining": 6,
+      "minutesRemaining": 30,
+      "nextAtomId": "a1b2c3d4-0000-0000-0000-000000000010",
+      "progressToNextLevel": 0.40,
+      "postingFrequency": 0.61
+    },
+    {
+      "skillId": 10,
+      "canonicalName": "Git & Version Control",
+      "currentLevel": 1,
+      "requiredLevel": 2,
+      "gap": 1,
+      "importance": 0.50,
+      "priority": 0.50,
       "severity": "minor",
       "severityLabel": "Minor",
-      "rationale": "Solid foundation established; indexing and performance tuning needed.",
+      "rationale": "Branching strategies, conflict resolution, and pull request workflows improve team collaboration.",
       "verified": true,
-      "postingFrequency": 0.61
+      "atomsRemaining": 4,
+      "minutesRemaining": 20,
+      "nextAtomId": "a1b2c3d4-0000-0000-0000-000000000015",
+      "progressToNextLevel": 0.50,
+      "postingFrequency": 0.70
     },
     {
       "skillId": 12,
@@ -66,6 +96,10 @@
       "severityLabel": "Met",
       "rationale": "Current verified level satisfies junior career requirements.",
       "verified": true,
+      "atomsRemaining": 0,
+      "minutesRemaining": 0,
+      "nextAtomId": null,
+      "progressToNextLevel": 1.00,
       "postingFrequency": 0.92
     },
     {
@@ -73,13 +107,17 @@
       "canonicalName": "React",
       "currentLevel": 4,
       "requiredLevel": 2,
-      "gap": -2,
+      "gap": 0,
       "importance": 0.60,
       "priority": 0.00,
       "severity": "strengths",
       "severityLabel": "Strength",
       "rationale": "Exceeds standard backend expectations, enabling versatile full-stack contribution.",
       "verified": false,
+      "atomsRemaining": 0,
+      "minutesRemaining": 0,
+      "nextAtomId": null,
+      "progressToNextLevel": 1.00,
       "postingFrequency": 0.45
     }
   ]
