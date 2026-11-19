@@ -1,12 +1,22 @@
 {
   "mode": "model-first",
+  "lowConfidence": false,
   "recommendations": [
     {
       "careerId": 2,
       "name": "Frontend / Full-Stack",
       "matchScore": 82,
+      "isActive": true,
+      "contentAvailability": 0.95,
+      "contentLimited": false,
+      "isSelectable": true,
       "breakdown": {
-        "constraintStatus": "passed"
+        "constraintStatus": "passed",
+        "modelScore": 82,
+        "baselineScore": 75,
+        "skillFit": 0.85,
+        "interestFit": 0.90,
+        "coverage": 0.80
       },
       "reasons": [
         {
@@ -27,8 +37,17 @@
       "careerId": 1,
       "name": "Backend Development",
       "matchScore": 74,
+      "isActive": true,
+      "contentAvailability": 0.98,
+      "contentLimited": false,
+      "isSelectable": true,
       "breakdown": {
-        "constraintStatus": "passed"
+        "constraintStatus": "passed",
+        "modelScore": 74,
+        "baselineScore": 68,
+        "skillFit": 0.75,
+        "interestFit": 0.85,
+        "coverage": 0.82
       },
       "reasons": [
         {

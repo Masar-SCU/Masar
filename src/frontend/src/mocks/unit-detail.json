@@ -3,6 +3,9 @@
   "slug": "sql-fundamentals",
   "title": "SQL Fundamentals",
   "state": "available",
+  "displayState": "available",
+  "bundleUrl": "/content/v1/units/sql-fundamentals.a1b2c3d4.json",
+  "canTestOut": true,
   "checkpointState": "locked",
   "atoms": [
     {
@@ -10,7 +13,7 @@
       "slug": "sql-select-where",
       "title": "Filtering Rows with WHERE",
       "estimatedMinutes": 5,
-      "state": "learned",
+      "displayState": "learned",
       "prerequisites": []
     },
     {
@@ -18,7 +21,7 @@
       "slug": "sql-joins-inner",
       "title": "Inner Joins",
       "estimatedMinutes": 5,
-      "state": "available",
+      "displayState": "current",
       "prerequisites": ["a1b2c3d4-0000-0000-0000-000000000001"]
     },
     {
@@ -26,7 +29,7 @@
       "slug": "sql-aggregations",
       "title": "Aggregations with GROUP BY",
       "estimatedMinutes": 5,
-      "state": "locked",
+      "displayState": "locked",
       "prerequisites": ["a1b2c3d4-0000-0000-0000-000000000002"]
     }
   ]

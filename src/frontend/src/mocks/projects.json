@@ -1,0 +1,28 @@
+[
+  {
+    "projectId": 1,
+    "title": "RESTful Task Management API with ASP.NET Core",
+    "difficulty": "intermediate",
+    "status": "in_progress",
+    "repoUrl": "https://github.com/student/task-manager-api",
+    "liveUrl": "https://task-manager-api.masar.app",
+    "milestones": [
+      {
+        "milestoneId": 101,
+        "title": "Design Database Schema & EF Core Migrations",
+        "completed": true,
+        "note": "Configured PostgreSQL with Docker"
+      },
+      {
+        "milestoneId": 102,
+        "title": "Implement JWT Auth & Role Authorization",
+        "completed": true
+      },
+      {
+        "milestoneId": 103,
+        "title": "Unit & Integration Tests with xUnit",
+        "completed": false
+      }
+    ]
+  }
+]

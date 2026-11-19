@@ -13,7 +13,7 @@
 | Client State & Caching | **TanStack Query v5** | Caches path summaries, manages optimistic updates, and queues offline lesson completions | Ziad |
 | Path Virtualization | **TanStack Virtual** | Virtualizes vertical path rendering to current unit $\pm 2$, ensuring 60 FPS on mobile | Mazen |
 | Motion & Animation | **Tailwind / CSS Transitions** | Lightweight micro-animations strictly respecting `prefers-reduced-motion` ([NFR-19](02-requirements.md#nfr-19--motion-and-sound-safety)); no heavy animation runtimes | Yousef K. |
-| Static Content Delivery| **Static JSON Bundles on Cloudflare Pages / Vercel** | Delivers `/content/v{n}/unit-{id}.json` directly to the client; lessons start instantly even during API cold starts | Mohamed Salah |
+| Static Content Delivery| **Static JSON Bundles on Cloudflare Pages / Vercel** | Delivers `/content/v{contentVersion}/units/{unitSlug}.{hash}.json` directly to the client; lessons start instantly even during API cold starts | Mohamed Salah |
 | Backend | **ASP.NET Core 10 Web API (C#)** | Team's primary backend skill; active LTS release; high performance | Osama, Mohamed Y. |
 | ORM | **EF Core 10 + Npgsql** | Migrations, type-safe queries, `Pgvector.EntityFrameworkCore` | Mohamed Y. |
 | Database | **PostgreSQL 16 + pgvector** | Unified relational and vector store ([ADR-0001](adr/0001-database-and-vector-store.md)) | Mohamed Y. |
@@ -30,9 +30,9 @@
 
 The split is drawn on a **language and isolation boundary, not a scalability boundary**:
 
-- **.NET owns all application state, public API endpoints, authoritative re-grading, and auth.** It is the only service that talks to PostgreSQL. It executes pure domain logic (`PathBuilder`, `MasteryCalculator`, `XpCalculator`, `StreakCalculator`) and orchestrates student state transactions.
+- **.NET owns all application state, public API endpoints, authoritative re-grading, and auth.** It is the only service that talks to PostgreSQL. It executes pure domain logic (`PathBuilder`, `MasteryCalculator`, `XpCalculator`, `StreakCalculator`), orchestrates student state transactions, and exposes system status endpoints (`GET /api/health`, `GET /api/ready`, `GET /api/meta`).
 - **FastAPI owns stateless AI compute.** It performs profile embedding, semantic scoring, reranker scoring, mandatory constraint checks, and mentor RAG with atom retrieval. It maintains zero state and has no database connection.
-- **Static Content Host serves pre-rendered unit content bundles.** Micro-lesson text, exercise definitions, and answer payloads are published as versioned static JSON files (`/content/v{n}/unit-{id}.json`). The React SPA fetches content directly from the CDN/static host, providing instant lesson starts even if the backend is cold-starting.
+- **Static Content Host serves pre-rendered unit content bundles.** Micro-lesson text, exercise definitions, and answer payloads are published as versioned static JSON files (`/content/v{contentVersion}/units/{unitSlug}.{hash}.json`). The React SPA fetches content directly from the CDN/static host, providing instant lesson starts even if the backend is cold-starting.
 - **React owns presentation and instant client-side feedback.** The SPA checks exercise answers locally for instantaneous feedback, while submitting student selections to .NET for authoritative server-side grading upon lesson completion.
 - **Content factory tooling is strictly offline.** The Python content factory (`tools/content-factory/`) used for LLM drafting and CI verification operates offline using a separate developer API key and quota; it is never in the runtime path.
 
@@ -47,7 +47,7 @@ flowchart TB
     ADM["Admin"]
 
     subgraph CDN["Static Hosting / CDN"]
-        BUNDLES["Static Content Bundles<br/>/content/v{n}/unit-{id}.json"]
+        BUNDLES["Static Content Bundles<br/>/content/v{contentVersion}/units/{unitSlug}.{hash}.json"]
     end
 
     subgraph MASAR["Masar Runtime"]
@@ -287,7 +287,7 @@ sequenceDiagram
     participant DB as PostgreSQL
 
     S->>W: tap next available atom
-    W->>C: GET /content/v1/unit-{id}.json (cached by browser/CDN)
+    W->>C: GET /content/v{contentVersion}/units/{unitSlug}.{hash}.json (read via bundleUrl, cached by CDN)
     C-->>W: unit bundle (micro-lesson markdown, exercises, local keys)
     W->>A: POST /api/lessons { atomId }
     A->>DB: create lesson_session
@@ -356,7 +356,7 @@ flowchart TB
     end
 
     subgraph PROD["Zero-Budget Production"]
-        CDN["Static Content Host (Pages/Vercel)<br/>React SPA + /content/v{n}/*.json"]
+        CDN["Static Content Host (Pages/Vercel)<br/>React SPA + /content/v{contentVersion}/*.json"]
         API["ASP.NET Core 10 Web API"]
         AISVC["Python FastAPI Service (Private)"]
         DB[("PostgreSQL 16 + pgvector")]

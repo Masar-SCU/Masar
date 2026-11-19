@@ -150,10 +150,16 @@ The Lesson Player is an immersive, distraction-free environment that maximizes f
 
 ### Exercise Types Supported
 
-1. **Multiple Choice (Single & Multi-Select):** Clear question stem, code formatting blocks where applicable, 3–4 distinct options navigated via Tab and selected via Enter or Space. (Direct character key shortcuts `1`–`4` are explicitly omitted to comply with WCAG 2.1 SC 2.1.4 Character Key Shortcuts).
-2. **Code Blank Fill-In:** Short snippet with an inline `<input>` field or token drop target (e.g., `SELECT * FROM users ___ age > 21;` with choice chip `WHERE`). Fully operable via keyboard navigation and focus management.
-3. **Parsons Problems (Code Reordering):** 4–6 lines of jumbled code that the student reorders into syntactically and logically correct sequence. Fully operable via drag-and-drop as well as accessible "Move Up" / "Move Down" buttons or Alt + ArrowUp / ArrowDown shortcuts.
-4. **Code Syntax Debugger / Spot the Defect:** A 4–8 line code snippet where the student identifies the line containing a syntax or logical defect. Full keyboard alternative is provided per WCAG 2.1 SC 2.1.1: navigate through lines using Up/Down arrow keys, and select/mark the target line with Enter or Space.
+The platform supports 8 canonical structured exercise types (`docs/07-api-contract.md` §9):
+
+1. **Multiple Choice (`multiple_choice`):** Clear question stem, code formatting blocks where applicable, 3–4 distinct options navigated via `Tab` and selected via `Enter` or `Space`. (Direct character key shortcuts `1`–`4` are explicitly omitted to comply with WCAG 2.1 SC 2.1.4 Character Key Shortcuts).
+2. **Code Blank Fill-In (`fill_blank_tokens`):** Short snippet with token drop target / choices (e.g., `SELECT * FROM users ___ age > 21;` with choice chip `WHERE`). Fully operable via keyboard navigation and focus management.
+3. **True / False Code (`true_false_code`):** Targeted code snippet or statement evaluated as true or false.
+4. **Parsons Problems / Token Reordering (`reorder_tokens`):** 4–6 lines or tokens of jumbled code that the student reorders into syntactically and logically correct sequence. Fully operable via drag-and-drop as well as accessible "Move Up" / "Move Down" buttons or `Alt + ArrowUp / ArrowDown` shortcuts.
+5. **Match Pairs (`match_pairs`):** Concept or syntax pairing matching left terms to right definitions.
+6. **Predict Output (`predict_output`):** Execution snippet where student predicts the runtime output or returned rows.
+7. **Code Syntax Debugger / Spot the Defect (`spot_defect`):** A 4–8 line code snippet where the student identifies the line containing a syntax or logical defect. Full keyboard alternative is provided per WCAG 2.1 SC 2.1.1: navigate through lines using Up/Down arrow keys, and select/mark the target line with Enter or Space.
+8. **Multi-Select (`multi_select`):** Question with multiple applicable options, submitted together.
 
 ### Interaction Flow & Result Sheets
 

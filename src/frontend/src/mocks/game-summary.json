@@ -4,6 +4,13 @@
   "longestStreak": 14,
   "streakFreezes": 2,
   "freezeActiveToday": false,
-  "dailyGoalMinutes": 30,
-  "dailyGoalMetToday": true
+  "hoursPerWeek": 5,
+  "dailyGoalMinutes": 43,
+  "minutesCompletedThisWeek": 120,
+  "examPause": {
+    "active": false,
+    "until": null,
+    "pausesUsedThisYear": 0,
+    "maxPausesPerYear": 2
+  }
 }

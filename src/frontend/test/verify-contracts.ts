@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 import { ApiClientError } from '../src/lib/api.ts';
+import type { ProblemDetails } from '../src/types/api.ts';
 import {
   mockAuth,
   mockProfile,
@@ -14,17 +15,31 @@ import {
   mockUnitDetail,
   mockGameSummary,
   mockReviewsDue,
+  mockProjects,
+  mockPathPreferences,
+  mockNotifications,
 } from '../src/mocks/index.ts';
 
-console.log('--- Verifying API Contract Types & Mocks (v2.0.0) ---');
+console.log('--- Verifying API Contract Types & Mocks (v2.1.0) ---');
 
-// 1. Verify ApiClientError structure & RFC error mapping
+// 1. Verify ApiClientError structure & RFC 9457 ProblemDetails extraction
+const testProblem: ProblemDetails = {
+  type: 'https://masar.app/errors/validation-failed',
+  title: 'Validation Failed',
+  status: 400,
+  code: 'VALIDATION_FAILED',
+  detail: 'Field hoursPerWeek is invalid.',
+  details: [{ field: 'hoursPerWeek', message: 'Must be between 1 and 20.' }],
+  correlationId: '0HN7A2K3P9QRS',
+};
+
 const testError = new ApiClientError(
-  400,
-  'VALIDATION_FAILED',
-  'Field hoursPerWeek is invalid.',
-  [{ field: 'hoursPerWeek', message: 'Must be between 1 and 20.' }],
-  '0HN7A2K3P9QRS'
+  testProblem.status,
+  testProblem.code,
+  testProblem.detail,
+  testProblem.details,
+  testProblem.correlationId,
+  testProblem
 );
 
 assert.strictEqual(testError.name, 'ApiClientError');
@@ -33,13 +48,15 @@ assert.strictEqual(testError.code, 'VALIDATION_FAILED');
 assert.strictEqual(testError.correlationId, '0HN7A2K3P9QRS');
 assert.strictEqual(testError.details?.length, 1);
 assert.strictEqual(testError.details?.[0]?.field, 'hoursPerWeek');
-console.log('✓ ApiClientError RFC envelope extraction verified.');
+assert.strictEqual(testError.problemDetails?.type, 'https://masar.app/errors/validation-failed');
+console.log('✓ ApiClientError RFC 9457 ProblemDetails extraction verified.');
 
 // 2. Verify System Meta mock
-assert.strictEqual(mockMeta.contractVersion, '2.0.0');
+assert.strictEqual(mockMeta.contractVersion, '2.1.0');
 assert.strictEqual(mockMeta.contentVersion, 1);
-assert.strictEqual(mockMeta.algorithmVersion, '2.0.0');
-console.log('✓ System Meta mock fixture verified.');
+assert.strictEqual(mockMeta.algorithmVersion, '2.1.0');
+assert.strictEqual(typeof mockMeta.demoMode, 'boolean');
+console.log('✓ System Meta mock fixture (v2.1.0) verified.');
 
 // 3. Verify Auth mock
 assert.ok(mockAuth.accessToken.length > 0, 'Auth mock must include accessToken');
@@ -48,13 +65,19 @@ assert.ok(['student', 'advisor', 'admin', 'Student', 'Advisor', 'Admin'].include
 assert.strictEqual(mockAuth.user?.email, 'student@ci.suez.edu.eg');
 console.log('✓ Auth mock fixture verified.');
 
-// 4. Verify Profile mock
+// 4. Verify Profile mock & goal derivation invariant
 assert.strictEqual(typeof mockProfile.academicYear, 'number');
-assert.strictEqual(typeof mockProfile.hoursPerWeek, 'number');
+assert.ok(mockProfile.hoursPerWeek >= 1 && mockProfile.hoursPerWeek <= 20, 'hoursPerWeek must be 1..20');
+assert.strictEqual(
+  mockProfile.dailyGoalMinutes,
+  Math.round((mockProfile.hoursPerWeek * 60) / 7),
+  'dailyGoalMinutes must be derived as round(hoursPerWeek * 60 / 7)'
+);
+assert.strictEqual(typeof mockProfile.timezone, 'string');
 assert.strictEqual(typeof mockProfile.targetCareerId, 'number');
 assert.strictEqual(typeof mockProfile.targetTrackId, 'number');
 assert.ok(mockProfile.interests.length > 0);
-console.log('✓ Student Profile mock fixture verified.');
+console.log('✓ Student Profile & derived dailyGoalMinutes verified.');
 
 // 5. Verify Profile Skills mock
 assert.ok(Array.isArray(mockProfileSkills));
@@ -87,7 +110,8 @@ for (const c of mockCareers) {
 console.log('✓ Careers mock fixture verified.');
 
 // 9. Verify Career Recommendations mock
-assert.ok(mockRecommendations.mode === 'model-first' || mockRecommendations.mode === 'fallback');
+assert.strictEqual(typeof mockRecommendations.lowConfidence, 'boolean');
+assert.ok(['model-first', 'fallback', 'unavailable'].includes(mockRecommendations.mode));
 assert.ok(mockRecommendations.recommendations.length > 0);
 for (const rec of mockRecommendations.recommendations) {
   assert.ok(rec.matchScore >= 0 && rec.matchScore <= 100);
@@ -130,7 +154,10 @@ for (const row of mockGapAnalysis.rows) {
 }
 console.log('✓ Gap Analysis mock & monotone severity invariants verified.');
 
-// 11. Verify Atomic Roadmap Path mock
+// 11. Verify Atomic Roadmap Path mock & canonical bundleUrl regex
+const bundleUrlRegex = /^\/content\/v\d+\/units\/[a-z0-9-]+\.[a-f0-9]{8}\.json$/;
+const validDisplayStates = ['learned', 'assumed', 'current', 'available', 'shaky', 'locked'];
+
 assert.strictEqual(mockPath.pathVersion, 1);
 assert.strictEqual(mockPath.careerName, 'Backend Development');
 assert.ok(mockPath.totals.atomsTotal > 0);
@@ -138,32 +165,60 @@ assert.ok(mockPath.stages.length > 0);
 for (const stage of mockPath.stages) {
   assert.ok(stage.units.length > 0);
   for (const unit of stage.units) {
+    assert.ok(
+      bundleUrlRegex.test(unit.bundleUrl),
+      `Unit ${unit.slug} bundleUrl ${unit.bundleUrl} does not match canonical pattern /content/v{n}/units/{slug}.{hash}.json`
+    );
+    assert.ok(
+      validDisplayStates.includes(unit.displayState),
+      `Unit ${unit.slug} has invalid displayState: ${unit.displayState}`
+    );
+    assert.strictEqual(typeof unit.canTestOut, 'boolean');
     assert.ok(['available', 'locked', 'completed'].includes(unit.state));
     assert.ok(['locked', 'available', 'passed'].includes(unit.checkpointState));
   }
 }
-console.log('✓ Atomic Roadmap Path mock fixture verified.');
+console.log('✓ Atomic Roadmap Path & canonical bundleUrl regex verified.');
 
 // 12. Verify Unit Detail mock
 assert.strictEqual(mockUnitDetail.unitId, 'u1111111-0000-0000-0000-000000000001');
 assert.ok(mockUnitDetail.atoms.length > 0);
 for (const atom of mockUnitDetail.atoms) {
-  assert.ok(['locked', 'available', 'learned', 'shaky', 'assumed'].includes(atom.state));
+  assert.ok(
+    validDisplayStates.includes(atom.displayState),
+    `Atom ${atom.slug} has invalid displayState: ${atom.displayState}`
+  );
 }
-console.log('✓ Unit Detail mock fixture verified.');
+console.log('✓ Unit Detail 6-state displayState verified.');
 
-// 13. Verify Game Summary mock
+// 13. Verify Game Summary mock & examPause invariants
 assert.ok(mockGameSummary.totalXp >= 0);
 assert.ok(mockGameSummary.currentStreak >= 0);
-assert.ok([10, 20, 30, 45, 60].includes(mockGameSummary.dailyGoalMinutes));
-console.log('✓ Gamification Summary mock fixture verified.');
+assert.strictEqual(mockGameSummary.hoursPerWeek, 5);
+assert.strictEqual(mockGameSummary.dailyGoalMinutes, 43);
+assert.strictEqual(typeof mockGameSummary.minutesCompletedThisWeek, 'number');
+assert.strictEqual(mockGameSummary.examPause.maxPausesPerYear, 2);
+assert.ok(
+  mockGameSummary.examPause.pausesUsedThisYear <= mockGameSummary.examPause.maxPausesPerYear,
+  'pausesUsedThisYear cannot exceed maxPausesPerYear'
+);
+console.log('✓ Gamification Summary & examPause bounds verified.');
 
-// 14. Verify Reviews Due mock
+// 14. Verify Spaced Repetition Reviews mock
 assert.strictEqual(typeof mockReviewsDue.dueCount, 'number');
 assert.ok(Array.isArray(mockReviewsDue.nextReviewBatch));
 for (const review of mockReviewsDue.nextReviewBatch) {
   assert.ok(review.box >= 1 && review.box <= 5, 'Leitner queue boxes are 1 to 5');
 }
 console.log('✓ Spaced Repetition Reviews mock fixture verified.');
+
+// 15. Verify Capstone Projects, Path Preferences, and Notifications mocks
+assert.ok(Array.isArray(mockProjects) && mockProjects.length > 0);
+assert.strictEqual(typeof mockProjects[0].projectId, 'number');
+assert.ok(mockProjects[0].milestones.length > 0);
+assert.ok(Array.isArray(mockPathPreferences.requirementGroupChoices));
+assert.strictEqual(typeof mockNotifications.emailStreakReminders, 'boolean');
+assert.strictEqual(typeof mockNotifications.emailWeeklyDigest, 'boolean');
+console.log('✓ Capstone Projects, Path Preferences & Notifications verified.');
 
 console.log('--- All Contract & Mock Fixture Assertions Passed! ---');
