@@ -5,12 +5,16 @@ using Masar.Api.Middleware;
 using Masar.Application;
 using Masar.Application.Common.Exceptions; // for ErrorDetail
 using Masar.Infrastructure;
+using Masar.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc; // for BadRequestObjectResult
 using Masar.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -179,7 +183,33 @@ builder.Services.AddRateLimiter(options =>
     );
 });
 
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<MasarDbContext>("database", tags: new[] { "ready" });
+
+// AddDbContextCheck has no timeout parameter, so set it on the registration.
+// Kept under the compose probe's 5s timeout so a hung connection yields a
+// clean 503 instead of the probe itself timing out.
+builder.Services.PostConfigure<HealthCheckServiceOptions>(options =>
+{
+    foreach (var registration in options.Registrations.Where(r => r.Name == "database"))
+    {
+        registration.Timeout = TimeSpan.FromSeconds(3);
+    }
+});
+
 var app = builder.Build();
+
+// Dev-only convenience (docs/03-architecture.md §8): staging/production apply
+// migrations as an explicit deployment step, never on startup.
+if (app.Environment.IsDevelopment()
+    && app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<MasarDbContext>();
+    app.Logger.LogInformation("Applying database migrations on startup (Development only)...");
+    await db.Database.MigrateAsync();
+    app.Logger.LogInformation("Database migrations applied.");
+}
 
 if (app.Environment.IsDevelopment())
 {
@@ -201,6 +231,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Liveness: runs no checks, so it's 200 whenever the process is serving requests.
+app.MapHealthChecks("/api/health", new HealthCheckOptions { Predicate = _ => false }).AllowAnonymous();
+
+// Readiness: runs only checks tagged "ready" (the DB connection).
+app.MapHealthChecks("/api/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready")
+}).AllowAnonymous();
 
 app.Run();
 
