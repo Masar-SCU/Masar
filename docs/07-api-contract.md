@@ -64,6 +64,8 @@ One shape for every error:
 | Method | Path | Returns | Notes |
 |---|---|---|---|
 | GET | `/api/meta` | `200` `{ contractVersion, contentVersion, algorithmVersion }` | Version handshake (F-09) |
+| GET | `/api/health` | `200` `Healthy` | Liveness. Runs no checks. Unauthenticated |
+| GET | `/api/ready` | `200` `Healthy` / `503` `Unhealthy` | Readiness. Checks the database connection. Unauthenticated |
 
 ---
 
