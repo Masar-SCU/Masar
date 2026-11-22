@@ -183,6 +183,27 @@ builder.Services.AddRateLimiter(options =>
     );
 });
 
+// ---- CORS: allow credentials for frontend origins (§1, §3) ----
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://localhost:4173",
+        "https://masar.app",
+        "https://staging.masar.app"
+    ];
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(allowedOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<MasarDbContext>("database", tags: new[] { "ready" });
 
@@ -224,6 +245,8 @@ app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseRateLimiter();
 
