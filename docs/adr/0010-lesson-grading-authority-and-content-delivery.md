@@ -49,7 +49,7 @@ Static content bundles are distributed via CDN. The browser evaluates exercises 
    - Up to 2 retries are allowed per exercise (maximum 3 attempts total).
    - If an exercise is missed 3 times, the player reveals the worked step-by-step solution and flags the exercise as `unresolved`. The lesson concludes once all exercises have been answered or exhausted their 3 attempts.
 3. **Authoritative Server Re-Grading & Idempotency:**
-   - Upon session completion, the client posts an attempt payload to `/api/lessons/{sessionId}/complete` containing: `atomId`, `sessionId`, `idempotencyKey` (optional, defaults to `sessionId`), `durationSeconds`, and the array of exercise `attempts` with timing telemetry (per `docs/07-api-contract.md` §6).
+   - Upon session completion, the client posts an attempt payload to `/api/lessons/{sessionId}/complete` containing: `idempotencyKey` (optional, defaults to `sessionId`) and the array of exercise `attempts` with timing telemetry (per `docs/07-api-contract.md` §8.2).
    - The .NET backend independently validates the submitted answers against the authoritative database record for that atom.
    - **Anti-Cheat Sanity Checks:** The server verifies reasonable timing thresholds (e.g., recording `telemetryFlags: ["RAPID_COMPLETION"]` when $\ge 5$ exercises are completed in $< 15$ seconds, without deducting XP per [ADR-0009](0009-gamification-and-engagement-ethics.md)).
    - **Canonical Idempotency Semantics:**

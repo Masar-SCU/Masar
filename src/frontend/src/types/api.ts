@@ -4,6 +4,12 @@
  * Single Source of Truth: docs/07-api-contract.md
  * Status: Revised 2026-11-19 (Pre-W9 Contract Freeze Reconciliation)
  * Casing: All JSON network properties follow camelCase format.
+ *
+ * Code Generation Policy & Migration Plan:
+ * As defined in docs/07-api-contract.md §13, production TypeScript client types will be
+ * generated automatically from the .NET OpenAPI specification once all endpoints are
+ * implemented across Slices 1–5. In Slice 0, this hand-authored specification acts as the
+ * authoritative pre-freeze baseline and contract test target until backend controllers are live.
  */
 
 // =============================================================================
@@ -140,13 +146,17 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface RefreshTokenRequest {
-  refreshToken?: string;
-}
+/**
+ * Request payload for token refresh.
+ * Refresh token is supplied exclusively via browser-managed HttpOnly cookie.
+ */
+export type RefreshTokenRequest = Record<string, never>;
 
-export interface LogoutRequest {
-  refreshToken?: string;
-}
+/**
+ * Request payload for session logout.
+ * Refresh token is cleared via browser-managed HttpOnly cookie.
+ */
+export type LogoutRequest = Record<string, never>;
 
 export interface VerifyEmailRequest {
   token: string;
@@ -183,7 +193,6 @@ export interface AuthUser {
 
 export interface AuthResponse {
   accessToken: string;
-  refreshToken?: string;
   expiresIn: number;
   /** @deprecated Kept for backwards compatibility */
   expiresInSeconds?: number;
@@ -219,8 +228,6 @@ export interface UpdateProfileRequest {
   timezone?: string;
   careerGoalText?: string;
   interests?: string[];
-  /** @deprecated dailyGoalMinutes is read-only derived from hoursPerWeek */
-  dailyGoalMinutes?: number;
 }
 
 export interface ProfileCompleteness {
@@ -638,15 +645,29 @@ export interface CreateLessonSessionRequest {
   unitId?: string;
 }
 
-export interface CreateLessonSessionResponse {
+export interface BaseLessonSessionResponse {
   sessionId: string;
-  kind?: LessonSessionKind;
   contentVersion: number;
-  bundleUrl?: string;
   expiresAt: string;
-  exercises?: KeylessExercise[];
+}
+
+export interface BundleBackedLessonSessionResponse extends BaseLessonSessionResponse {
+  kind?: 'lesson' | 'review' | 'replay';
+  bundleUrl: string;
+  exercises?: never;
   reviewItems?: Array<{ atomId: string; exercise: KeylessExercise }>;
 }
+
+export interface AssessmentLessonSessionResponse extends BaseLessonSessionResponse {
+  kind: 'checkpoint' | 'test_out';
+  bundleUrl?: string;
+  exercises: KeylessExercise[];
+  reviewItems?: never;
+}
+
+export type CreateLessonSessionResponse =
+  | BundleBackedLessonSessionResponse
+  | AssessmentLessonSessionResponse;
 
 /**
  * Discriminated union of client answer submissions across the 8 canonical exercise types.
@@ -1046,11 +1067,59 @@ export interface AdvisorSuppressedCell {
   meanLevel: null;
 }
 
-export interface CohortGapItem {
+export interface AdvisorSuppressedGapItem {
+  skillId?: number;
   skillName: string;
-  studentCount: number | null;
-  meanLevel?: number | null;
-  suppressed?: boolean;
+  suppressed: true;
+  studentCount: null;
+  meanLevel: null;
+}
+
+export interface AdvisorVisibleGapItem {
+  skillId?: number;
+  skillName: string;
+  suppressed?: false;
+  studentCount: number;
+  meanLevel: number;
+}
+
+export type CohortGapItem = AdvisorSuppressedGapItem | AdvisorVisibleGapItem;
+
+export interface CohortGapResponse {
+  academicYear?: number | null;
+  careerId?: number | null;
+  careerName?: string | null;
+  totalStudents: number;
+  gaps: CohortGapItem[];
+}
+
+export interface AdvisorSuppressedAtomItem {
+  atomId: string;
+  atomTitle: string;
+  unitId: string;
+  unitTitle: string;
+  suppressed: true;
+  failCount: null;
+  failureRate: null;
+}
+
+export interface AdvisorVisibleAtomItem {
+  atomId: string;
+  atomTitle: string;
+  unitId: string;
+  unitTitle: string;
+  suppressed?: false;
+  failCount: number;
+  failureRate: number;
+}
+
+export type CohortAtomItem = AdvisorSuppressedAtomItem | AdvisorVisibleAtomItem;
+
+export interface CohortAtomsResponse {
+  unitId?: string | null;
+  academicYear?: number | null;
+  totalAttempts: number;
+  atoms: CohortAtomItem[];
 }
 
 export interface CohortGapSummary {
@@ -1059,6 +1128,29 @@ export interface CohortGapSummary {
   meanReadiness: number;
   totalStudents: number;
   topGaps: CohortGapItem[];
+}
+
+export interface CohortSummaryResponse {
+  totalStudents: number;
+  meanReadiness: number;
+  activeRoadmapsCount: number;
+  topGaps: CohortGapItem[];
+  careerSummaries?: CohortGapSummary[];
+}
+
+export interface AdvisorStudentItem {
+  userId: string;
+  email: string;
+  academicYear: number;
+  targetCareerId?: number | null;
+  targetCareerName?: string | null;
+  readinessScore: number;
+  lastActiveAt?: string | null;
+}
+
+export interface StudentListResponse {
+  totalCount: number;
+  students: AdvisorStudentItem[];
 }
 
 export interface ContentPublishJobResponse {

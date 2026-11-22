@@ -1,4 +1,5 @@
 import authMock from './auth.json' with { type: 'json' };
+import registerMock from './register.json' with { type: 'json' };
 import profileMock from './profile.json' with { type: 'json' };
 import profileSkillsMock from './profile-skills.json' with { type: 'json' };
 import profileCompletenessMock from './profile-completeness.json' with { type: 'json' };
@@ -17,6 +18,7 @@ import notificationsMock from './notifications.json' with { type: 'json' };
 
 import type {
   AuthResponse,
+  RegisterResponse,
   StudentProfile,
   SkillClaim,
   ProfileCompleteness,
@@ -35,6 +37,7 @@ import type {
 } from '../types/api.ts';
 
 export const mockAuth: AuthResponse = authMock as unknown as AuthResponse;
+export const mockRegister: RegisterResponse = registerMock as RegisterResponse;
 export const mockProfile: StudentProfile = profileMock as StudentProfile;
 export const mockProfileSkills: SkillClaim[] = profileSkillsMock as SkillClaim[];
 export const mockProfileCompleteness: ProfileCompleteness =
@@ -57,6 +60,7 @@ export const mockNotifications: NotificationPreferences =
 
 export const mocks = {
   auth: mockAuth,
+  register: mockRegister,
   profile: mockProfile,
   skills: mockProfileSkills,
   completeness: mockProfileCompleteness,

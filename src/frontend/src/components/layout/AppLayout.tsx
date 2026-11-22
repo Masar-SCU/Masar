@@ -11,12 +11,14 @@ import {
   X,
 } from 'lucide-react';
 import { AUTH_TOKEN_KEY, LEGACY_AUTH_TOKEN_KEY } from '../../lib/constants.ts';
+import { setAccessToken } from '../../lib/api.ts';
 
 export const AppLayout: React.FC = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
+    setAccessToken(null);
     localStorage.removeItem(AUTH_TOKEN_KEY);
     localStorage.removeItem(LEGACY_AUTH_TOKEN_KEY);
     navigate('/login');

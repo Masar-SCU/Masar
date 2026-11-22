@@ -1,8 +1,26 @@
 import assert from 'node:assert';
-import { ApiClientError } from '../src/lib/api.ts';
-import type { ProblemDetails } from '../src/types/api.ts';
+import {
+  api,
+  apiClient,
+  ApiClientError,
+  setAccessToken,
+  getAccessToken,
+  setUseMockData,
+} from '../src/lib/api.ts';
+import type {
+  ProblemDetails,
+  CohortGapItem,
+  CohortGapResponse,
+  CohortAtomsResponse,
+  StudentListResponse,
+  CreateLessonSessionResponse,
+  SystemMetaResponse,
+  AuthResponse,
+  RegisterResponse,
+} from '../src/types/api.ts';
 import {
   mockAuth,
+  mockRegister,
   mockProfile,
   mockProfileSkills,
   mockProfileCompleteness,
@@ -21,6 +39,9 @@ import {
 } from '../src/mocks/index.ts';
 
 console.log('--- Verifying API Contract Types & Mocks (v2.1.0) ---');
+
+// Ensure mock adapter is active for request-level testing
+setUseMockData(true);
 
 // 1. Verify ApiClientError structure & RFC 9457 ProblemDetails extraction
 const testProblem: ProblemDetails = {
@@ -58,12 +79,18 @@ assert.strictEqual(mockMeta.algorithmVersion, '2.1.0');
 assert.strictEqual(typeof mockMeta.demoMode, 'boolean');
 console.log('✓ System Meta mock fixture (v2.1.0) verified.');
 
-// 3. Verify Auth mock
+// 3. Verify Auth & Register mocks (Findings 4 & 7)
 assert.ok(mockAuth.accessToken.length > 0, 'Auth mock must include accessToken');
 assert.strictEqual(mockAuth.expiresIn, 900);
 assert.ok(['student', 'advisor', 'admin', 'Student', 'Advisor', 'Admin'].includes(mockAuth.role));
 assert.strictEqual(mockAuth.user?.email, 'student@ci.suez.edu.eg');
-console.log('✓ Auth mock fixture verified.');
+assert.strictEqual(
+  (mockAuth as unknown as { refreshToken?: unknown }).refreshToken,
+  undefined,
+  'AuthResponse must not expose refreshToken in JSON contract'
+);
+assert.strictEqual(mockRegister.userId, 'd3b07384-d113-404d-b0a8-b6159670eb82');
+console.log('✓ Auth & Register mock fixtures verified (no refreshToken, dedicated RegisterResponse).');
 
 // 4. Verify Profile mock & goal derivation invariant
 assert.strictEqual(typeof mockProfile.academicYear, 'number');
@@ -220,5 +247,195 @@ assert.ok(Array.isArray(mockPathPreferences.requirementGroupChoices));
 assert.strictEqual(typeof mockNotifications.emailStreakReminders, 'boolean');
 assert.strictEqual(typeof mockNotifications.emailWeeklyDigest, 'boolean');
 console.log('✓ Capstone Projects, Path Preferences & Notifications verified.');
+
+// 16. Verify In-memory Auth Token Management (Finding 3)
+setAccessToken('test-in-memory-token-123');
+assert.strictEqual(getAccessToken(), 'test-in-memory-token-123');
+setAccessToken(null);
+assert.strictEqual(getAccessToken(), null);
+console.log('✓ In-memory access token storage and lifecycle verified.');
+
+// 17. Verify Advisor Privacy Suppression & Discriminated Union (Findings 8 & 10)
+const suppressedGap: CohortGapItem = {
+  skillId: 101,
+  skillName: 'Advanced Distributed Systems',
+  suppressed: true,
+  studentCount: null,
+  meanLevel: null,
+};
+assert.strictEqual(suppressedGap.suppressed, true);
+assert.strictEqual(suppressedGap.studentCount, null);
+assert.strictEqual(suppressedGap.meanLevel, null);
+
+const visibleGap: CohortGapItem = {
+  skillId: 102,
+  skillName: 'Relational Database Design',
+  suppressed: false,
+  studentCount: 18,
+  meanLevel: 3.2,
+};
+assert.strictEqual(visibleGap.suppressed, false);
+assert.strictEqual(visibleGap.studentCount, 18);
+assert.strictEqual(visibleGap.meanLevel, 3.2);
+
+const cohortGapResponse: CohortGapResponse = {
+  academicYear: 3,
+  careerId: 1,
+  careerName: 'Backend Development',
+  totalStudents: 42,
+  gaps: [suppressedGap, visibleGap],
+};
+assert.strictEqual(cohortGapResponse.gaps.length, 2);
+
+const cohortAtomsResponse: CohortAtomsResponse = {
+  unitId: 'u1111111-0000-0000-0000-000000000001',
+  academicYear: 3,
+  totalAttempts: 150,
+  atoms: [
+    {
+      atomId: 'a1',
+      atomTitle: 'B-Trees',
+      unitId: 'u1',
+      unitTitle: 'Storage Engines',
+      suppressed: false,
+      failCount: 22,
+      failureRate: 0.147,
+    },
+    {
+      atomId: 'a2',
+      atomTitle: 'Write-Ahead Log',
+      unitId: 'u1',
+      unitTitle: 'Storage Engines',
+      suppressed: true,
+      failCount: null,
+      failureRate: null,
+    },
+  ],
+};
+assert.strictEqual(cohortAtomsResponse.atoms.length, 2);
+
+const studentListResponse: StudentListResponse = {
+  totalCount: 1,
+  students: [
+    {
+      userId: 's-001',
+      email: 'student@ci.suez.edu.eg',
+      academicYear: 3,
+      readinessScore: 78.5,
+    },
+  ],
+};
+assert.strictEqual(studentListResponse.students.length, 1);
+console.log('✓ Advisor Privacy Suppression & response DTOs verified.');
+
+// 18. Request-level Client & Mock Adapter Tests (Findings 1, 5, 6, 11, 14)
+
+// 18a. Supported No-Content Routes (Finding 1 & 6)
+const logoutResponse = await apiClient.post('/api/auth/logout');
+assert.strictEqual(logoutResponse.status, 204, 'POST /api/auth/logout must return 204');
+assert.strictEqual(logoutResponse.data, undefined, '204 response must not have body');
+
+const examPauseDelResponse = await apiClient.delete('/api/game/exam-pause');
+assert.strictEqual(examPauseDelResponse.status, 204, 'DELETE /api/game/exam-pause must return 204');
+assert.strictEqual(examPauseDelResponse.data, undefined);
+
+// 18b. Unsupported Routes Rejected in Mock Mode (Finding 1)
+await assert.rejects(
+  async () => {
+    await apiClient.delete('/api/game/unsupported-endpoint');
+  },
+  (err: unknown) => {
+    assert.ok(err instanceof ApiClientError);
+    assert.strictEqual(err.status, 404);
+    assert.strictEqual(err.code, 'MOCK_NOT_FOUND');
+    return true;
+  },
+  'Unsupported DELETE route in mock mode must be rejected with 404 MOCK_NOT_FOUND'
+);
+
+await assert.rejects(
+  async () => {
+    await apiClient.get('/api/unsupported-get-route');
+  },
+  (err: unknown) => {
+    assert.ok(err instanceof ApiClientError);
+    assert.strictEqual(err.status, 404);
+    assert.strictEqual(err.code, 'MOCK_NOT_FOUND');
+    return true;
+  },
+  'Unsupported GET route in mock mode must be rejected with 404 MOCK_NOT_FOUND'
+);
+
+// 18c. Dedicated Registration Mock & 201 Created (Finding 7)
+const registerResponse = await apiClient.post<RegisterResponse>('/api/auth/register', {
+  email: 'newstudent@ci.suez.edu.eg',
+  password: 'SecurePassword123!',
+  academicYear: 1,
+});
+assert.strictEqual(registerResponse.status, 201, 'POST /api/auth/register must return 201 Created');
+assert.strictEqual(registerResponse.data.userId, 'd3b07384-d113-404d-b0a8-b6159670eb82');
+
+// 18d. Login Mock returning 200 OK without refreshToken (Finding 4 & 6)
+const loginResponse = await apiClient.post<AuthResponse>('/api/auth/login', {
+  email: 'student@ci.suez.edu.eg',
+  password: 'SecurePassword123!',
+});
+assert.strictEqual(loginResponse.status, 200, 'POST /api/auth/login must return 200 OK');
+assert.ok(loginResponse.data.accessToken);
+
+// 18e. Lesson Creation returns 201 Created with bundleUrl (Finding 6 & 14)
+const lessonResponse = await apiClient.post<CreateLessonSessionResponse>('/api/lessons', {
+  kind: 'lesson',
+  atomId: 'a1111111-0000-0000-0000-000000000001',
+});
+assert.strictEqual(lessonResponse.status, 201, 'POST /api/lessons must return 201 Created');
+assert.ok(lessonResponse.data.bundleUrl, 'Lesson session response must contain bundleUrl');
+assert.strictEqual(lessonResponse.data.contentVersion, 1);
+
+// 18f. Deprecated Legacy Route returns 410 Gone
+await assert.rejects(
+  async () => {
+    await apiClient.get('/api/roadmap');
+  },
+  (err: unknown) => {
+    assert.ok(err instanceof ApiClientError);
+    assert.strictEqual(err.status, 410);
+    assert.strictEqual(err.code, 'ENDPOINT_DEPRECATED');
+    return true;
+  },
+  'GET /api/roadmap must reject with 410 ENDPOINT_DEPRECATED'
+);
+
+// 18g. Convenience Helper api.get
+const metaViaHelper = await api.get<SystemMetaResponse>('/api/meta');
+assert.strictEqual(metaViaHelper.contractVersion, '2.1.0');
+
+// 18h. ProblemDetails Error Parsing Fallback when code is missing (Finding 5)
+try {
+  // @ts-expect-error accessing response interceptor handler for unit test verification
+  const responseErrorHandler = apiClient.interceptors.response.handlers[0]?.rejected;
+  if (responseErrorHandler) {
+    await responseErrorHandler({
+      response: {
+        status: 502,
+        data: {
+          type: 'https://masar.app/errors/bad-gateway',
+          title: 'Bad Gateway',
+          status: 502,
+          detail: 'Reverse proxy upstream error',
+        },
+      },
+      message: 'Request failed with status code 502',
+    });
+  }
+  assert.fail('Should have thrown ApiClientError for 502');
+} catch (err: unknown) {
+  assert.ok(err instanceof ApiClientError);
+  assert.strictEqual(err.status, 502);
+  assert.strictEqual(err.code, 'HTTP_502', 'Missing custom code must fall back to HTTP_<status>');
+  assert.strictEqual(err.message, 'Reverse proxy upstream error');
+}
+
+console.log('✓ Request-level API client, status codes, and mock adapter handling verified.');
 
 console.log('--- All Contract & Mock Fixture Assertions Passed! ---');

@@ -265,7 +265,7 @@ Private service, reachable only from .NET backend with `X-Masar-Service-Key`.
 
 1. **Semver governance:** API revisions follow strict Semantic Versioning. Changes after the baseline freeze require an approved ADR and corresponding version bump.
 2. **Version `2.1.0`:** Incorporates pre-W9 freeze reconciliation: RFC 9457 `ProblemDetails`, canonical bundle URLs, `hoursPerWeek` goal authority, 8 canonical exercise types, keyless assessments, Stage Capstone Projects, `STUDENT_PATH_PREFS`, opt-in notifications, early exam-pause cancellation, `.NET` health and ready probes, and cursor-paginated mentor history.
-3. **Single source of truth:** The .NET OpenAPI spec generates TypeScript client types automatically in CI. Hand-written types fail CI checks.
+3. **Single source of truth:** The .NET OpenAPI spec generates TypeScript client types automatically in CI once all endpoints are implemented across Slices 1–5. In Slice 0, `src/frontend/src/types/api.ts` serves as the frozen baseline client contract reconciled against this document until full backend controller generation is integrated.
 
 ### Changelog
 

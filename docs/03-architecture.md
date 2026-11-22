@@ -299,7 +299,7 @@ sequenceDiagram
     end
 
     S->>W: complete lesson
-    W->>A: POST /api/lessons/{sessionId}/complete { atomId, attempts, idempotencyKey }
+    W->>A: POST /api/lessons/{sessionId}/complete { idempotencyKey?, attempts }
     A->>D: MasteryCalculator.Evaluate(attempts)
     A->>D: XpCalculator.Calculate(accuracy)
     A->>D: StreakCalculator.Update(studentTimezone, injectedClock)
