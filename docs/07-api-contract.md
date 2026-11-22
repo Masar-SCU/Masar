@@ -69,8 +69,8 @@ All errors conform to **RFC 9457 ProblemDetails** (`application/problem+json`):
 | Method | Path | Returns | Notes |
 |---|---|---|---|
 | GET | `/api/meta` | `200` `{ contractVersion, contentVersion, algorithmVersion, demoMode }` | Version handshake and offline demo status (F-09) |
-| GET | `/api/health` | `200` `{ status: "ok", timestamp }` | Liveness probe for container orchestration |
-| GET | `/api/ready` | `200` \| `503` `{ status, database, aiService, contentHost }` | Readiness probe verifying dependencies |
+| GET | `/api/health` | `200` `{ status: "ok", timestamp }` / `Healthy` | Liveness probe for container orchestration. Unauthenticated |
+| GET | `/api/ready` | `200` \| `503` `{ status, database, aiService, contentHost }` / `Healthy` | Readiness probe verifying dependencies (DB connection). Unauthenticated |
 
 ---
 

@@ -33,6 +33,12 @@ services:
     restart: unless-stopped
     ports:
       - "${BACKEND_PORT:-5080}:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/api/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
     depends_on:
       postgres:
         condition: service_healthy
@@ -42,6 +48,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__MasarDb=Host=postgres;Port=5432;Database=${POSTGRES_DB:-masar};Username=${POSTGRES_USER:-masar_dev};Password=${POSTGRES_PASSWORD:-masar_dev_password}
       - Jwt__Secret=${JWT_SECRET:-masar_dev_jwt_secret_key_minimum_32_characters_for_local_dev!}
+      - Database__MigrateOnStartup=true
       - AiService__BaseUrl=http://ai:8000
       - AiService__Key=${AI_SERVICE_KEY:-masar_local_secret_key_123}
     networks:
@@ -76,7 +83,7 @@ services:
       - "${FRONTEND_PORT:-5173}:5173"
     depends_on:
       api:
-        condition: service_started
+        condition: service_healthy
     environment:
       - VITE_API_URL=http://localhost:${BACKEND_PORT:-5080}
     networks:
