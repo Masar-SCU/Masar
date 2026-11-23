@@ -53,16 +53,18 @@ builder
 
             var payload = new
             {
-                error = new
-                {
-                    code = "VALIDATION_FAILED",
-                    message = "One or more fields are invalid.",
-                    details,
-                    correlationId,
-                },
+                type = "https://masar.app/errors/validation-failed",
+                title = "Validation Failed",
+                status = StatusCodes.Status400BadRequest,
+                code = "VALIDATION_FAILED",
+                detail = "One or more fields are invalid.",
+                details = details is { Count: > 0 } ? details : null,
+                correlationId,
             };
 
-            return new BadRequestObjectResult(payload);
+            var result = new BadRequestObjectResult(payload);
+            result.ContentTypes.Add("application/problem+json");
+            return result;
         };
     });
 builder.Services.AddEndpointsApiExplorer();
@@ -139,12 +141,12 @@ builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
-    // Matches the error envelope shape (§2) even for a 429, and sets
+    // Matches RFC 9457 ProblemDetails shape (§2) even for a 429, and sets
     // Retry-After as the contract requires.
     options.OnRejected = async (context, ct) =>
     {
         context.HttpContext.Response.Headers.RetryAfter = "900";
-        context.HttpContext.Response.ContentType = "application/json";
+        context.HttpContext.Response.ContentType = "application/problem+json";
 
         var correlationId = context.HttpContext.Items.TryGetValue(
             CorrelationIdMiddleware.ItemsKey,
@@ -156,12 +158,12 @@ builder.Services.AddRateLimiter(options =>
         var payload = System.Text.Json.JsonSerializer.Serialize(
             new
             {
-                error = new
-                {
-                    code = "RATE_LIMITED",
-                    message = "Too many login attempts. Try again later.",
-                    correlationId,
-                },
+                type = "https://masar.app/errors/rate-limited",
+                title = "Too Many Requests",
+                status = StatusCodes.Status429TooManyRequests,
+                code = "RATE_LIMITED",
+                detail = "Too many login attempts. Try again later.",
+                correlationId,
             }
         );
 
@@ -255,6 +257,10 @@ app.Use(async (context, next) =>
         (path.Equals("/api/auth/refresh", StringComparison.OrdinalIgnoreCase) ||
          path.Equals("/api/auth/logout", StringComparison.OrdinalIgnoreCase)))
     {
+        var correlationId = context.Items.TryGetValue(CorrelationIdMiddleware.ItemsKey, out var id)
+            ? id!.ToString()
+            : context.TraceIdentifier;
+
         var clientHeader = context.Request.Headers["X-Masar-Client"].ToString();
         if (!string.Equals(clientHeader, "web", StringComparison.Ordinal))
         {
@@ -266,7 +272,8 @@ app.Use(async (context, next) =>
                 title = "Forbidden",
                 status = StatusCodes.Status403Forbidden,
                 code = "CSRF_VALIDATION_FAILED",
-                detail = "Missing or invalid X-Masar-Client header on cookie-authenticated request."
+                detail = "Missing or invalid X-Masar-Client header on cookie-authenticated request.",
+                correlationId
             });
             return;
         }
@@ -282,7 +289,8 @@ app.Use(async (context, next) =>
                 title = "Forbidden",
                 status = StatusCodes.Status403Forbidden,
                 code = "CSRF_VALIDATION_FAILED",
-                detail = "Request Origin is not authorized for cookie-authenticated endpoints."
+                detail = "Request Origin is not authorized for cookie-authenticated endpoints.",
+                correlationId
             });
             return;
         }

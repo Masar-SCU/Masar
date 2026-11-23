@@ -25,7 +25,8 @@ src/backend/
 │   └── Masar.Api/              # ASP.NET Core controllers, middleware, dependency injection setup
 └── tests/
     ├── Masar.Domain.Tests/     # Domain unit tests (XP, mastery, streak calculations)
-    └── Masar.Application.Tests/# Application workflow and command/query handler unit tests
+    ├── Masar.Application.Tests/# Application workflow and command/query handler unit tests
+    └── Masar.Api.Tests/        # Api middleware and endpoint unit tests
 ```
 
 ---

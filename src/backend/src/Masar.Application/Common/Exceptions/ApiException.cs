@@ -1,10 +1,11 @@
 using System.Net;
+using System.Text.Json.Serialization;
 
 namespace Masar.Application.Common.Exceptions;
 
 /// <summary>
-/// Base for every exception the API translates into the contract's error
-/// envelope: { error: { code, message, details, correlationId } }.
+/// Base for every exception the API translates into the contract's RFC 9457
+/// ProblemDetails envelope: { type, title, status, code, detail, details, correlationId }.
 /// Thrown from Application handlers; caught once by the Api's exception
 /// middleware — handlers never touch HTTP status codes directly.
 /// </summary>
@@ -23,7 +24,10 @@ public class ApiException : Exception
     }
 }
 
-public record ErrorDetail(string Field, string Message);
+public record ErrorDetail(
+    [property: JsonPropertyName("field")] string Field,
+    [property: JsonPropertyName("message")] string Message
+);
 
 public sealed class ValidationException : ApiException
 {
