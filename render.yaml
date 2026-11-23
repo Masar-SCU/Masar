@@ -1,0 +1,58 @@
+services:
+  # ---------------------------------------------------------------------------
+  # 1. Backend Web API (.NET 10 Docker Container)
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: masar-api-staging
+    runtime: docker
+    dockerfilePath: src/backend/Dockerfile
+    dockerContext: src/backend
+    plan: free
+    region: frankfurt
+    branch: main
+    healthCheckPath: /api/ready
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Staging
+      - key: ConnectionStrings__MasarDb
+        sync: false
+      - key: Database__MigrateOnStartup
+        value: "true"
+      - key: Jwt__Secret
+        sync: false
+      - key: Jwt__Issuer
+        value: MasarStaging
+      - key: Jwt__Audience
+        value: MasarStaging
+      - key: Cors__AllowedOrigins__0
+        fromService:
+          type: web
+          name: masar-web-staging
+          property: host
+      - key: Cors__AllowedOrigins__1
+        value: http://localhost:5173
+      - key: Cors__AllowedOrigins__2
+        value: http://localhost:4173
+
+  # ---------------------------------------------------------------------------
+  # 2. Frontend Web App (React 19 Static Site)
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: masar-web-staging
+    runtime: static
+    buildCommand: npm run build
+    staticPublishPath: dist
+    rootDir: src/frontend
+    plan: free
+    region: frankfurt
+    branch: main
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: masar-api-staging
+          property: host

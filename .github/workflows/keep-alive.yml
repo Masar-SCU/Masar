@@ -1,0 +1,28 @@
+name: Staging Keep-Alive Ping
+
+on:
+  schedule:
+    # Runs every 14 minutes between 06:00 and 20:59 UTC (08:00 to 22:59 Cairo local time)
+    - cron: '*/14 6-20 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    name: Keep-Alive Staging Health Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Staging API Health Endpoint
+        run: |
+          API_URL="${{ secrets.STAGING_API_URL }}"
+          if [ -z "$API_URL" ]; then
+            API_URL="https://masar-api-staging.onrender.com"
+          fi
+          echo "Pinging health endpoint at: ${API_URL}/api/health"
+          RESPONSE=$(curl -sS --max-time 45 -w "\nHTTP_STATUS:%{http_code}" "${API_URL}/api/health" || echo "CURL_FAILED")
+          echo "$RESPONSE"
+          STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d':' -f2)
+          if [ "$STATUS" = "200" ]; then
+            echo "Staging backend is healthy and active."
+          else
+            echo "Warning: Staging backend returned status $STATUS (or cold start in progress)."
+          fi

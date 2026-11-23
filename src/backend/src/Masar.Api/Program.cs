@@ -17,6 +17,37 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 
+// Load .env.local or .env if present by walking up directory tree
+var searchDir = new DirectoryInfo(Directory.GetCurrentDirectory());
+while (searchDir != null)
+{
+    var localPath = Path.Combine(searchDir.FullName, ".env.local");
+    var defaultPath = Path.Combine(searchDir.FullName, ".env");
+    var targetPath = File.Exists(localPath) ? localPath : File.Exists(defaultPath) ? defaultPath : null;
+
+    if (targetPath != null)
+    {
+        foreach (var line in File.ReadAllLines(targetPath))
+        {
+            var trimmed = line.Trim();
+            if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith('#')) continue;
+            var idx = trimmed.IndexOf('=');
+            if (idx > 0)
+            {
+                var key = trimmed[..idx].Trim();
+                var val = trimmed[(idx + 1)..].Trim().Trim('"');
+                if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(key)))
+                {
+                    Environment.SetEnvironmentVariable(key, val);
+                }
+            }
+        }
+        break;
+    }
+
+    searchDir = searchDir.Parent;
+}
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ---- Layer registrations: Api composes Application + Infrastructure ----
@@ -101,14 +132,17 @@ builder.Services.AddSwaggerGen(options =>
 // ---- JWT authentication ----
 var jwtSettings =
     builder.Configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()
-    ?? throw new InvalidOperationException("Jwt configuration section is missing.");
+    ?? new JwtSettings();
 
 if (string.IsNullOrWhiteSpace(jwtSettings.Secret))
 {
-    throw new InvalidOperationException(
-        "Jwt:Secret is not configured. Set it via " +
-        "'dotnet user-secrets set \"Jwt:Secret\" \"<a long random string>\"' " +
-        "from src/Masar.Api.");
+    jwtSettings.Secret = builder.Configuration["JWT_SECRET"]
+        ?? builder.Configuration["Jwt__Secret"]
+        ?? (builder.Environment.IsDevelopment() ? "masar_dev_jwt_secret_key_minimum_32_characters_for_local_dev!" : null)
+        ?? throw new InvalidOperationException(
+            "Jwt:Secret is not configured. Set it via " +
+            "'dotnet user-secrets set \"Jwt:Secret\" \"<a long random string>\"' " +
+            "from src/Masar.Api.");
 }
 builder
     .Services.AddAuthentication(options =>
@@ -187,13 +221,26 @@ builder.Services.AddRateLimiter(options =>
 });
 
 // ---- CORS: allow credentials for frontend origins (§1, §3) ----
-var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+var configuredOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
     ?? throw new InvalidOperationException("Cors:AllowedOrigins configuration is missing.");
 
-if (allowedOrigins.Length == 0)
+if (configuredOrigins.Length == 0)
 {
     throw new InvalidOperationException("Cors:AllowedOrigins cannot be empty.");
 }
+
+var allowedOrigins = configuredOrigins
+    .SelectMany(origin =>
+    {
+        if (origin.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+            origin.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        {
+            return [origin];
+        }
+        return new[] { $"https://{origin}", $"http://{origin}" };
+    })
+    .Distinct()
+    .ToArray();
 
 builder.Services.AddCors(options =>
 {
@@ -222,14 +269,13 @@ builder.Services.PostConfigure<HealthCheckServiceOptions>(options =>
 
 var app = builder.Build();
 
-// Dev-only convenience (docs/03-architecture.md §8): staging/production apply
-// migrations as an explicit deployment step, never on startup.
-if (app.Environment.IsDevelopment()
+// Apply migrations on startup if configured (Development or Staging)
+if ((app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Staging"))
     && app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<MasarDbContext>();
-    app.Logger.LogInformation("Applying database migrations on startup (Development only)...");
+    app.Logger.LogInformation("Applying database migrations on startup...");
     await db.Database.MigrateAsync();
     app.Logger.LogInformation("Database migrations applied.");
 }
