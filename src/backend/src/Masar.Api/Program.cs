@@ -50,6 +50,13 @@ while (searchDir != null)
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Cloud-native port binding: honor PORT environment variable if provided by PaaS runtime (e.g. Back4app)
+var portEnv = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(portEnv) && string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ASPNETCORE_HTTP_PORTS")))
+{
+    builder.WebHost.UseUrls($"http://0.0.0.0:{portEnv}");
+}
+
 // ---- Layer registrations: Api composes Application + Infrastructure ----
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -221,8 +228,13 @@ builder.Services.AddRateLimiter(options =>
 });
 
 // ---- CORS: allow credentials for frontend origins (§1, §3) ----
-var configuredOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
-    ?? throw new InvalidOperationException("Cors:AllowedOrigins configuration is missing.");
+var originsSection = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+var originsCsv = builder.Configuration["Cors:AllowedOrigins"];
+var configuredOrigins = originsSection is { Length: > 0 }
+    ? originsSection
+    : !string.IsNullOrWhiteSpace(originsCsv)
+        ? originsCsv.Split([',', ';'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+        : throw new InvalidOperationException("Cors:AllowedOrigins configuration is missing.");
 
 if (configuredOrigins.Length == 0)
 {
@@ -246,10 +258,27 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins(allowedOrigins)
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+        policy.SetIsOriginAllowed(origin =>
+        {
+            if (allowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            if (Uri.TryCreate(origin, UriKind.Absolute, out var uri))
+            {
+                if (uri.Host.EndsWith(".vercel.app", StringComparison.OrdinalIgnoreCase) ||
+                    uri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        })
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
 

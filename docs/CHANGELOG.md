@@ -15,6 +15,7 @@ Completed Slice 0 Walking Skeleton deployment ([#13](https://github.com/Masar-SC
 3. **Keep-Alive Automation (`.github/workflows/keep-alive.yml`):** Added scheduled 14-minute uptime ping during active hours (06:00–20:59 UTC / 08:00–22:59 Cairo local time) per [ADR-0005](adr/0005-zero-budget-hosting.md).
 4. **RFC 9457 & Health Response Formatting:** Merged standardized `application/problem+json` exception handling ([#44](https://github.com/Masar-SCU/Masar/issues/44), [#46](https://github.com/Masar-SCU/Masar/pull/46)) and JSON health check responses ([#45](https://github.com/Masar-SCU/Masar/issues/45), [#47](https://github.com/Masar-SCU/Masar/pull/47)).
 5. **Walking Skeleton Verification:** Proved end-to-end user registration and database persistence live against Neon database.
+6. **Zero-Budget Hosting Flexibility:** Added `src/frontend/vercel.json` for Vercel SPA routing and dynamic `PORT` / `.vercel.app` CORS matching in `src/backend/src/Masar.Api/Program.cs` to support strictly card-free deployments on Vercel and Back4app Containers.
 
 ---
 
