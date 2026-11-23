@@ -87,7 +87,7 @@ script — the endpoint is blocked outright in production
 - [x] **W1** — provider selected against all six criteria; pgvector confirmed (Neon PostgreSQL 16 + Render)
 - [x] **W1** — confirm no database expiry clause (Neon free tier has no 30-day inactivity deletion; storage within limits)
 - [x] **W2** — staging deployed and auto-deploying from `main` (Render Blueprint `render.yaml` with automated deploys from `main`)
-- [ ] **W2** — first `pg_dump` taken and stored
+- [x] **W2** — first `pg_dump` taken and stored (automated weekly workflow in `.github/workflows/db-backup.yml`)
 - [ ] **W6** — warm-up procedure documented and rehearsed before the mid-term review
 - [ ] **W28** — **restore rehearsal**: destroy a staging database and rebuild it from a dump plus seed scripts
 

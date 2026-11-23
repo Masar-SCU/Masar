@@ -26,3 +26,7 @@ venv/
 !.env.example
 
 .neon
+
+# Database dumps
+backups/
+*.sql.gz
