@@ -10,6 +10,7 @@ COPY ["src/Masar.Domain/Masar.Domain.csproj", "src/Masar.Domain/"]
 COPY ["src/Masar.Infrastructure/Masar.Infrastructure.csproj", "src/Masar.Infrastructure/"]
 COPY ["tests/Masar.Application.Tests/Masar.Application.Tests.csproj", "tests/Masar.Application.Tests/"]
 COPY ["tests/Masar.Domain.Tests/Masar.Domain.Tests.csproj", "tests/Masar.Domain.Tests/"]
+COPY ["tests/Masar.Api.Tests/Masar.Api.Tests.csproj", "tests/Masar.Api.Tests/"]
 
 RUN dotnet restore "Masar.sln"
 

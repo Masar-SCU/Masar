@@ -34,8 +34,13 @@ export class ApiClientError extends Error {
   }
 }
 
-const baseURL =
+const rawBaseURL =
   (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) || 'http://localhost:5080';
+
+const baseURL =
+  rawBaseURL.startsWith('http://') || rawBaseURL.startsWith('https://')
+    ? rawBaseURL
+    : `https://${rawBaseURL}`;
 
 // In-memory access token storage (ADR-0010 & v2.1.0 Contract §3 - prevents XSS token theft)
 let inMemoryAccessToken: string | null = null;
