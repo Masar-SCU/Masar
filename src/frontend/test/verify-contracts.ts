@@ -6,6 +6,7 @@ import {
   setAccessToken,
   getAccessToken,
   setUseMockData,
+  isUseMockData,
 } from '../src/lib/api.ts';
 import type {
   ProblemDetails,
@@ -365,6 +366,26 @@ await assert.rejects(
   },
   'Unsupported GET route in mock mode must be rejected with 404 MOCK_NOT_FOUND'
 );
+
+// Retired daily-goal endpoint must be rejected (Finding 3)
+await assert.rejects(
+  async () => {
+    await apiClient.put('/api/game/daily-goal', { dailyGoalMinutes: 45 });
+  },
+  (err: unknown) => {
+    assert.ok(err instanceof ApiClientError);
+    assert.strictEqual(err.status, 404);
+    assert.strictEqual(err.code, 'MOCK_NOT_FOUND');
+    return true;
+  },
+  'Retired PUT /api/game/daily-goal must be rejected in mock mode'
+);
+
+// Mock mode control verification (Finding 1)
+setUseMockData(false);
+assert.strictEqual(isUseMockData(), false);
+setUseMockData(true);
+assert.strictEqual(isUseMockData(), true);
 
 // 18c. Dedicated Registration Mock & 201 Created (Finding 7)
 const registerResponse = await apiClient.post<RegisterResponse>('/api/auth/register', {

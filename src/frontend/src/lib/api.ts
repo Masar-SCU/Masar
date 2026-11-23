@@ -48,11 +48,25 @@ export function getAccessToken(): string | null {
   return inMemoryAccessToken;
 }
 
-// Mock mode toggle (defaults to true in non-production/test environments if unset)
-let mockDataEnabled =
+// Mock mode toggle:
+// In production builds, mocks are disabled by default to prevent serving fixture data.
+// In development or test environments, mocks default to enabled unless explicitly disabled.
+const globalProcess = (
+  globalThis as { process?: { env?: Record<string, string | undefined> } }
+).process;
+
+const isProduction =
+  (typeof import.meta !== 'undefined' && Boolean(import.meta.env?.PROD)) ||
+  globalProcess?.env?.NODE_ENV === 'production';
+
+const rawMockFlag =
   typeof import.meta !== 'undefined' && import.meta.env?.VITE_USE_MOCK_DATA !== undefined
     ? import.meta.env.VITE_USE_MOCK_DATA === 'true'
-    : true;
+    : globalProcess?.env?.VITE_USE_MOCK_DATA !== undefined
+      ? globalProcess.env.VITE_USE_MOCK_DATA === 'true'
+      : undefined;
+
+let mockDataEnabled = rawMockFlag ?? !isProduction;
 
 export function setUseMockData(enable: boolean): void {
   mockDataEnabled = enable;
@@ -212,9 +226,6 @@ function resolveMockResponse(config: InternalAxiosRequestConfig): MockResolution
           projectedCompletion: '2027-03-12',
         },
       };
-    }
-    if (pathname === '/api/game/daily-goal') {
-      return { status: 200, data: { dailyGoalMinutes: 43 } };
     }
   }
 
