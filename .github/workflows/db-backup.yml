@@ -1,0 +1,59 @@
+name: Database Backup
+
+on:
+  schedule:
+    # Runs weekly every Sunday at 02:00 UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    name: Weekly PostgreSQL Backup (pg_dump)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install PostgreSQL 16 Client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends postgresql-client-16
+
+      - name: Execute pg_dump
+        id: dump
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_UNPOOLED || secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "DATABASE_URL secret is not configured in repository secrets."
+            echo "Skipping automated database dump."
+            exit 0
+          fi
+
+          BACKUP_DIR="backups"
+          mkdir -p "$BACKUP_DIR"
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          BACKUP_FILE="${BACKUP_DIR}/masardb_backup_${TIMESTAMP}.sql.gz"
+
+          echo "Initiating pg_dump to ${BACKUP_FILE}..."
+          # Strip unsupported query params if present, e.g. channel_binding
+          CLEAN_URL=$(echo "$DATABASE_URL" | sed 's/[?&]channel_binding=[^&]*//g')
+
+          pg_dump "$CLEAN_URL" --no-owner --no-privileges | gzip > "$BACKUP_FILE"
+
+          FILESIZE=$(stat -c%s "$BACKUP_FILE")
+          echo "Database backup completed successfully (${FILESIZE} bytes)."
+          echo "backup_file=${BACKUP_FILE}" >> "$GITHUB_OUTPUT"
+          echo "timestamp=${TIMESTAMP}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload Backup Artifact
+        if: steps.dump.outputs.backup_file != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-backup-${{ steps.dump.outputs.timestamp }}
+          path: ${{ steps.dump.outputs.backup_file }}
+          retention-days: 60
+          if-no-files-found: error
