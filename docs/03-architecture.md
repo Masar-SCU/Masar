@@ -22,7 +22,7 @@
 | LLM Provider | **Free-tier hosted API**, provider-abstracted ([ADR-0002](adr/0002-llm-provider.md)) | $0 budget; separate quotas for runtime mentor vs offline content drafting | Ahmed Y. |
 | Content Factory Tooling | **Python CLI (`tools/content-factory/`)** | Offline CLI for LLM-assisted drafting and blind-solve checks; completely outside runtime | Mohamed Salah |
 | Containers & CI/CD | **Docker + docker compose · GitHub Actions** | Local parity ([NFR-14](02-requirements.md#nfr-14--portability)) and automated CI verification | Mohamed Salah |
-| Hosting & Uptime | **Render (Web + API) + Neon (PostgreSQL 16) + GitHub Actions** ([ADR-0005](adr/0005-zero-budget-hosting.md)) | $0 budget hosting on Render free tier, Neon serverless Postgres with pgvector, and scheduled keep-alive ping | Mohamed Salah |
+| Hosting & Uptime | **Vercel / Render (Web) + Back4app / Render (API) + Neon (PostgreSQL 16) + GitHub Actions** ([ADR-0005](adr/0005-zero-budget-hosting.md)) | $0 budget hosting on verified card-free tiers (Vercel, Back4app, Neon serverless Postgres with pgvector) and scheduled keep-alive ping | Mohamed Salah |
 
 ---
 
@@ -379,8 +379,8 @@ flowchart TB
 | Setting | Local Development | Staging (Verified W2) | Production |
 |---|---|---|---|
 | Database | `pgvector/pgvector` container | Neon Serverless PostgreSQL 16 + pgvector (`masardb`) | Neon Serverless PostgreSQL 16 + pgvector |
-| Backend API Hosting | Local Kestrel (`dotnet run`) / Docker | Render Docker Web Service (`masar-api-staging`) | Containerized Web Service |
-| Frontend Hosting | Local Vite dev server (`npm run dev`) | Render Static Site (`masar-web-staging`) | Global Static CDN (Cloudflare Pages / Vercel) |
+| Backend API Hosting | Local Kestrel (`dotnet run`) / Docker | Back4app Containers / Render Docker Web Service (`masar-api-staging`) | Containerized Web Service |
+| Frontend Hosting | Local Vite dev server (`npm run dev`) | Vercel (`src/frontend`) / Render Static Site (`masar-web-staging`) | Global Static CDN (Vercel / Cloudflare Pages) |
 | Uptime & Warm-Up | Local (on-demand) | GitHub Actions keep-alive ping (every 14m, 06:00–20:59 UTC) | Scheduled keep-alive / pre-demo warm-up |
 | Static Bundles | Local Vite dev server | Static preview URL | Global Static CDN |
 | LLM Provider | Mock by default; real key if supplied | Real free tier | Real free tier |
