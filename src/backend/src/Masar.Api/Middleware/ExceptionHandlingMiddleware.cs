@@ -6,8 +6,8 @@ using Masar.Application.Common.Exceptions;
 namespace Masar.Api.Middleware;
 
 /// <summary>
-/// Single place that turns any exception into the contract's error
-/// envelope (§2): { error: { code, message, details, correlationId } }.
+/// Single place that turns any exception into the contract's RFC 9457
+/// ProblemDetails envelope (§2): { type, title, status, code, detail, details, correlationId }.
 /// ApiException subclasses map straight to their own status/code; anything
 /// else becomes an opaque 500 INTERNAL_ERROR — a stack trace never reaches
 /// the client.
@@ -79,20 +79,35 @@ public class ExceptionHandlingMiddleware
                 code, message, correlationId);
         }
 
-        context.Response.ContentType = "application/json";
+        context.Response.ContentType = "application/problem+json";
         context.Response.StatusCode = statusCode;
 
+        var typeSlug = code.ToLowerInvariant().Replace('_', '-');
         var payload = new
         {
-            error = new
-            {
-                code,
-                message,
-                details = details is { Count: > 0 } ? details : null,
-                correlationId
-            }
+            type = $"https://masar.app/errors/{typeSlug}",
+            title = GetTitleForStatus(statusCode, code),
+            status = statusCode,
+            code,
+            detail = message,
+            details = details is { Count: > 0 } ? details : null,
+            correlationId
         };
 
         await context.Response.WriteAsync(JsonSerializer.Serialize(payload, JsonOptions));
     }
+
+    private static string GetTitleForStatus(int statusCode, string code) => statusCode switch
+    {
+        StatusCodes.Status400BadRequest => code == "VALIDATION_FAILED" ? "Validation Failed" : "Bad Request",
+        StatusCodes.Status401Unauthorized => "Unauthorized",
+        StatusCodes.Status403Forbidden => "Forbidden",
+        StatusCodes.Status404NotFound => "Not Found",
+        StatusCodes.Status409Conflict => "Conflict",
+        StatusCodes.Status410Gone => "Gone",
+        StatusCodes.Status422UnprocessableEntity => "Unprocessable Entity",
+        StatusCodes.Status429TooManyRequests => "Too Many Requests",
+        StatusCodes.Status503ServiceUnavailable => "Service Unavailable",
+        _ => "Internal Server Error"
+    };
 }
