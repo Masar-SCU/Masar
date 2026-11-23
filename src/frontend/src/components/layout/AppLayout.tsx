@@ -10,14 +10,25 @@ import {
   Menu,
   X,
 } from 'lucide-react';
+import { AUTH_TOKEN_KEY, LEGACY_AUTH_TOKEN_KEY } from '../../lib/constants.ts';
+import { api, setAccessToken } from '../../lib/api.ts';
 
 export const AppLayout: React.FC = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleLogout = () => {
-    localStorage.removeItem('masar_token');
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      // Revoke the server-side refresh session and invalidate HttpOnly cookie
+      await api.post('/api/auth/logout');
+    } catch {
+      // Client cleanup must proceed even if network or server revocation fails
+    } finally {
+      setAccessToken(null);
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+      localStorage.removeItem(LEGACY_AUTH_TOKEN_KEY);
+      navigate('/login');
+    }
   };
 
   const navItems = [

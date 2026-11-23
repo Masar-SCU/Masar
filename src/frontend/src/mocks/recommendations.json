@@ -1,0 +1,67 @@
+{
+  "mode": "model-first",
+  "lowConfidence": false,
+  "recommendations": [
+    {
+      "careerId": 2,
+      "name": "Frontend / Full-Stack",
+      "matchScore": 82,
+      "isActive": true,
+      "contentAvailability": 0.95,
+      "contentLimited": false,
+      "isSelectable": true,
+      "breakdown": {
+        "constraintStatus": "passed",
+        "modelScore": 82,
+        "baselineScore": 75,
+        "skillFit": 0.85,
+        "interestFit": 0.90,
+        "coverage": 0.80
+      },
+      "reasons": [
+        {
+          "type": "skill",
+          "detail": "React at level 4 matches a core requirement for this track"
+        },
+        {
+          "type": "interest",
+          "detail": "Your visual design and interactive application preferences align with modern frontend engineering"
+        }
+      ],
+      "tracks": [
+        { "trackId": 4, "name": "React + TypeScript", "isDefault": true },
+        { "trackId": 5, "name": "Next.js Full-Stack", "isDefault": false }
+      ]
+    },
+    {
+      "careerId": 1,
+      "name": "Backend Development",
+      "matchScore": 74,
+      "isActive": true,
+      "contentAvailability": 0.98,
+      "contentLimited": false,
+      "isSelectable": true,
+      "breakdown": {
+        "constraintStatus": "passed",
+        "modelScore": 74,
+        "baselineScore": 68,
+        "skillFit": 0.75,
+        "interestFit": 0.85,
+        "coverage": 0.82
+      },
+      "reasons": [
+        {
+          "type": "skill",
+          "detail": "C# and SQL foundational claims provide a strong base for server architecture"
+        },
+        {
+          "type": "interest",
+          "detail": "Interest in database systems directly maps to junior backend responsibilities"
+        }
+      ],
+      "tracks": [
+        { "trackId": 1, "name": ".NET / C#", "isDefault": true }
+      ]
+    }
+  ]
+}

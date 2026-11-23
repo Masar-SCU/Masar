@@ -1,0 +1,42 @@
+[
+  {
+    "skillId": 12,
+    "canonicalName": "C# / .NET",
+    "category": "Backend",
+    "description": "Modern C# programming language, ASP.NET Core, and Entity Framework Core.",
+    "aliases": ["C#", "dotnet", ".NET", "C-Sharp", "ASP.NET"],
+    "prerequisites": [10]
+  },
+  {
+    "skillId": 14,
+    "canonicalName": "React",
+    "category": "Frontend",
+    "description": "React component architecture, hooks, state management, and modern SPA design.",
+    "aliases": ["React.js", "ReactJS", "React 19"],
+    "prerequisites": [11, 13]
+  },
+  {
+    "skillId": 19,
+    "canonicalName": "PostgreSQL",
+    "category": "Database",
+    "description": "Relational database design, SQL querying, indexing, and pgvector.",
+    "aliases": ["Postgres", "psql", "Postgre"],
+    "prerequisites": []
+  },
+  {
+    "skillId": 44,
+    "canonicalName": "Docker",
+    "category": "DevOps",
+    "description": "Containerization, Dockerfiles, multi-stage builds, and Docker Compose.",
+    "aliases": ["Docker container", "Containers", "Compose"],
+    "prerequisites": []
+  },
+  {
+    "skillId": 45,
+    "canonicalName": "CI/CD Pipelines",
+    "category": "DevOps",
+    "description": "Automated build, test, and deployment workflows with GitHub Actions.",
+    "aliases": ["GitHub Actions", "CI", "CD", "Continuous Integration"],
+    "prerequisites": [44]
+  }
+]

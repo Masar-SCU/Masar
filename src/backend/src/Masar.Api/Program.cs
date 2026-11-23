@@ -183,6 +183,26 @@ builder.Services.AddRateLimiter(options =>
     );
 });
 
+// ---- CORS: allow credentials for frontend origins (§1, §3) ----
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? throw new InvalidOperationException("Cors:AllowedOrigins configuration is missing.");
+
+if (allowedOrigins.Length == 0)
+{
+    throw new InvalidOperationException("Cors:AllowedOrigins cannot be empty.");
+}
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(allowedOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<MasarDbContext>("database", tags: new[] { "ready" });
 
@@ -224,6 +244,52 @@ app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
+
+app.UseCors();
+
+// CSRF validation for cookie-authenticated endpoints (contract §1)
+app.Use(async (context, next) =>
+{
+    var path = context.Request.Path.Value ?? string.Empty;
+    if (HttpMethods.IsPost(context.Request.Method) &&
+        (path.Equals("/api/auth/refresh", StringComparison.OrdinalIgnoreCase) ||
+         path.Equals("/api/auth/logout", StringComparison.OrdinalIgnoreCase)))
+    {
+        var clientHeader = context.Request.Headers["X-Masar-Client"].ToString();
+        if (!string.Equals(clientHeader, "web", StringComparison.Ordinal))
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            context.Response.ContentType = "application/problem+json";
+            await context.Response.WriteAsJsonAsync(new
+            {
+                type = "https://masar.app/errors/csrf-validation-failed",
+                title = "Forbidden",
+                status = StatusCodes.Status403Forbidden,
+                code = "CSRF_VALIDATION_FAILED",
+                detail = "Missing or invalid X-Masar-Client header on cookie-authenticated request."
+            });
+            return;
+        }
+
+        var origin = context.Request.Headers.Origin.ToString();
+        if (!string.IsNullOrEmpty(origin) && !allowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            context.Response.ContentType = "application/problem+json";
+            await context.Response.WriteAsJsonAsync(new
+            {
+                type = "https://masar.app/errors/csrf-validation-failed",
+                title = "Forbidden",
+                status = StatusCodes.Status403Forbidden,
+                code = "CSRF_VALIDATION_FAILED",
+                detail = "Request Origin is not authorized for cookie-authenticated endpoints."
+            });
+            return;
+        }
+    }
+
+    await next();
+});
 
 app.UseRateLimiter();
 

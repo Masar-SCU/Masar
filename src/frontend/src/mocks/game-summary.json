@@ -1,0 +1,16 @@
+{
+  "totalXp": 480,
+  "currentStreak": 6,
+  "longestStreak": 14,
+  "streakFreezes": 2,
+  "freezeActiveToday": false,
+  "hoursPerWeek": 5,
+  "dailyGoalMinutes": 43,
+  "minutesCompletedThisWeek": 120,
+  "examPause": {
+    "active": false,
+    "until": null,
+    "pausesUsedThisYear": 0,
+    "maxPausesPerYear": 2
+  }
+}

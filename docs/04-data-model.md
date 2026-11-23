@@ -456,9 +456,9 @@ ATOM
 
 EXERCISE
   id uuid PK, atom_id REFERENCES ATOM(id),
-  type ('concept_card' | 'multiple_choice' | 'multi_select' |
-        'true_false_code' | 'fill_blank_tokens' | 'reorder_tokens' |
-        'match_pairs' | 'predict_output'),
+  type ('multiple_choice' | 'fill_blank_tokens' | 'true_false_code' |
+        'reorder_tokens' | 'match_pairs' | 'predict_output' |
+        'spot_defect' | 'multi_select'),
   payload_json jsonb, answer_json jsonb, explanation text,
   difficulty smallint (1..3), is_placement_probe BOOL DEFAULT false,
   status ('draft' | 'reviewed' | 'approved' | 'published'), version int DEFAULT 1
