@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text;
 using System.Threading.RateLimiting;
+using Masar.Api.Diagnostics;
 using Masar.Api.Middleware;
 using Masar.Application;
 using Masar.Application.Common.Exceptions; // for ErrorDetail
@@ -307,12 +308,17 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Liveness: runs no checks, so it's 200 whenever the process is serving requests.
-app.MapHealthChecks("/api/health", new HealthCheckOptions { Predicate = _ => false }).AllowAnonymous();
+app.MapHealthChecks("/api/health", new HealthCheckOptions
+{
+    Predicate = _ => false,
+    ResponseWriter = HealthCheckResponseWriter.WriteHealthResponse
+}).AllowAnonymous();
 
 // Readiness: runs only checks tagged "ready" (the DB connection).
 app.MapHealthChecks("/api/ready", new HealthCheckOptions
 {
-    Predicate = check => check.Tags.Contains("ready")
+    Predicate = check => check.Tags.Contains("ready"),
+    ResponseWriter = HealthCheckResponseWriter.WriteReadyResponse
 }).AllowAnonymous();
 
 app.Run();
