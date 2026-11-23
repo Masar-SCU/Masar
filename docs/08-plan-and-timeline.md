@@ -64,7 +64,7 @@ All vertical slices begin anew from **S0 (Walking Skeleton)**, incorporating the
 
 | Slice | Weeks | Dates | Core Deliverables | Status |
 |---|---|---|---|---|
-| **S0 Walking skeleton** | W1–W2 | 17 Nov – 30 Nov 2026 | Multi-service Docker compose (Postgres + pgvector, .NET 10 API, FastAPI AI, React 19 SPA); CI/CD workflows; base auth (JWT); initial OpenAPI contract frozen | In progress |
+| **S0 Walking skeleton** | W1–W2 | 17 Nov – 30 Nov 2026 | Multi-service Docker compose (Postgres + pgvector, .NET 10 API, FastAPI AI, React 19 SPA); CI/CD workflows; base auth (JWT); initial OpenAPI contract frozen; Staging deploy on Render + Neon | **Completed** |
 | **S1 Profile & catalogue** | W3–W4 | 1 Dec – 14 Dec 2026 | 60 skills seeded from O\*NET/ESCO with aliases, category hierarchy, prerequisite DAG v1; student profile CRUD, academic history, student consent disclosure; 22-item assessment | Scheduled |
 | **S2 Gap engine & readiness** | W5–W6 | 15 Dec – 28 Dec 2026 | 6 careers seeded with importance weights; `GapCalculator` and `ReadinessCalculator`; gap UI with severity badges; demo mode with offline fixtures | Scheduled |
 | **S3 Atomic foundation** | W7–W9 | 29 Dec 2026 – 18 Jan 2027 | Atom/Unit/Path schema & migrations; CI validator; `PathBuilder` and `MasteryCalculator`; **API v2 contract frozen at end of W9**; lesson player prototype with 3 exercise types on pilot unit (`sql-fundamentals`, ~150 atoms); content factory v1 | Scheduled |

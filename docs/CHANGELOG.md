@@ -6,7 +6,19 @@ This document provides a comprehensive audit trail of all defect corrections (Pa
 
 ---
 
-## 0. API Contract v2.1.0 Upgrade & Companion Doc Sync (2026-11-19)
+## 0. Slice 0 Staging Deployment & Infrastructure Baseline (2026-11-23)
+
+Completed Slice 0 Walking Skeleton deployment ([#13](https://github.com/Masar-SCU/Masar/issues/13), [#50](https://github.com/Masar-SCU/Masar/pull/50)), verifying end-to-end integration across .NET 10 Web API, React 19 SPA, and Neon PostgreSQL:
+
+1. **Neon Serverless PostgreSQL Integration:** Provisioned staging database `masardb` on Neon (branch `production`), verified pgvector extension, executed initial EF Core migration (`20260929111840_InitialCreate`), and normalized connection strings in `src/backend/src/Masar.Infrastructure/DependencyInjection.cs` to support libpq URIs and strip unsupported parameters (`channel_binding=require`).
+2. **Render Blueprint IaC (`render.yaml`):** Configured automated Infrastructure-as-Code deployments from `main` for `masar-api-staging` (Docker container Web Service with `/api/ready` health check and startup EF migration) and `masar-web-staging` (Static Site with SPA route rewrites).
+3. **Keep-Alive Automation (`.github/workflows/keep-alive.yml`):** Added scheduled 14-minute uptime ping during active hours (06:00–20:59 UTC / 08:00–22:59 Cairo local time) per [ADR-0005](adr/0005-zero-budget-hosting.md).
+4. **RFC 9457 & Health Response Formatting:** Merged standardized `application/problem+json` exception handling ([#44](https://github.com/Masar-SCU/Masar/issues/44), [#46](https://github.com/Masar-SCU/Masar/pull/46)) and JSON health check responses ([#45](https://github.com/Masar-SCU/Masar/issues/45), [#47](https://github.com/Masar-SCU/Masar/pull/47)).
+5. **Walking Skeleton Verification:** Proved end-to-end user registration and database persistence live against Neon database.
+
+---
+
+## 1. API Contract v2.1.0 Upgrade & Companion Doc Sync (2026-11-19)
 
 Upgraded the API Contract (`docs/07-api-contract.md`) to **Version 2.1.0** ahead of the pre-W9 freeze target (<2027-01-18>), reconciling cross-document specifications and updating frontend client types, API client, mock fixtures, and contract tests:
 
